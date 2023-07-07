@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MyNote</string>
+
+    <string name="time_note">TimeNote</string>
+    <string name="title_ok">OK</string>
+    <string name="button_save">Save</string>
+
+
+    <!-- Text Bottom Nav-->
+    <string name="title_home">Home</string>
+    <string name="title_category">Category</string>
+    <string name="title_setting">Setting</string>
+
+    <!-- Add Category-->
+    <string name="title_add_category">Add Category</string>
+    <string name="category_name">Category Name</string>
+
+    <!-- Dialog Category-->
+    <string name="title_dialog_category">Select Category</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Add Note-->
+    <string name="title_add_note">New Note</string>
+    <string name="input_title">Title…</string>
+    <string name="text_dialog_camera">Camera</string>
+    <string name="text_dialog_photo">My Photo</string>
+
+
+</resources>

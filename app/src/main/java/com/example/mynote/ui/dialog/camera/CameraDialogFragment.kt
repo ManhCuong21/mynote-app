@@ -1,0 +1,195 @@
+package com.example.mynote.ui.dialog.camera
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import com.example.mynote.R
+import com.example.mynote.core.external.AppConstants.Companion.FILE_NAME_FORMAT
+import com.example.mynote.core.external.AppConstants.Companion.PATH_IMAGE_NOTE
+import com.example.mynote.core.external.FileExtension
+import com.example.mynote.core.viewbinding.inflateViewBinding
+import com.example.mynote.databinding.FragmentCameraDialogBinding
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import javax.inject.Inject
+
+
+fun Fragment.showCameraDialog(
+    tag: String = this::class.java.simpleName,
+    init: CameraDialogFragment.Builder.() -> Unit,
+) {
+    val builder = CameraDialogFragment.Builder().apply(init)
+    CameraDialogFragment.getInstance(builder)
+        .show(
+            requireActivity().supportFragmentManager,
+            "${CameraDialogFragment.CAMERA_DIALOG_FRAGMENT_TAG}.$tag"
+        )
+}
+
+@AndroidEntryPoint
+class CameraDialogFragment : DialogFragment() {
+
+    @Inject
+    lateinit var fileExtension: FileExtension
+
+    private var builder: Builder? = null
+    private lateinit var binding: FragmentCameraDialogBinding
+
+
+    private var imageCapture: ImageCapture? = null
+
+    private lateinit var cameraExecutor: ExecutorService
+    override fun onStart() {
+        super.onStart()
+        dialog?.setCancelable(false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.Theme_AlertDialogFullScreen)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+        binding = layoutInflater.inflateViewBinding(
+            parent = container,
+            attachToParent = false
+        )
+        startCamera()
+        // Set up the listeners for take photo and video capture buttons
+        binding.imageCaptureButton.setOnClickListener { takePhoto() }
+        binding.videoCaptureButton.setOnClickListener { captureVideo() }
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
+        return binding.root
+    }
+
+    private fun captureVideo() {}
+
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
+
+        cameraProviderFuture.addListener({
+            // Used to bind the lifecycle of cameras to the lifecycle owner
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+            // Preview
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                }
+
+            imageCapture = ImageCapture.Builder().build()
+
+            // Select back camera as a default
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                // Unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // Bind use cases to camera
+                cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture
+                )
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }, ContextCompat.getMainExecutor(requireActivity()))
+    }
+
+    private fun takePhoto() {
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        // Create time stamped name and MediaStore entry.
+        val pathFile = SimpleDateFormat(
+            FILE_NAME_FORMAT,
+            Locale.getDefault()
+        ).format(System.currentTimeMillis())
+        val file = File(
+            fileExtension.getOutputDirectory(
+                requireActivity(),
+                builder?.fileName ?: "${PATH_IMAGE_NOTE}$pathFile"
+            ),
+            "$pathFile.jpg"
+        )
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(file)
+            .build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(requireActivity()),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    exc.printStackTrace()
+                }
+
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    output.savedUri?.path?.let { path ->
+                        builder?.let {
+                            it.takePictureClickListener(path)
+                        }
+                    }
+                    dismiss()
+                }
+            }
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+    class Builder {
+        internal var fileName: String? = null
+            private set
+        internal var takePictureClickListener: (String) -> Unit = { }
+            private set
+
+        fun setFileNameImage(fileNameImage: String) {
+            fileName = fileNameImage
+        }
+
+        fun takePictureAction(
+            listener: (pathImage: String) -> Unit,
+        ) {
+            takePictureClickListener = listener
+        }
+    }
+
+    companion object {
+        fun getInstance(builder: Builder): CameraDialogFragment {
+            return CameraDialogFragment().apply { this.builder = builder }
+        }
+
+        const val CAMERA_DIALOG_FRAGMENT_TAG = "CameraDialogFragment"
+    }
+}
