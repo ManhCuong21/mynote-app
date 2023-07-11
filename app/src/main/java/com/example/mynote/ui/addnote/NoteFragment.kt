@@ -1,11 +1,15 @@
 package com.example.mynote.ui.addnote
 
 import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -21,6 +25,8 @@ import com.example.mynote.core.navigation.MainNavigator
 import com.example.mynote.core.viewbinding.viewBinding
 import com.example.mynote.databinding.DialogChooseImageAddNoteBinding
 import com.example.mynote.databinding.FragmentNoteBinding
+import com.example.mynote.ui.addnote.adapter.NoteChooseColorAdapter
+import com.example.mynote.ui.addnote.adapter.NoteListImageAdapter
 import com.example.mynote.ui.dialog.camera.showCameraDialog
 import com.example.mynote.ui.dialog.text.showTextDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,6 +81,21 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             binding.edtContentNote.colorLine = resources.getString(item.colorTitle)
         })
     }
+    private var pathImage = ""
+    private val listImageAdapter by lazy {
+        NoteListImageAdapter(onItemClicked = {
+            lifecycleScope.launch {
+                pathImage = it
+                intentSenderLauncherForAndroid10 = intentSenderLauncher
+                fileExtension.deleteImageFromFile(
+                    fragmentActivity = requireActivity(),
+                    intentSenderLauncher = intentSenderLauncher,
+                    pathImage = it
+                )
+                viewModel.dispatch(NoteAction.UpdateListImage)
+            }
+        })
+    }
 
     private val requestPermissionCameraLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
@@ -91,6 +112,23 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     private val appPermissionSettingLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
+    private val intentSenderLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    lifecycleScope.launch {
+                        fileExtension.deleteImageFromFile(
+                            fragmentActivity = requireActivity(),
+                            intentSenderLauncher = intentSenderLauncherForAndroid10,
+                            pathImage = pathImage
+                        )
+                    }
+                }
+                viewModel.dispatch(NoteAction.UpdateListImage)
+            }
+        }
+    private lateinit var intentSenderLauncherForAndroid10: ActivityResultLauncher<IntentSenderRequest>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissionCameraLauncher.launch(Manifest.permission.CAMERA)
@@ -106,7 +144,16 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     override fun bindViewModel() {
         lifecycleScope.launch {
             viewModel.singleEventFlow.collect { event ->
-
+                when (event) {
+                    is NoteSingleEvent.UpdateListImage -> {
+                        val listImage = fileExtension.readImageFromFile(
+                            fragmentActivity = requireActivity(),
+                            pathChild = filePath
+                        )
+                        binding.rvImage.isVisible = listImage.isNotEmpty()
+                        listImageAdapter.submitList(listImage)
+                    }
+                }
             }
         }
     }
@@ -132,6 +179,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             adapter = chooseColorAdapter
             chooseColorAdapter.submitList(listColor)
         }
+        rvImage.apply {
+            adapter = listImageAdapter
+        }
     }
 
     private fun showDialogChooseImage() = binding.apply {
@@ -148,8 +198,8 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             when (viewModel.stateFlow.value.permissionCameraGranted) {
                 true -> showCameraDialog {
                     setFileNameImage(filePath)
-                    takePictureAction { pathImage ->
-
+                    takePictureAction {
+                        viewModel.dispatch(NoteAction.UpdateListImage)
                     }
                 }
 

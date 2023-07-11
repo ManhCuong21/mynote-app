@@ -2,8 +2,11 @@ package com.example.mynote.ui.dialog.camera
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.OrientationEventListener
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -60,6 +63,21 @@ class CameraDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.Theme_AlertDialogFullScreen)
+        imageCapture = ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9).build()
+        val orientationEventListener = object : OrientationEventListener(requireActivity()) {
+            override fun onOrientationChanged(orientation: Int) {
+                // Monitors orientation values to determine the target rotation value
+                val rotation: Int = when (orientation) {
+                    in 45..134 -> Surface.ROTATION_270
+                    in 135..224 -> Surface.ROTATION_180
+                    in 225..314 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+
+                imageCapture!!.targetRotation = rotation
+            }
+        }
+        orientationEventListener.enable()
     }
 
     override fun onCreateView(
@@ -75,14 +93,11 @@ class CameraDialogFragment : DialogFragment() {
         startCamera()
         // Set up the listeners for take photo and video capture buttons
         binding.imageCaptureButton.setOnClickListener { takePhoto() }
-        binding.videoCaptureButton.setOnClickListener { captureVideo() }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         return binding.root
     }
-
-    private fun captureVideo() {}
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
@@ -97,8 +112,6 @@ class CameraDialogFragment : DialogFragment() {
                 .also {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
-
-            imageCapture = ImageCapture.Builder().build()
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -129,9 +142,9 @@ class CameraDialogFragment : DialogFragment() {
             Locale.getDefault()
         ).format(System.currentTimeMillis())
         val file = File(
-            fileExtension.getOutputDirectory(
-                requireActivity(),
-                builder?.fileName ?: "${PATH_IMAGE_NOTE}$pathFile"
+            fileExtension.getOutputMediaDirectory(
+                fragmentActivity = requireActivity(),
+                pathDirectory = builder?.fileName ?: "${PATH_IMAGE_NOTE}$pathFile"
             ),
             "$pathFile.jpg"
         )
@@ -152,10 +165,8 @@ class CameraDialogFragment : DialogFragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    output.savedUri?.path?.let { path ->
-                        builder?.let {
-                            it.takePictureClickListener(path)
-                        }
+                    builder?.let {
+                        it.takePictureClickListener()
                     }
                     dismiss()
                 }
@@ -171,7 +182,7 @@ class CameraDialogFragment : DialogFragment() {
     class Builder {
         internal var fileName: String? = null
             private set
-        internal var takePictureClickListener: (String) -> Unit = { }
+        internal var takePictureClickListener: () -> Unit = { }
             private set
 
         fun setFileNameImage(fileNameImage: String) {
@@ -179,7 +190,7 @@ class CameraDialogFragment : DialogFragment() {
         }
 
         fun takePictureAction(
-            listener: (pathImage: String) -> Unit,
+            listener: () -> Unit,
         ) {
             takePictureClickListener = listener
         }

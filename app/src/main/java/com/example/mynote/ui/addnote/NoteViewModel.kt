@@ -56,14 +56,18 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.permissionCameraGranted) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed()).distinctUntilChanged()
 
-        val listImageFlow = action<NoteAction.UpdateListImage>()
-            .map { it.image }
-            .onStart { emit(initialUiState.listImage) }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed()).distinctUntilChanged()
+//        val listImageFlow = action<NoteAction.UpdateListImage>()
+//            .map { it.image }
+//            .onStart { emit(initialUiState.listImage) }
+//            .onEach { _singleEventChannel.send(NoteSingleEvent.UpdateListImage(it)) }
+//            .shareIn(viewModelScope, SharingStarted.WhileSubscribed()).distinctUntilChanged()
+        action<NoteAction.UpdateListImage>()
+            .onEach {_singleEventChannel.send(NoteSingleEvent.UpdateListImage)  }.launchIn(viewModelScope)
 
         stateFlow = combine(
             permissionCameraFlow,
             permissionStorageFlow,
+//            listImageFlow,
             ::buildNoteUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it

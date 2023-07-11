@@ -1,4 +1,4 @@
-package com.example.mynote.ui.addnote
+package com.example.mynote.ui.addnote.adapter
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mynote.R
 import com.example.mynote.core.viewbinding.inflateViewBinding
 import com.example.mynote.databinding.ItemListChooseColorBinding
+import com.example.mynote.ui.addnote.ItemChooseColor
 
 class NoteChooseColorAdapter(
     private val onItemClicked: (Int) -> Unit
