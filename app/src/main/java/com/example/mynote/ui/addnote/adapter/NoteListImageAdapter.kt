@@ -13,7 +13,7 @@ import com.example.mynote.domain.model.ItemImage
 import java.io.IOException
 
 class NoteListImageAdapter(
-    private val onItemClicked: (String) -> Unit
+    private val onItemDelete: (String) -> Unit
 ) : ListAdapter<ItemImage, NoteListImageAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ItemImage>() {
         override fun areItemsTheSame(oldItem: ItemImage, newItem: ItemImage): Boolean =
@@ -30,7 +30,7 @@ class NoteListImageAdapter(
             imgDelete.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        onItemClicked(item.pathImage)
+                        onItemDelete(item.pathImage)
                     }
                 }
             }

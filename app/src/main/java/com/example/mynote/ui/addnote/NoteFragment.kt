@@ -1,32 +1,30 @@
 package com.example.mynote.ui.addnote
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.mynote.R
 import com.example.mynote.base.BaseFragment
 import com.example.mynote.core.external.AppConstants
-import com.example.mynote.core.external.AppConstants.Companion.PATH_IMAGE_NOTE
-import com.example.mynote.core.external.FileExtension
+import com.example.mynote.core.external.AppConstants.PATH_MEDIA_NOTE
+import com.example.mynote.core.file.image.ImageFile
+import com.example.mynote.core.file.record.RecordFile
 import com.example.mynote.core.navigation.MainNavigator
 import com.example.mynote.core.viewbinding.viewBinding
 import com.example.mynote.databinding.DialogChooseImageAddNoteBinding
 import com.example.mynote.databinding.FragmentNoteBinding
 import com.example.mynote.ui.addnote.adapter.NoteChooseColorAdapter
 import com.example.mynote.ui.addnote.adapter.NoteListImageAdapter
+import com.example.mynote.ui.addnote.adapter.NoteListRecordAdapter
 import com.example.mynote.ui.dialog.camera.showCameraDialog
 import com.example.mynote.ui.dialog.text.showTextDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,17 +40,16 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     lateinit var mainNavigator: MainNavigator
 
     @Inject
-    lateinit var fileExtension: FileExtension
+    lateinit var imageFile: ImageFile
+
+    @Inject
+    lateinit var recordFile: RecordFile
 
     override val binding: FragmentNoteBinding by viewBinding()
-    override val viewModel: NoteViewModel by viewModels()
+    override val viewModel: NoteViewModel by activityViewModels()
 
-    private val filePath = PATH_IMAGE_NOTE + SimpleDateFormat(
-        AppConstants.FILE_NAME_FORMAT,
-        Locale.getDefault()
-    ).format(System.currentTimeMillis())
-
-
+    private val listPermission =
+        arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
     private val listColor = listOf(
         ItemChooseColor(R.color.orangeTitle, R.color.orangeContent),
         ItemChooseColor(R.color.blueTitle, R.color.blueContent),
@@ -62,6 +59,10 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         ItemChooseColor(R.color.redTitle, R.color.redContent),
         ItemChooseColor(R.color.blackTitle, R.color.blackContent),
     )
+    private val pathFile = PATH_MEDIA_NOTE + SimpleDateFormat(
+        AppConstants.FILE_NAME_FORMAT,
+        Locale.getDefault()
+    ).format(System.currentTimeMillis())
 
     private val chooseColorAdapter by lazy {
         NoteChooseColorAdapter(onItemClicked = { position ->
@@ -81,15 +82,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             binding.edtContentNote.colorLine = resources.getString(item.colorTitle)
         })
     }
-    private var pathImage = ""
+
     private val listImageAdapter by lazy {
-        NoteListImageAdapter(onItemClicked = {
+        NoteListImageAdapter(onItemDelete = {
             lifecycleScope.launch {
-                pathImage = it
-                intentSenderLauncherForAndroid10 = intentSenderLauncher
-                fileExtension.deleteImageFromFile(
-                    fragmentActivity = requireActivity(),
-                    intentSenderLauncher = intentSenderLauncher,
+                imageFile.deleteImageFromFile(
                     pathImage = it
                 )
                 viewModel.dispatch(NoteAction.UpdateListImage)
@@ -97,44 +94,27 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         })
     }
 
-    private val requestPermissionCameraLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
-            viewModel.dispatch(NoteAction.CameraPermissionResult(isGranted = result))
-        }
-
-    private val requestPermissionStorageLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
-            if (result) {
-//                viewModel.dispatch(NoteAction.StoragePermissionResult(isGranted = result))
+    private val listRecordAdapter by lazy {
+        NoteListRecordAdapter(onItemDelete = {
+            lifecycleScope.launch {
+                recordFile.deleteRecordFromFile(
+                    pathRecord = it
+                )
+                viewModel.dispatch(NoteAction.UpdateListRecord)
             }
-        }
+        })
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
 
     private val appPermissionSettingLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
-    private val intentSenderLauncher =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-            if (it.resultCode == RESULT_OK) {
-                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    lifecycleScope.launch {
-                        fileExtension.deleteImageFromFile(
-                            fragmentActivity = requireActivity(),
-                            intentSenderLauncher = intentSenderLauncherForAndroid10,
-                            pathImage = pathImage
-                        )
-                    }
-                }
-                viewModel.dispatch(NoteAction.UpdateListImage)
-            }
-        }
-    private lateinit var intentSenderLauncherForAndroid10: ActivityResultLauncher<IntentSenderRequest>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPermissionCameraLauncher.launch(Manifest.permission.CAMERA)
-        requestPermissionStorageLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        requestPermissionLauncher.launch(listPermission)
     }
-
 
     override fun setupViews() {
         setupRecyclerView()
@@ -146,12 +126,21 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             viewModel.singleEventFlow.collect { event ->
                 when (event) {
                     is NoteSingleEvent.UpdateListImage -> {
-                        val listImage = fileExtension.readImageFromFile(
+                        val listImage = imageFile.readImageFromFile(
                             fragmentActivity = requireActivity(),
-                            pathChild = filePath
+                            pathFile = pathFile
                         )
-                        binding.rvImage.isVisible = listImage.isNotEmpty()
+                        binding.rvImageNote.isVisible = listImage.isNotEmpty()
                         listImageAdapter.submitList(listImage)
+                    }
+
+                    is NoteSingleEvent.UpdateListRecord -> {
+                        val listRecord = recordFile.readRecordFromFile(
+                            fragmentActivity = requireActivity(),
+                            pathFile = pathFile
+                        )
+                        binding.rvRecordNote.isVisible = listRecord.isNotEmpty()
+                        listRecordAdapter.submitList(listRecord)
                     }
                 }
             }
@@ -169,7 +158,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             showDialogChooseImage()
         }
         btnChooseRecord.setOnClickListener {
-
+            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment(pathFile))
         }
     }
 
@@ -179,8 +168,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             adapter = chooseColorAdapter
             chooseColorAdapter.submitList(listColor)
         }
-        rvImage.apply {
+        rvImageNote.apply {
             adapter = listImageAdapter
+        }
+        rvRecordNote.apply {
+            adapter = listRecordAdapter
         }
     }
 
@@ -194,33 +186,33 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
         }
         binding.btnCamera.setOnClickListener {
-            val permissionCamera = Manifest.permission.CAMERA
-            when (viewModel.stateFlow.value.permissionCameraGranted) {
-                true -> showCameraDialog {
-                    setFileNameImage(filePath)
+            if (checkPermission()) {
+                showCameraDialog {
+                    setFileNameImage(pathFile)
                     takePictureAction {
                         viewModel.dispatch(NoteAction.UpdateListImage)
                     }
                 }
-
-                false -> checkPermission(permissionCamera)
             }
             dialog.dismiss()
         }
     }
 
-    private fun checkPermission(permission: String) {
+    private fun checkPermission(): Boolean {
         when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                viewModel.dispatch(NoteAction.CameraPermissionResult(isGranted = true))
+            listPermission.any {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            } -> return true
+
+            shouldShowRequestPermissionRationale(listPermission[0]) -> {
+                requestPermissionLauncher.launch(listPermission)
             }
 
-            shouldShowRequestPermissionRationale(permission) -> {
-                viewModel.dispatch(NoteAction.CameraPermissionResult(isGranted = false))
-                requestPermissionCameraLauncher.launch(permission)
+            shouldShowRequestPermissionRationale(listPermission[1]) -> {
+                requestPermissionLauncher.launch(listPermission)
             }
 
             else -> {
@@ -236,5 +228,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                 }
             }
         }
+        return false
     }
 }

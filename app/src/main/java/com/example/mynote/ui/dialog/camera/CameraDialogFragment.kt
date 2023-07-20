@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.mynote.R
-import com.example.mynote.core.external.AppConstants.Companion.FILE_NAME_FORMAT
-import com.example.mynote.core.external.AppConstants.Companion.PATH_IMAGE_NOTE
-import com.example.mynote.core.external.FileExtension
+import com.example.mynote.core.external.AppConstants.FILE_NAME_FORMAT
+import com.example.mynote.core.external.AppConstants.PATH_MEDIA_NOTE
+import com.example.mynote.core.file.FileExtension
 import com.example.mynote.core.viewbinding.inflateViewBinding
 import com.example.mynote.databinding.FragmentCameraDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -144,7 +144,7 @@ class CameraDialogFragment : DialogFragment() {
         val file = File(
             fileExtension.getOutputMediaDirectory(
                 fragmentActivity = requireActivity(),
-                pathDirectory = builder?.fileName ?: "${PATH_IMAGE_NOTE}$pathFile"
+                pathDirectory = builder?.fileName ?: "${PATH_MEDIA_NOTE}$pathFile"
             ),
             "$pathFile.jpg"
         )

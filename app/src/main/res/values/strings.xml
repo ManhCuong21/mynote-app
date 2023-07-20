@@ -4,6 +4,7 @@
     <string name="time_note">TimeNote</string>
     <string name="title_ok">OK</string>
     <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
 
 
     <!-- Text Bottom Nav-->
@@ -25,6 +26,9 @@
     <string name="input_title">Title…</string>
     <string name="text_dialog_camera">Camera</string>
     <string name="text_dialog_photo">My Photo</string>
-
+    <string name="text_record">Record</string>
+    <string name="text_un_recording">Tap the button to start recording.</string>
+    <string name="text_recording">Recording…</string>
+    <string name="text_pause_recording">Tap the button to continue recording.</string>
 
 </resources>

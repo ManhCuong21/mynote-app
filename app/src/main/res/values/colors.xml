@@ -12,6 +12,7 @@
     <color name="button_selected_bg">#EC0E0E</color>
     <color name="button_unselected_bg">#595959</color>
     <color name="system_gray_disable">#8F8D8D</color>
+    <color name="button_cancel">#737373</color>
 
     <!-- Color choose add note -->
     <color name="orangeTitle">#FF7A00</color>

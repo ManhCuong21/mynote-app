@@ -9,8 +9,8 @@ import com.example.mynote.core.external.checkMainThread
 import javax.inject.Inject
 import com.example.mynote.core.navigation.MainNavigator.Direction
 import com.example.mynote.core.external.safeNavigate
+import com.example.mynote.ui.addnote.NoteFragmentDirections
 import com.example.mynote.ui.main.MainFragmentDirections
-import com.example.mynote.ui.main.home.HomeFragmentDirections
 
 class MainNavigatorImpl @Inject constructor(
     private val activity: Activity
@@ -37,5 +37,9 @@ class MainNavigatorImpl @Inject constructor(
 private fun Direction.toNavDirections(): NavDirections = when (this) {
     is Direction.MainFragmentToAddNoteFragment -> MainFragmentDirections.actionMainFragmentToAddNoteFragment(
         idCategoryNote
+    )
+
+    is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment(
+        fileMediaName
     )
 }

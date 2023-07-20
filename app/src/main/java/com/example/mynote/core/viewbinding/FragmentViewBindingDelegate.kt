@@ -71,7 +71,7 @@ class FragmentViewBindingDelegate<T : ViewBinding> private constructor(
   }
 
   private inner class FragmentLifecycleObserver : DefaultLifecycleObserver {
-    val observer = Observer<LifecycleOwner?> { viewLifecycleOwner: LifecycleOwner? ->
+    val observer = Observer { viewLifecycleOwner: LifecycleOwner? ->
       viewLifecycleOwner ?: return@Observer
 
       var onDestroyViewActual = onDestroyView

@@ -9,6 +9,7 @@ interface MainNavigator {
 
     sealed interface Direction {
         data class MainFragmentToAddNoteFragment(val idCategoryNote: Int) : Direction
+        data class NoteFragmentToRecorderFragment(val fileMediaName: String) : Direction
     }
 
     @MainThread

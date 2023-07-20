@@ -11,16 +11,31 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_addNoteFragment"
-            app:destination="@+id/addNoteFragment" />
+            app:destination="@+id/noteFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/addNoteFragment"
+        android:id="@+id/noteFragment"
         android:name="com.example.mynote.ui.addnote.NoteFragment"
         tools:layout="@layout/fragment_note">
+
+        <action
+            android:id="@+id/action_noteFragment_to_recorderFragment"
+            app:destination="@id/recorderFragment" />
+
         <argument
             android:name="categoryId"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recorderFragment"
+        android:name="com.example.mynote.ui.addnote.record.RecorderFragment"
+        tools:layout="@layout/fragment_recorder">
+
+        <argument
+            android:name="fileNameMedia"
+            app:argType="string" />
     </fragment>
 
 </navigation>
