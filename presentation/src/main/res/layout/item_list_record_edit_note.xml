@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dimen_8"
+    app:cardCornerRadius="@dimen/dimen_20"
+    app:cardElevation="@dimen/dimen_0">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnPlayRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_8"
+            android:src="@drawable/icon_play_record" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimerRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="#FD5454" />
+
+        <com.example.presentation.canvas.AudioWave
+            android:layout_width="@dimen/dimen_100"
+            android:layout_height="@dimen/dimen_45" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnDeleteRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_8"
+            android:src="@drawable/icon_delete_image_edit_note" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>
