@@ -12,15 +12,13 @@ data class NoteEntity(
     @ColumnInfo(name = "categoryId")
     var categoryId: Int?,
     @ColumnInfo(name = "title")
-    var title: String?,
+    var titleNote: String?,
     @ColumnInfo(name = "text")
-    var text: String?,
+    var contentNote: String?,
     @ColumnInfo(name = "image")
-    var image: List<String>?,
-    @ColumnInfo(name = "record")
-    var record: List<String>?,
+    var fileMediaNote: String,
     @ColumnInfo(name = "color")
-    var color: String?,
+    var colorNote: Int?,
     @ColumnInfo(name = "time")
-    var time: Long?
+    var timeNote: Long?
 )

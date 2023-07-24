@@ -1,4 +1,4 @@
-package com.example.presentation.addnote.record
+package com.example.presentation.note.record
 
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel

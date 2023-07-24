@@ -1,4 +1,4 @@
-package com.example.presentation.addnote
+package com.example.presentation.note
 
 import android.Manifest
 import android.content.Intent
@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.core.base.BaseFragment
@@ -17,10 +18,12 @@ import com.example.core.core.external.AppConstants
 import com.example.core.core.external.AppConstants.PATH_MEDIA_NOTE
 import com.example.core.core.file.image.ImageFile
 import com.example.core.core.file.record.RecordFile
+import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.viewbinding.viewBinding
-import com.example.presentation.addnote.adapter.NoteChooseColorAdapter
-import com.example.presentation.addnote.adapter.NoteListImageAdapter
-import com.example.presentation.addnote.adapter.NoteListRecordAdapter
+import com.example.mynote.core.external.collectIn
+import com.example.presentation.note.adapter.NoteChooseColorAdapter
+import com.example.presentation.note.adapter.NoteListImageAdapter
+import com.example.presentation.note.adapter.NoteListRecordAdapter
 import com.example.presentation.dialog.camera.showCameraDialog
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.R
@@ -66,29 +69,15 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val chooseColorAdapter by lazy {
         NoteChooseColorAdapter(onItemClicked = { position ->
-            val item = listColor[position]
-            binding.edtTitleNote.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    item.colorTitle
-                )
-            )
-            binding.edtContentNote.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    item.colorContent
-                )
-            )
-            binding.edtContentNote.colorLine = resources.getString(item.colorTitle)
+            setupColorTextInput(position)
+            viewModel.dispatch(NoteAction.ColorNoteChanged(indexColor = position))
         })
     }
 
     private val listImageAdapter by lazy {
         NoteListImageAdapter(onItemDelete = {
             lifecycleScope.launch {
-                imageFile.deleteImageFromFile(
-                    pathImage = it
-                )
+                imageFile.deleteImageFromFile(pathImage = it)
                 viewModel.dispatch(NoteAction.UpdateListImage)
             }
         })
@@ -97,9 +86,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     private val listRecordAdapter by lazy {
         NoteListRecordAdapter(onItemDelete = {
             lifecycleScope.launch {
-                recordFile.deleteRecordFromFile(
-                    pathRecord = it
-                )
+                recordFile.deleteRecordFromFile(pathRecord = it)
                 viewModel.dispatch(NoteAction.UpdateListRecord)
             }
         })
@@ -117,13 +104,15 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     override fun setupViews() {
+        initialValue()
         setupRecyclerView()
         setupClickListener()
+        setupTextInput()
     }
 
     override fun bindViewModel() {
         lifecycleScope.launch {
-            viewModel.singleEventFlow.collect { event ->
+            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                 when (event) {
                     is NoteSingleEvent.UpdateListImage -> {
                         val listImage = imageFile.readImageFromFile(
@@ -142,7 +131,16 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                         binding.rvRecordNote.isVisible = listRecord.isNotEmpty()
                         listRecordAdapter.submitList(listRecord)
                     }
+
+                    is NoteSingleEvent.SaveNote.Success -> {
+                        mainNavigator.popBackStack()
+                    }
+
+                    is NoteSingleEvent.SaveNote.Failed -> {}
                 }
+            }
+            viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+                binding.btnSaveNote.isVisible = !state.titleNote.isNullOrEmpty()
             }
         }
     }
@@ -160,6 +158,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         btnChooseRecord.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment(pathFile))
         }
+        btnSaveNote.setOnClickListener {
+            viewModel.dispatch(NoteAction.InsertNote)
+        }
     }
 
     private fun setupRecyclerView() = binding.apply {
@@ -173,6 +174,44 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         }
         rvRecordNote.apply {
             adapter = listRecordAdapter
+        }
+    }
+
+    private fun initialValue() = binding.apply {
+        val state = viewModel.stateFlow.value
+        edtTitleNote.setText(state.titleNote)
+        edtContentNote.setText(state.contentNote)
+        setupColorTextInput(state.colorNote ?: 0)
+        viewModel.dispatch(NoteAction.FileMediaNoteChanged(fileMediaNote = pathFile))
+    }
+
+    private fun setupColorTextInput(indexColor: Int) = binding.apply {
+        val item = listColor[indexColor]
+        edtTitleNote.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                item.colorTitle
+            )
+        )
+        edtContentNote.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                item.colorContent
+            )
+        )
+        edtContentNote.colorLine = resources.getString(item.colorTitle)
+    }
+
+    private fun setupTextInput() = binding.apply {
+        edtTitleNote.apply {
+            doOnTextChanged { text, _, _, _ ->
+                viewModel.dispatch(NoteAction.TitleNoteChanged(text?.toString().orEmpty()))
+            }
+        }
+        edtContentNote.apply {
+            doOnTextChanged { text, _, _, _ ->
+                viewModel.dispatch(NoteAction.ContentNoteChanged(text?.toString().orEmpty()))
+            }
         }
     }
 

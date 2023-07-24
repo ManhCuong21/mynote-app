@@ -1,4 +1,4 @@
-package com.example.presentation.addnote.adapter
+package com.example.presentation.note.adapter
 
 import android.graphics.Bitmap
 import android.graphics.Matrix

@@ -1,13 +1,13 @@
-package com.example.presentation.addnote.adapter
+package com.example.presentation.note.adapter
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
-import com.example.presentation.addnote.ItemChooseColor
 import com.example.presentation.databinding.ItemListChooseColorBinding
 
 class NoteChooseColorAdapter(
@@ -36,7 +36,7 @@ class NoteChooseColorAdapter(
 
     inner class ViewHolder(private val binding: ItemListChooseColorBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("UseCompatLoadingForDrawables")
+        @SuppressLint("UseCompatLoadingForDrawables", "NotifyDataSetChanged")
         fun bind(item: ItemChooseColor) = binding.apply {
             imgChooseColor.setBackgroundColor(binding.root.context.getColor(item.colorTitle))
             val imageDrawable = if (selectedPosition == bindingAdapterPosition) {
@@ -46,10 +46,9 @@ class NoteChooseColorAdapter(
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        notifyItemChanged(selectedPosition)
                         selectedPosition = it
-                        notifyItemChanged(selectedPosition)
                         onItemClicked(it)
+                        notifyDataSetChanged()
                     }
                 }
             }

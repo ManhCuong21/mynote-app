@@ -117,7 +117,7 @@ class AddCategoryFragment : com.example.core.base.BaseFragment(R.layout.fragment
     }
 
     private fun setupCategoryTitleInput() = binding.edtCategoryName.run {
-        editText?.run {
+        editText?.apply {
             doOnTextChanged { text, _, _, _ ->
                 viewModel.dispatch(AddCategoryAction.TitleCategoryChanged(text?.toString().orEmpty()))
             }

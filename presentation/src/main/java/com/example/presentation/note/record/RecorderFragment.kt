@@ -1,4 +1,4 @@
-package com.example.presentation.addnote.record
+package com.example.presentation.note.record
 
 import android.Manifest
 import android.content.Intent
@@ -21,8 +21,8 @@ import com.example.core.core.external.getDate
 import com.example.core.core.file.FileExtension
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
-import com.example.presentation.addnote.NoteAction
-import com.example.presentation.addnote.NoteViewModel
+import com.example.presentation.note.NoteAction
+import com.example.presentation.note.NoteViewModel
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentRecorderBinding

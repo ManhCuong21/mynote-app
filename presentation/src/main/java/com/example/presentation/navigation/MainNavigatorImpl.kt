@@ -8,7 +8,7 @@ import com.example.core.core.external.checkMainThread
 import com.example.core.core.external.safeNavigate
 import javax.inject.Inject
 import com.example.presentation.R
-import com.example.presentation.addnote.NoteFragmentDirections
+import com.example.presentation.note.NoteFragmentDirections
 import com.example.presentation.main.MainFragmentDirections
 import com.example.presentation.navigation.MainNavigator.Direction
 

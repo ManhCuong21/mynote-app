@@ -58,16 +58,13 @@ class AddCategoryViewModel @Inject constructor(
         saveCategory()
 
         val categoryTitleFlow = action<AddCategoryAction.TitleCategoryChanged>()
-            .map {
-                it.value
-            }
+            .map { it.value }
             .onStart { emit(initialUiState.title) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
         val imageFlow = action<AddCategoryAction.ImageCategoryChanged>()
-            .map {
-                it.value
-            }.onStart { initialUiState.image }
+            .map { it.value }
+            .onStart { initialUiState.image }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
         val title = categoryTitleFlow.distinctUntilChanged()

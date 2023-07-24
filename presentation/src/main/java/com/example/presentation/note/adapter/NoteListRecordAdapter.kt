@@ -1,4 +1,4 @@
-package com.example.presentation.addnote.adapter
+package com.example.presentation.note.adapter
 
 import android.media.MediaPlayer
 import android.view.ViewGroup
@@ -116,6 +116,5 @@ class NoteListRecordAdapter(
             player?.release()
             player = null
         }
-
     }
 }

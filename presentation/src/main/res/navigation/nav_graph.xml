@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/noteFragment"
-        android:name="com.example.presentation.addnote.NoteFragment"
+        android:name="com.example.presentation.note.NoteFragment"
         tools:layout="@layout/fragment_note">
 
         <action
@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/recorderFragment"
-        android:name="com.example.presentation.addnote.record.RecorderFragment"
+        android:name="com.example.presentation.note.record.RecorderFragment"
         tools:layout="@layout/fragment_recorder">
 
         <argument
