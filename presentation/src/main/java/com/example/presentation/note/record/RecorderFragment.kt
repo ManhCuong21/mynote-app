@@ -21,6 +21,7 @@ import com.example.core.core.external.getDate
 import com.example.core.core.file.FileExtension
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
+import com.example.mynote.core.external.collectIn
 import com.example.presentation.note.NoteAction
 import com.example.presentation.note.NoteViewModel
 import com.example.presentation.dialog.text.showTextDialog
@@ -70,7 +71,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     override fun bindViewModel() {
         lifecycleScope.launch {
-            viewModel.singleEventFlow.collect { time ->
+            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
                 binding.tvTimerRecord.text = time
             }
         }

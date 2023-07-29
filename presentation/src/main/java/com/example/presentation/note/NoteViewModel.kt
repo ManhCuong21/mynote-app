@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.external.combine
+import com.example.domain.mapper.NoteParams
 import com.example.domain.usecase.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
@@ -68,7 +68,7 @@ class NoteViewModel @Inject constructor(
 
         val categoryNoteFlow = action<NoteAction.CategoryNoteChanged>()
             .map { it.categoryNote }
-            .onStart { emit(initialUiState.categoryId ?: 0) }
+            .onStart { emit(initialUiState.categoryNote) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
         val fileMediaNoteFlow = action<NoteAction.FileMediaNoteChanged>()
@@ -76,23 +76,30 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.fileMediaNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-        val colorNoteFlow = action<NoteAction.ColorNoteChanged>()
-            .map { it.indexColor }
-            .onStart { emit(initialUiState.colorNote ?: 0) }
+        val colorTitleNoteFlow = action<NoteAction.ColorTitleNoteChanged>()
+            .map { it.colorTitleNote }
+            .onStart { emit(initialUiState.colorTitleNote.orEmpty()) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+        val colorContentNoteFlow = action<NoteAction.ColorContentNoteChanged>()
+            .map { it.colorContentNote }
+            .onStart { emit(initialUiState.colorContentNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
         val titleNote = titleNoteFlow.distinctUntilChanged()
         val contentNote = contentNoteFlow.distinctUntilChanged()
         val categoryNote = categoryNoteFlow.distinctUntilChanged()
         val fileMediaNote = fileMediaNoteFlow.distinctUntilChanged()
-        val colorNote = colorNoteFlow.distinctUntilChanged()
+        val colorTitleNote = colorTitleNoteFlow.distinctUntilChanged()
+        val colorContentNote = colorContentNoteFlow.distinctUntilChanged()
 
         stateFlow = combine(
             titleNote,
             contentNote,
             categoryNote,
             fileMediaNote,
-            colorNote,
+            colorTitleNote,
+            colorContentNote,
             ::buildNoteUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
@@ -111,12 +118,13 @@ class NoteViewModel @Inject constructor(
                     emit(ResultContent.Loading)
                     val uiState = stateFlow.value
                     noteUseCase.insertNote(
-                        NoteUIModel(
+                        NoteParams(
                             titleNote = uiState.titleNote.orEmpty(),
                             contentNote = uiState.contentNote.orEmpty(),
-                            categoryId = uiState.categoryId ?: 0,
+                            categoryNote = uiState.categoryNote,
                             fileMediaNote = uiState.fileMediaNote.orEmpty(),
-                            colorNote = uiState.colorNote ?: 0,
+                            colorTitleNote = uiState.colorTitleNote.orEmpty(),
+                            colorContentNote = uiState.colorContentNote.orEmpty(),
                             timeNote = System.currentTimeMillis()
                         )
                     ).fold(

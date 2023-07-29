@@ -10,4 +10,5 @@ object AppConstants {
         const val DATE_FORMAT_yyyy_MM_dd_HH_mm_ss = "yyyyMMddHHmmss"
 
         const val FORMAT_TIME_MINUTE = "mm:ss"
+        const val DATE_FORMAT_TIME_ALL = "yyyy-MM-dd HH:mm:ss aa"
 }

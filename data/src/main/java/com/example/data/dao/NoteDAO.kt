@@ -15,6 +15,9 @@ interface NoteDAO {
     @Query("SELECT * FROM noteEntity")
     fun readAllNote(): List<NoteEntity>
 
+    @Query("SELECT * FROM NoteEntity WHERE idCategory = :categoryId")
+    fun readNoteWithCategory(categoryId: Int): List<NoteEntity>
+
     @Update
     fun updateNote(note: NoteEntity)
 

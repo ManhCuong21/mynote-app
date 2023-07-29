@@ -9,6 +9,7 @@ import javax.inject.Inject
 interface CategoryDatabase {
     suspend fun insertCategory(category: CategoryEntity): Result<Unit, Throwable>
     suspend fun readAllCategory(): Result<List<CategoryEntity>, Throwable>
+    suspend fun readCategoryWithId(categoryId: Int): Result<CategoryEntity, Throwable>
     suspend fun updateCategory(category: CategoryEntity): Result<Unit, Throwable>
     suspend fun deleteCategory(category: CategoryEntity): Result<Unit, Throwable>
 }
@@ -24,6 +25,11 @@ class CategoryDatabaseImpl @Inject constructor(appDAO: AppDAO) : CategoryDatabas
     override suspend fun readAllCategory(): Result<List<CategoryEntity>, Throwable> =
         runCatching {
             categoryDAO.readAllCategory()
+        }
+
+    override suspend fun readCategoryWithId(categoryId: Int): Result<CategoryEntity, Throwable> =
+        runCatching {
+            categoryDAO.readCategoryWithId(categoryId)
         }
 
     override suspend fun updateCategory(category: CategoryEntity): Result<Unit, Throwable> =

@@ -35,8 +35,8 @@ class MainNavigatorImpl @Inject constructor(
 
 
 private fun Direction.toNavDirections(): NavDirections = when (this) {
-    is Direction.MainFragmentToAddNoteFragment -> MainFragmentDirections.actionMainFragmentToAddNoteFragment(
-        idCategoryNote
+    is Direction.MainFragmentToNoteFragment -> MainFragmentDirections.actionMainFragmentToAddNoteFragment(
+        category
     )
 
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment(

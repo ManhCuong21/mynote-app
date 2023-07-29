@@ -12,13 +12,16 @@ import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.databinding.ItemListCategoryHomeBinding
 
 class HomeListCategoryAdapter(
-    private val onItemClicked: (CategoryUIModel) -> Unit
+    private val onItemClicked: (Int) -> Unit
 ) : ListAdapter<CategoryUIModel, HomeListCategoryAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<CategoryUIModel>() {
         override fun areItemsTheSame(oldItem: CategoryUIModel, newItem: CategoryUIModel): Boolean =
-            oldItem.id == newItem.id
+            oldItem.idCategory == newItem.idCategory
 
-        override fun areContentsTheSame(oldItem: CategoryUIModel, newItem: CategoryUIModel): Boolean =
+        override fun areContentsTheSame(
+            oldItem: CategoryUIModel,
+            newItem: CategoryUIModel
+        ): Boolean =
             oldItem == newItem
     }
 ) {
@@ -35,18 +38,24 @@ class HomeListCategoryAdapter(
         holder.bind(getItem(position))
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun setCurrentTab(position: Int) {
+        selectedPosition = position
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolder(val binding: ItemListCategoryHomeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("NotifyDataSetChanged")
         fun bind(item: CategoryUIModel) = binding.apply {
-            tvTitleCategory.text = item.title
-            item.image.let { imgItemCategory.loadImage(it) }
+            tvTitleCategory.text = item.titleCategory
+            item.imageCategory.let { imgItemCategory.loadImage(it) }
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
                         selectedPosition = it
                         notifyDataSetChanged()
-                        onItemClicked(getItem(it))
+                        onItemClicked(it)
                     }
                 }
             }

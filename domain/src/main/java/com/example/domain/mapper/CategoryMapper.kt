@@ -2,24 +2,25 @@ package com.example.domain.mapper
 
 import com.example.core.core.model.CategoryUIModel
 import com.example.data.model.CategoryEntity
-import com.example.domain.model.CategoryModel
 
-fun CategoryModel.toCategoryEntity() = CategoryEntity(
-    title = title,
-    image = image
+data class CategoryParams(val title: String, val image: Int)
+
+fun CategoryParams.toCategoryEntity() = CategoryEntity(
+    titleCategory = title,
+    imageCategory = image
 )
 
-fun CategoryModel.toCategoryUIModel() = CategoryUIModel(
-    id = id,
-    title = title,
-    image = image
+fun CategoryUIModel.toCategoryEntity() = CategoryEntity(
+    idCategory = idCategory,
+    titleCategory = titleCategory,
+    imageCategory = imageCategory
 )
 
-internal fun List<CategoryEntity>.toListCategoryModel(): List<CategoryModel> =
-    this.map { it.toCategoryModel() }
+internal fun List<CategoryEntity>.toListCategoryModel(): List<CategoryUIModel> =
+    this.map { it.toCategoryUIModel() }
 
-private fun CategoryEntity.toCategoryModel() = CategoryModel(
-    id = id,
-    title = title,
-    image = image
+fun CategoryEntity.toCategoryUIModel() = CategoryUIModel(
+    idCategory = idCategory,
+    titleCategory = titleCategory,
+    imageCategory = imageCategory
 )

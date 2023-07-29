@@ -32,7 +32,7 @@
         <me.ibrahimsn.lib.SmoothBottomBar
             android:id="@+id/bottom_nav_view"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="@dimen/dimen_56"
             android:layout_alignParentBottom="true"
             android:paddingVertical="@dimen/dimen_8"
             app:backgroundColor="@color/primary"

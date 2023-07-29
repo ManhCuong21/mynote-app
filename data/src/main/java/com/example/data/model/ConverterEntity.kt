@@ -6,13 +6,33 @@ import com.google.gson.reflect.TypeToken
 
 object ConverterEntity {
     @TypeConverter
-    fun toString(list: List<String?>?): String? {
+    fun toStringNote(list: List<String?>?): String? {
         if (list == null) {
             return null
         }
         val gson = Gson()
         val type = object : TypeToken<List<NoteEntity?>?>() {}.type
         return gson.toJson(list, type)
+    }
+
+    @TypeConverter
+    fun categoryToString(categoryEntity: CategoryEntity?): String? {
+        if (categoryEntity == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<CategoryEntity?>() {}.type
+        return gson.toJson(categoryEntity, type)
+    }
+
+    @TypeConverter
+    fun stringToCategory(string: String?): CategoryEntity? {
+        if (string == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<String?>?>() {}.type
+        return gson.fromJson(string, type)
     }
 
     @TypeConverter

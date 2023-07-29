@@ -5,18 +5,19 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CategoryUIModel(
-    val id: Int? = null,
-    val title: String,
-    val image: Int
+    val idCategory: Int,
+    val titleCategory: String,
+    val imageCategory: Int
 ) : Parcelable
 
 @Parcelize
 data class NoteUIModel(
-    val id: Int? = null,
-    val categoryId: Int,
+    val idNote: Int,
+    val categoryNote: CategoryUIModel,
     val titleNote: String,
     val contentNote: String,
     val fileMediaNote: String,
-    var colorNote: Int,
+    var colorTitleNote: String,
+    var colorContentNote: String,
     var timeNote: Long
 ) : Parcelable

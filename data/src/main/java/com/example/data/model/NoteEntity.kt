@@ -1,24 +1,27 @@
 package com.example.data.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id: Int = 0,
-    @ColumnInfo(name = "categoryId")
-    var categoryId: Int?,
-    @ColumnInfo(name = "title")
-    var titleNote: String?,
-    @ColumnInfo(name = "text")
-    var contentNote: String?,
-    @ColumnInfo(name = "image")
-    var fileMediaNote: String,
-    @ColumnInfo(name = "color")
-    var colorNote: Int?,
-    @ColumnInfo(name = "time")
-    var timeNote: Long?
+    @ColumnInfo(name = "idNote")
+    val idNote: Int = 0,
+    @Embedded
+    val categoryEntity: CategoryEntity,
+    @ColumnInfo(name = "titleNote")
+    val titleNote: String,
+    @ColumnInfo(name = "contentNote")
+    val contentNote: String,
+    @ColumnInfo(name = "fileMediaNote")
+    val fileMediaNote: String,
+    @ColumnInfo(name = "colorTitleNote")
+    val colorTitleNote: String,
+    @ColumnInfo("colorContentNote")
+    val colorContentNote: String,
+    @ColumnInfo(name = "timeNote")
+    val timeNote: Long?
 )

@@ -24,8 +24,8 @@
             app:destination="@id/recorderFragment" />
 
         <argument
-            android:name="categoryId"
-            app:argType="integer" />
+            android:name="category"
+            app:argType="com.example.core.core.model.CategoryUIModel" />
     </fragment>
 
     <fragment

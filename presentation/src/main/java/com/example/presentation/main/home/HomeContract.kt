@@ -41,6 +41,6 @@ fun buildHomeUiState(
 )
 
 internal fun CategoryUIModel.toListDialogItem() = ListDialogItem(
-    title = title,
-    image = image
+    title = titleCategory,
+    image = imageCategory
 )

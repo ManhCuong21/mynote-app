@@ -67,10 +67,18 @@ class ListDialogFragment : DialogFragment() {
                     it.text = textTitle
                     it.isVisible = textTitle?.isNotEmpty() == true
                 }
-                binding.btnDialog.let {
+                binding.btnPositive.let {
                     it.text = positiveButtonText
                     it.setOnClickListener {
                         positiveButtonClickListener(positionSelected)
+                        dismiss()
+                    }
+                }
+                binding.btnNegative.let {
+                    it.text = negativeButtonText
+                    it.isVisible = !negativeButtonText.isNullOrEmpty()
+                    it.setOnClickListener {
+                        negativeButtonClickListener()
                         dismiss()
                     }
                 }
@@ -78,7 +86,7 @@ class ListDialogFragment : DialogFragment() {
                     it.adapter = dialogAdapter
                     dialogAdapter.submitList(list)
                 }
-                isCancelable = cancelable
+                isCancelable = true
             }
         }
     }
@@ -92,6 +100,9 @@ class ListDialogFragment : DialogFragment() {
             private set
         internal var positiveButtonClickListener: (Int) -> Unit = { }
             private set
+        internal var negativeButtonText: String? = null
+            private set
+        internal var negativeButtonClickListener: () -> Unit = { }
         internal var cancelable: Boolean = true
             private set
 
@@ -109,6 +120,14 @@ class ListDialogFragment : DialogFragment() {
         ) {
             positiveButtonText = text
             positiveButtonClickListener = listener
+        }
+
+        fun negativeButtonAction(
+            text: String,
+            listener: () -> Unit,
+        ) {
+            negativeButtonText = text
+            negativeButtonClickListener = listener
         }
     }
 

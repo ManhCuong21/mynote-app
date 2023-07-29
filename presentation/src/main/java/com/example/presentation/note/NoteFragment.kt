@@ -3,6 +3,7 @@ package com.example.presentation.note
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -13,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants
 import com.example.core.core.external.AppConstants.PATH_MEDIA_NOTE
@@ -66,11 +68,15 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         AppConstants.FILE_NAME_FORMAT,
         Locale.getDefault()
     ).format(System.currentTimeMillis())
+    private val categoryNote by lazy(LazyThreadSafetyMode.NONE) { navArgs<NoteFragmentArgs>().value.category }
 
     private val chooseColorAdapter by lazy {
         NoteChooseColorAdapter(onItemClicked = { position ->
-            setupColorTextInput(position)
-            viewModel.dispatch(NoteAction.ColorNoteChanged(indexColor = position))
+            val colorTitle = resources.getString(listColor[position].colorTitle)
+            val colorContent = resources.getString(listColor[position].colorContent)
+            setupColorTextInput(colorTitle, colorContent)
+            viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
+            viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
         })
     }
 
@@ -105,6 +111,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     override fun setupViews() {
         initialValue()
+        setCategoryId()
         setupRecyclerView()
         setupClickListener()
         setupTextInput()
@@ -145,6 +152,10 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         }
     }
 
+    private fun setCategoryId() {
+        viewModel.dispatch(NoteAction.CategoryNoteChanged(categoryNote))
+    }
+
     private fun setupClickListener() = binding.apply {
         btnBack.setOnClickListener {
             mainNavigator.popBackStack()
@@ -181,25 +192,24 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         val state = viewModel.stateFlow.value
         edtTitleNote.setText(state.titleNote)
         edtContentNote.setText(state.contentNote)
-        setupColorTextInput(state.colorNote ?: 0)
+        val colorTitle =
+            if (!state.colorTitleNote.isNullOrEmpty()) state.colorTitleNote else resources.getString(
+                listColor[0].colorTitle
+            )
+        val colorContent =
+            if (!state.colorContentNote.isNullOrEmpty()) state.colorContentNote else resources.getString(
+                listColor[0].colorContent
+            )
+        setupColorTextInput(colorTitle, colorContent)
+        viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
+        viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
         viewModel.dispatch(NoteAction.FileMediaNoteChanged(fileMediaNote = pathFile))
     }
 
-    private fun setupColorTextInput(indexColor: Int) = binding.apply {
-        val item = listColor[indexColor]
-        edtTitleNote.setBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                item.colorTitle
-            )
-        )
-        edtContentNote.setBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                item.colorContent
-            )
-        )
-        edtContentNote.colorLine = resources.getString(item.colorTitle)
+    private fun setupColorTextInput(colorTitle: String, colorContent: String) = binding.apply {
+        edtTitleNote.setBackgroundColor(Color.parseColor(colorTitle))
+        edtContentNote.setBackgroundColor(Color.parseColor(colorContent))
+        edtContentNote.colorLine = colorTitle
     }
 
     private fun setupTextInput() = binding.apply {

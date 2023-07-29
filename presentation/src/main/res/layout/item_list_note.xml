@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemNote"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@null"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/dimen_16"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/vLineTop"
+            android:layout_width="@dimen/dimen_1"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCategoryNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dimen_6"
+            android:src="@drawable/icon_travel" />
+
+        <View
+            android:id="@+id/vLineBottom"
+            android:layout_width="@dimen/dimen_1"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/black" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <View
+        android:id="@+id/vColorNote"
+        android:layout_width="@dimen/dimen_3"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="@dimen/dimen_16"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lConstrain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dimen_16"
+        android:background="@android:color/white"
+        android:paddingEnd="@dimen/dimen_16">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitleNote"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_16"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_marginTop="@dimen/dimen_8"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="@dimen/text_size_18sp"
+            android:layout_marginEnd="@dimen/dimen_8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvTimeNote"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".1"
+            tools:text="HaLong Bay" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimeNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_12sp"
+            app:layout_constraintBottom_toTopOf="@+id/tvContentNote"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".85"
+            tools:text="04-25-2022 | 11:39:02:37 AM" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvContentNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_16"
+            android:layout_marginBottom="@dimen/dimen_8"
+            android:maxLines="2"
+            android:minHeight="@dimen/dimen_50"
+            android:overScrollMode="always"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitleNote"
+            tools:text="Last year I went on a trip to Ha Long with my family. To make the trip more interesting my dad drove a family car himself..." />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

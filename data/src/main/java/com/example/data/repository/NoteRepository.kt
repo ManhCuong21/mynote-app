@@ -3,13 +3,15 @@ package com.example.data.repository
 import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.data.model.NoteEntity
 import com.example.data.database.NoteDatabase
+import com.example.data.model.CategoryEntity
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.github.michaelbull.result.Result
 
 interface NoteRepository {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
-    suspend fun readNote(): Result<List<NoteEntity>, Throwable>
+    suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
+    suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable>
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
 }
@@ -23,9 +25,14 @@ class NoteRepositoryImpl @Inject constructor(
             noteDatabase.insertNote(note)
         }
 
-    override suspend fun readNote(): Result<List<NoteEntity>, Throwable> =
+    override suspend fun readAllNote(): Result<List<NoteEntity>, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             noteDatabase.readAllNote()
+        }
+
+    override suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable> =
+        withContext(appCoroutineDispatchers.io) {
+            noteDatabase.readNoteWithCategory(categoryId)
         }
 
     override suspend fun updateNote(note: NoteEntity) =

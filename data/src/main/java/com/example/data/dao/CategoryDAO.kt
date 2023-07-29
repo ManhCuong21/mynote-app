@@ -15,6 +15,9 @@ interface CategoryDAO {
     @Query("SELECT * FROM categoryEntity")
     fun readAllCategory(): List<CategoryEntity>
 
+    @Query("SELECT * FROM categoryEntity WHERE idCategory = :categoryId")
+    fun readCategoryWithId(categoryId: Int): CategoryEntity
+
     @Update
     fun updateCategory(category: CategoryEntity)
 

@@ -7,9 +7,10 @@ import androidx.room.PrimaryKey
 @Entity
 data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
-    @ColumnInfo(name = "title")
-    var title: String,
-    @ColumnInfo(name = "image")
-    var image: Int
+    @ColumnInfo(name = "idCategory")
+    var idCategory: Int = 0,
+    @ColumnInfo(name = "titleCategory")
+    var titleCategory: String,
+    @ColumnInfo(name = "imageCategory")
+    var imageCategory: Int
 )

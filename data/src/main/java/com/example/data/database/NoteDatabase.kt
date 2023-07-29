@@ -1,6 +1,7 @@
 package com.example.data.database
 
 import com.example.data.dao.AppDAO
+import com.example.data.model.CategoryEntity
 import com.example.data.model.NoteEntity
 import javax.inject.Inject
 import com.github.michaelbull.result.Result
@@ -8,13 +9,14 @@ import com.github.michaelbull.result.runCatching
 
 interface NoteDatabase {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
-    suspend fun readAllNote(): com.github.michaelbull.result.Result<List<NoteEntity>, Throwable>
+    suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
+    suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable>
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
 }
 
 class NoteDatabaseImpl @Inject constructor(
-    private val appDao: AppDAO
+    appDao: AppDAO
 ) : NoteDatabase {
     private val noteDAO = appDao.noteDao()
     override suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable> = runCatching {
@@ -24,6 +26,11 @@ class NoteDatabaseImpl @Inject constructor(
     override suspend fun readAllNote(): Result<List<NoteEntity>, Throwable> = runCatching {
         noteDAO.readAllNote()
     }
+
+    override suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable> =
+        runCatching {
+            noteDAO.readNoteWithCategory(categoryId)
+        }
 
     override suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable> = runCatching {
         noteDAO.updateNote(note)

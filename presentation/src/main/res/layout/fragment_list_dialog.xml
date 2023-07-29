@@ -12,11 +12,11 @@
         android:layout_gravity="center"
         android:layout_marginHorizontal="@dimen/dimen_16">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/dimen_16">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleDialog"
@@ -25,24 +25,48 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/dimen_16"
                 android:paddingBottom="@dimen/dimen_16"
-                android:textSize="@dimen/text_size_18sp" />
+                android:textSize="@dimen/text_size_18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintHeight_max="@dimen/dimen_320"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitleDialog" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDialog"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompat4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:minWidth="@dimen/dimen_488"
-                android:paddingVertical="@dimen/dimen_12"
-                android:textAllCaps="false"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                android:gravity="end"
+                app:layout_constraintTop_toBottomOf="@+id/rvDialog"
+                android:layout_marginTop="@dimen/dimen_16">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btnNegative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/dimen_8"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/dimen_16"
+                    android:text="@string/button_cancel"
+                    android:textColor="@color/primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPositive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingVertical="@dimen/dimen_12"
+                    android:text="@string/title_ok"
+                    android:textAllCaps="false" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.domain.mapper.CategoryParams
 import com.example.domain.usecase.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +87,7 @@ class AddCategoryViewModel @Inject constructor(
                 flow {
                     emit(ResultContent.Loading)
                     categoryUseCase.insertCategory(
-                        com.example.domain.model.CategoryModel(
+                        CategoryParams(
                             title = stateFlow.value.title,
                             image = stateFlow.value.image
                         )

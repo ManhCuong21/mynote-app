@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.domain.mapper.toCategoryUIModel
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -99,7 +98,7 @@ class HomeViewModel @Inject constructor(
             }.onEach { result ->
                 val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> HomeSingleEvent.GetListCategory.Success(result.content.map { it.toCategoryUIModel() })
+                    is ResultContent.Content -> HomeSingleEvent.GetListCategory.Success(result.content)
                     is ResultContent.Error -> HomeSingleEvent.GetListCategory.Failed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }

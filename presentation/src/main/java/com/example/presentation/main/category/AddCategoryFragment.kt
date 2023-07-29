@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.core.core.external.loadImage
 import com.example.core.core.viewbinding.viewBinding
+import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentAddCategoryBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,7 +89,7 @@ class AddCategoryFragment : com.example.core.base.BaseFragment(R.layout.fragment
 
     override fun bindViewModel() {
         lifecycleScope.launch {
-            viewModel.singleEventFlow.collect { event ->
+            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                 when (event) {
                     is AddCategorySingleEvent.SaveCategory.Success -> {
                         binding.edtCategoryName.editText?.text = null

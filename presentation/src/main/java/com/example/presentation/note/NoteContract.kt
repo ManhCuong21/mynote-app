@@ -1,6 +1,7 @@
 package com.example.presentation.note
 
 import android.os.Parcelable
+import com.example.core.core.model.CategoryUIModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface NoteAction {
@@ -8,9 +9,10 @@ sealed interface NoteAction {
     object UpdateListRecord : NoteAction
     data class TitleNoteChanged(val titleNote: String) : NoteAction
     data class ContentNoteChanged(val contentNote: String) : NoteAction
-    data class CategoryNoteChanged(val categoryNote: Int) : NoteAction
+    data class CategoryNoteChanged(val categoryNote: CategoryUIModel) : NoteAction
     data class FileMediaNoteChanged(val fileMediaNote: String) : NoteAction
-    data class ColorNoteChanged(val indexColor: Int) : NoteAction
+    data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
+    data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
     object InsertNote : NoteAction
 }
 
@@ -20,23 +22,26 @@ sealed interface NoteSingleEvent {
     sealed interface SaveNote : NoteSingleEvent {
         object Success : SaveNote
         data class Failed(val error: Throwable) : SaveNote
-    }}
+    }
+}
 
 @Parcelize
 data class NoteUiState(
     val titleNote: String?,
     val contentNote: String?,
-    val categoryId: Int?,
+    val categoryNote: CategoryUIModel,
     val fileMediaNote: String?,
-    var colorNote: Int?
+    val colorTitleNote: String?,
+    val colorContentNote: String?
 ) : Parcelable {
     companion object {
         val INITIAL = NoteUiState(
             titleNote = null,
             contentNote = null,
-            categoryId = null,
+            categoryNote = CategoryUIModel(-1, "", 0),
             fileMediaNote = null,
-            colorNote = null
+            colorTitleNote = null,
+            colorContentNote = null
         )
     }
 }
@@ -44,13 +49,15 @@ data class NoteUiState(
 fun buildNoteUiState(
     titleNote: String,
     contentNote: String,
-    categoryId: Int?,
+    categoryNote: CategoryUIModel,
     fileMediaNote: String?,
-    colorNote: Int?,
+    colorTitleNote: String?,
+    colorContentNote: String?
 ): NoteUiState = NoteUiState(
     titleNote = titleNote,
     contentNote = contentNote,
-    categoryId = categoryId,
+    categoryNote = categoryNote,
     fileMediaNote = fileMediaNote,
-    colorNote = colorNote,
+    colorTitleNote = colorTitleNote,
+    colorContentNote = colorContentNote
 )
