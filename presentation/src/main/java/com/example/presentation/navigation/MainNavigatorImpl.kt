@@ -35,10 +35,11 @@ class MainNavigatorImpl @Inject constructor(
 
 
 private fun Direction.toNavDirections(): NavDirections = when (this) {
-    is Direction.MainFragmentToNoteFragment -> MainFragmentDirections.actionMainFragmentToAddNoteFragment(
+    is Direction.MainFragmentToNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
         category
     )
 
+    is Direction.MainFragmentToCategoryFragment -> MainFragmentDirections.actionMainFragmentToCategoryFragment()
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment(
         fileMediaName
     )

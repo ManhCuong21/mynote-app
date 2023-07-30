@@ -12,10 +12,10 @@ interface NoteDAO {
     @Insert
     fun insertNote(note: NoteEntity)
 
-    @Query("SELECT * FROM noteEntity")
+    @Query("SELECT * FROM noteEntity ORDER BY idNote DESC")
     fun readAllNote(): List<NoteEntity>
 
-    @Query("SELECT * FROM NoteEntity WHERE idCategory = :categoryId")
+    @Query("SELECT * FROM NoteEntity WHERE idCategory = :categoryId ORDER BY idNote DESC")
     fun readNoteWithCategory(categoryId: Int): List<NoteEntity>
 
     @Update

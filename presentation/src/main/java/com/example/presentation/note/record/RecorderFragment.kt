@@ -70,7 +70,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     }
 
     override fun bindViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
                 binding.tvTimerRecord.text = time
             }

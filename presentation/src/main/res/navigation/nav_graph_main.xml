@@ -10,23 +10,22 @@
         android:name="com.example.presentation.main.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
-
     <fragment
-        android:id="@+id/categoryFragment"
-        android:name="com.example.presentation.main.category.AddCategoryFragment"
-        tools:layout="@layout/fragment_add_category" />
+        android:id="@+id/listCategoryFragment"
+        android:name="com.example.presentation.main.listcategory.ListCategoryFragment"
+        tools:layout="@layout/fragment_list_category" />
 
     <action
         android:id="@+id/action_global_to_HomeFragment"
         app:destination="@+id/homeFragment"
         app:launchSingleTop="true"
-        app:popUpTo="@navigation/nav_graph" />
+        app:popUpTo="@navigation/nav_graph_main"
+        app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_global_to_CategoryFragment"
-        app:destination="@+id/categoryFragment"
+        android:id="@+id/action_global_to_ListCategoryFragment"
+        app:destination="@+id/listCategoryFragment"
         app:launchSingleTop="true"
-        app:popUpTo="@navigation/nav_graph" />
-
-
+        app:popUpTo="@navigation/nav_graph_main"
+        app:popUpToInclusive="true" />
 </navigation>

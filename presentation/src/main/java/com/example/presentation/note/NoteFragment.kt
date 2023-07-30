@@ -82,7 +82,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val listImageAdapter by lazy {
         NoteListImageAdapter(onItemDelete = {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 imageFile.deleteImageFromFile(pathImage = it)
                 viewModel.dispatch(NoteAction.UpdateListImage)
             }
@@ -91,7 +91,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val listRecordAdapter by lazy {
         NoteListRecordAdapter(onItemDelete = {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 recordFile.deleteRecordFromFile(pathRecord = it)
                 viewModel.dispatch(NoteAction.UpdateListRecord)
             }
@@ -118,7 +118,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     override fun bindViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                 when (event) {
                     is NoteSingleEvent.UpdateListImage -> {

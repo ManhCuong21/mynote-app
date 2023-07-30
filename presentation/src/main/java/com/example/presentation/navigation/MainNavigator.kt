@@ -10,6 +10,7 @@ interface MainNavigator {
 
     sealed interface Direction {
         data class MainFragmentToNoteFragment(val category: CategoryUIModel) : Direction
+        object MainFragmentToCategoryFragment : Direction
         data class NoteFragmentToRecorderFragment(val fileMediaName: String) : Direction
     }
 

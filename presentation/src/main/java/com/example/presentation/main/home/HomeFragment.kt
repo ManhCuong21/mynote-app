@@ -1,6 +1,5 @@
 package com.example.presentation.main.home
 
-import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,8 +34,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         })
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         viewModel.dispatch(HomeAction.GetListCategory)
     }
 
@@ -72,7 +71,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     override fun bindViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                 when (event) {
                     is HomeSingleEvent.GetListCategory.Success -> {

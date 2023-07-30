@@ -10,8 +10,12 @@
         android:name="com.example.presentation.main.MainFragment"
         tools:layout="@layout/fragment_main">
         <action
-            android:id="@+id/action_mainFragment_to_addNoteFragment"
+            android:id="@+id/action_mainFragment_to_NoteFragment"
             app:destination="@+id/noteFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_CategoryFragment"
+            app:destination="@+id/categoryFragment" />
     </fragment>
 
     <fragment
@@ -27,6 +31,11 @@
             android:name="category"
             app:argType="com.example.core.core.model.CategoryUIModel" />
     </fragment>
+
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.presentation.category.CategoryFragment"
+        tools:layout="@layout/fragment_category" />
 
     <fragment
         android:id="@+id/recorderFragment"

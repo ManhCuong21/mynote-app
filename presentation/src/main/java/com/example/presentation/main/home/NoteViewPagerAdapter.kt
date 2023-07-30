@@ -3,7 +3,7 @@ package com.example.presentation.main.home
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.core.core.model.CategoryUIModel
-import com.example.presentation.main.listnote.ListNoteFragment
+import com.example.presentation.main.home.listnote.ListNoteFragment
 
 class NoteViewPagerAdapter(
     fragment: Fragment,

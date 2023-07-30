@@ -22,8 +22,6 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
     @Inject
     lateinit var mainNavigator: MainNavigator
 
-//    private var homeUIBottomNavVisible: Boolean = true
-
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
 
@@ -58,7 +56,7 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
         onItemSelected = {
             when (it) {
                 0 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
-                1 -> navController.navigate(HomeFragmentDirections.actionGlobalToCategoryFragment())
+                1 -> navController.navigate(HomeFragmentDirections.actionGlobalToListCategoryFragment())
                 2 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
                 3 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
             }
