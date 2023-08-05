@@ -1,11 +1,15 @@
 package com.example.presentation.note
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -18,20 +22,21 @@ import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants
 import com.example.core.core.external.AppConstants.PATH_MEDIA_NOTE
+import com.example.core.core.file.FileExtension
 import com.example.core.core.file.image.ImageFile
 import com.example.core.core.file.record.RecordFile
 import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
-import com.example.presentation.note.adapter.NoteChooseColorAdapter
-import com.example.presentation.note.adapter.NoteListImageAdapter
-import com.example.presentation.note.adapter.NoteListRecordAdapter
-import com.example.presentation.dialog.camera.showCameraDialog
-import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogChooseImageAddNoteBinding
 import com.example.presentation.databinding.FragmentNoteBinding
+import com.example.presentation.dialog.camera.showCameraDialog
+import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
+import com.example.presentation.note.adapter.NoteChooseColorAdapter
+import com.example.presentation.note.adapter.NoteListImageAdapter
+import com.example.presentation.note.adapter.NoteListRecordAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -45,6 +50,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     lateinit var mainNavigator: MainNavigator
 
     @Inject
+    lateinit var fileExtension: FileExtension
+
+    @Inject
     lateinit var imageFile: ImageFile
 
     @Inject
@@ -54,7 +62,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     override val viewModel: NoteViewModel by activityViewModels()
 
     private val listPermission =
-        arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+        arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
     private val listColor = listOf(
         ItemChooseColor(R.color.orangeTitle, R.color.orangeContent),
         ItemChooseColor(R.color.blueTitle, R.color.blueContent),
@@ -101,6 +113,24 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
 
+    private val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent: Intent? = result.data
+                val selectedPhotoUri = intent?.data
+                selectedPhotoUri?.let {
+                    if (intent.clipData != null) {
+                        for (i in 0 until intent.clipData!!.itemCount) {
+                            saveImage(intent.clipData!!.getItemAt(i).uri)
+                        }
+                    } else if (intent.data != null) {
+                        saveImage(selectedPhotoUri)
+                    }
+                    viewModel.dispatch(NoteAction.UpdateListImage)
+                }
+            }
+        }
+
     private val appPermissionSettingLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
@@ -140,6 +170,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                     }
 
                     is NoteSingleEvent.SaveNote.Success -> {
+                        requireActivity().viewModelStore.clear()
                         mainNavigator.popBackStack()
                     }
 
@@ -158,6 +189,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private fun setupClickListener() = binding.apply {
         btnBack.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val file = fileExtension.getOutputMediaDirectory(requireActivity(), pathFile)
+                fileExtension.deleteFile(file)
+                requireActivity().viewModelStore.clear()
+            }
             mainNavigator.popBackStack()
         }
         btnChooseColor.setOnClickListener {
@@ -230,9 +266,17 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setView(binding.root)
         val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
         binding.btnMyPhoto.setOnClickListener {
-
+            if (checkPermission()) {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                intent.action = Intent.ACTION_GET_CONTENT
+                resultLauncher.launch(intent)
+                dialog.dismiss()
+            }
         }
         binding.btnCamera.setOnClickListener {
             if (checkPermission()) {
@@ -245,6 +289,23 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             }
             dialog.dismiss()
         }
+    }
+
+    private fun saveImage(imageUri: Uri) {
+        val bitmap = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(
+                requireActivity().contentResolver,
+                imageUri
+            )
+        } else {
+            val source = ImageDecoder.createSource(
+                requireActivity().contentResolver,
+                imageUri
+            )
+            ImageDecoder.decodeBitmap(source)
+        }
+        imageFile.saveImageToFile(requireActivity(), pathFile, bitmap)
     }
 
     private fun checkPermission(): Boolean {
@@ -261,6 +322,10 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             }
 
             shouldShowRequestPermissionRationale(listPermission[1]) -> {
+                requestPermissionLauncher.launch(listPermission)
+            }
+
+            shouldShowRequestPermissionRationale(listPermission[2]) -> {
                 requestPermissionLauncher.launch(listPermission)
             }
 

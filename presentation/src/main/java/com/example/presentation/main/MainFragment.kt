@@ -28,6 +28,9 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
     private inline val navController: NavController
         get() = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
 
+    private var indexBottomNav = 0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        if (sharedPrefersManager.darkModeTheme){
@@ -53,13 +56,14 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
 
     private fun setupBottomNav() = binding.bottomNavView.apply {
 //        isVisible = homeUIBottomNavVisible
+        itemActiveIndex = indexBottomNav
         onItemSelected = {
             when (it) {
                 0 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
                 1 -> navController.navigate(HomeFragmentDirections.actionGlobalToListCategoryFragment())
                 2 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
-                3 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
             }
+            indexBottomNav = it
         }
 //        binding.bottomNavView.setupWithNavController(navController)
 //        setupWithNavController(navController)

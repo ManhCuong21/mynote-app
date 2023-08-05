@@ -86,7 +86,7 @@ class ListDialogFragment : DialogFragment() {
                     it.adapter = dialogAdapter
                     dialogAdapter.submitList(list)
                 }
-                isCancelable = true
+                isCancelable = cancelable
             }
         }
     }
