@@ -1,7 +1,7 @@
 package com.example.presentation.main
 
-import android.os.Bundle
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -28,25 +28,12 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
     private inline val navController: NavController
         get() = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
 
-    private var indexBottomNav = 0
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        if (sharedPrefersManager.darkModeTheme){
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//            sharedPrefersManager.darkModeTheme = false
-//        } else {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//            sharedPrefersManager.darkModeTheme = true
-//        }
-    }
-
     override fun setupViews() {
         requireActivity().onBackPressedDispatcher.addCallback(
             owner = viewLifecycleOwner,
             enabled = true
         ) {}
+        setupTheme()
         setupBottomNav()
     }
 
@@ -54,22 +41,24 @@ class MainFragment : com.example.core.base.BaseFragment(R.layout.fragment_main) 
         //No TODO here
     }
 
+    private fun setupTheme() {
+        if (sharedPrefersManager.darkModeTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
     private fun setupBottomNav() = binding.bottomNavView.apply {
 //        isVisible = homeUIBottomNavVisible
-        itemActiveIndex = indexBottomNav
+        itemActiveIndex = viewModel.indexBottomNav.value
         onItemSelected = {
             when (it) {
                 0 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
                 1 -> navController.navigate(HomeFragmentDirections.actionGlobalToListCategoryFragment())
-                2 -> navController.navigate(HomeFragmentDirections.actionGlobalToHomeFragment())
+                2 -> navController.navigate(HomeFragmentDirections.actionGlobalToSettingFragment())
             }
-            indexBottomNav = it
+            viewModel.indexBottomNav.value = it
         }
-//        binding.bottomNavView.setupWithNavController(navController)
-//        setupWithNavController(navController)
-//        setOnItemReselectedListener {
-//            // Pop the back stack to the start destination of the current navController graph
-//            navController.popToStartDestination(it)
-//        }
     }
 }

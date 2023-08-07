@@ -114,7 +114,7 @@ class ListDialogFragment : DialogFragment() {
             list = listItem
         }
 
-        fun positiveAction(
+        fun positiveButtonAction(
             text: String,
             listener: (indexItem: Int) -> Unit,
         ) {

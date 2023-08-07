@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.core.base.BaseFragment
 import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
@@ -19,19 +20,24 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
+    @Inject
+    lateinit var mainNavigator: MainNavigator
+
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
+
     override val binding: FragmentHomeBinding by viewBinding()
 
     override val viewModel: HomeViewModel by viewModels()
 
-    @Inject
-    lateinit var mainNavigator: MainNavigator
-
     private var viewPagerAdapter: NoteViewPagerAdapter? = null
 
     private val categoryAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        HomeListCategoryAdapter(onItemClicked = { position ->
-            binding.viewPagerNote.currentItem = position
-        })
+        HomeListCategoryAdapter(
+            isDarkMode = sharedPrefersManager.darkModeTheme,
+            onItemClicked = { position ->
+                binding.viewPagerNote.currentItem = position
+            })
     }
 
     override fun onStart() {
@@ -52,7 +58,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 showListDialog {
                     textTitle(getString(R.string.title_dialog_category))
                     listItem(listCategory.map { it.toListDialogItem() })
-                    positiveAction(getString(R.string.title_ok)) { indexItem ->
+                    positiveButtonAction(getString(R.string.title_ok)) { indexItem ->
                         listCategory[indexItem].let {
                             mainNavigator.navigate(
                                 MainNavigator.Direction.MainFragmentToNoteFragment(

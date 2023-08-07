@@ -18,10 +18,10 @@
 
         <View
             android:id="@+id/vLineTop"
+            style="@style/LineVertical"
             android:layout_width="@dimen/dimen_1"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/black" />
+            android:layout_weight="1" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCategoryNote"
@@ -32,10 +32,10 @@
 
         <View
             android:id="@+id/vLineBottom"
+            style="@style/LineVertical"
             android:layout_width="@dimen/dimen_1"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/black" />
+            android:layout_weight="1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -50,24 +50,24 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lConstrain"
+        style="@style/BackgroundContentRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/dimen_16"
-        android:background="@android:color/white"
         android:paddingEnd="@dimen/dimen_16">
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitleNote"
+            style="@style/TextTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_16"
-            style="@style/TextAppearance.AppCompat.Title"
             android:layout_marginTop="@dimen/dimen_8"
+            android:layout_marginEnd="@dimen/dimen_8"
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="@dimen/text_size_18sp"
-            android:layout_marginEnd="@dimen/dimen_8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvTimeNote"
             app:layout_constraintHorizontal_bias="0"
@@ -78,6 +78,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTimeNote"
+            style="@style/TextContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_12sp"
@@ -89,6 +90,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvContentNote"
+            style="@style/TextContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_16"

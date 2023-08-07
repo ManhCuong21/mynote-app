@@ -51,6 +51,16 @@ class ListDialogAdapter(
                     }
                 }
             }
+            cbItem.setOnClickListener {
+                bindingAdapterPosition.let {
+                    if (it != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(selectedPosition)
+                        selectedPosition = it
+                        notifyItemChanged(selectedPosition)
+                        onItemClicked(bindingAdapterPosition)
+                    }
+                }
+            }
         }
     }
 }

@@ -3,22 +3,25 @@ package com.example.presentation.category
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.loadImage
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentCategoryBinding
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryFragment : BaseFragment(R.layout.fragment_category) {
+
     @Inject
     lateinit var mainNavigator: MainNavigator
+
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
 
     override val binding: FragmentCategoryBinding by viewBinding()
     override val viewModel: CategoryViewModel by viewModels()
@@ -59,12 +62,14 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     )
 
     private val categoryAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        CategoryAdapter(onItemClicked = { item ->
-            binding.edtCategoryName.editText?.setText(item.title)
-            binding.imgItemCategory.loadImage(item.image)
-            viewModel.dispatch(AddCategoryAction.TitleCategoryChanged(item.title))
-            viewModel.dispatch(AddCategoryAction.ImageCategoryChanged(item.image))
-        })
+        CategoryAdapter(
+            isDarkMode = sharedPrefersManager.darkModeTheme,
+            onItemClicked = { item ->
+                binding.edtCategoryName.editText?.setText(item.title)
+                binding.imgItemCategory.loadImage(item.image)
+                viewModel.dispatch(AddCategoryAction.TitleCategoryChanged(item.title))
+                viewModel.dispatch(AddCategoryAction.ImageCategoryChanged(item.image))
+            })
     }
 
     override fun setupViews() {

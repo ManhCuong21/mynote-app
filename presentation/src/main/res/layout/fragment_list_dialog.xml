@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -13,6 +14,7 @@
         android:layout_marginHorizontal="@dimen/dimen_16">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/BackgroundContentRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -20,7 +22,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleDialog"
-                style="@style/TEXT_TITLE"
+                style="@style/TextTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/dimen_16"
@@ -37,15 +39,16 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constrainedHeight="true"
                 app:layout_constraintHeight_max="@dimen/dimen_320"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitleDialog" />
+                app:layout_constraintTop_toBottomOf="@+id/tvTitleDialog"
+                tools:listitem="@layout/item_list_dialog" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayoutCompat4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_16"
                 android:gravity="end"
-                app:layout_constraintTop_toBottomOf="@+id/rvDialog"
-                android:layout_marginTop="@dimen/dimen_16">
+                app:layout_constraintTop_toBottomOf="@+id/rvDialog">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/btnNegative"

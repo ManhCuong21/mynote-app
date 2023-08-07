@@ -5,8 +5,9 @@ import androidx.core.content.edit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class SharedPrefersManager(private val preferences: SharedPreferences) {
+class SharedPrefersManager(preferences: SharedPreferences) {
     var darkModeTheme by SharedPrefBooleanParameter(DARK_MODE_THEME, preferences, false)
+    var format24Hour by SharedPrefBooleanParameter(FORMAT_TIME, preferences, false)
 }
 
 class SharedPrefParameter(

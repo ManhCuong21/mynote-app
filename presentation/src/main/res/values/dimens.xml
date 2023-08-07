@@ -41,6 +41,7 @@
     <dimen name="dimen_112">112dp</dimen>
     <dimen name="dimen_142">142dp</dimen>
     <dimen name="dimen_144">144dp</dimen>
+    <dimen name="dimen_250">250dp</dimen>
     <dimen name="dimen_320">320dp</dimen>
     <dimen name="dimen_400">400dp</dimen>
     <dimen name="dimen_488">488dp</dimen>

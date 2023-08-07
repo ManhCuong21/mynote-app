@@ -1,60 +1,97 @@
 package com.example.presentation.main.setting
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.viewModels
+import com.example.core.base.BaseFragment
+import com.example.core.core.sharepref.SharedPrefersManager
+import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
+import com.example.presentation.databinding.DialogTimeFormatBinding
+import com.example.presentation.databinding.FragmentSettingBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class SettingFragment : BaseFragment(R.layout.fragment_setting) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SettingFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SettingFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override val binding: FragmentSettingBinding by viewBinding()
+    override val viewModel: SettingViewModel by viewModels()
+
+    override fun setupViews() {
+        setupSwipeButton()
+        setupClickListener()
+        setupTextView()
+    }
+
+    override fun bindViewModel() {
+        //No TODO here
+    }
+
+    private fun setupTextView() = binding.apply {
+        tvTimeFormat.text =
+            if (!sharedPrefersManager.format24Hour) getString(R.string.dialog_time_format_12)
+            else getString(R.string.dialog_time_format_24)
+    }
+
+    private fun setupSwipeButton() = binding.apply {
+        switchTheme.apply {
+            isChecked = sharedPrefersManager.darkModeTheme
+            setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+                sharedPrefersManager.darkModeTheme = isChecked
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false)
+    private fun setupClickListener() = binding.apply {
+        btnTimeFormat.setOnClickListener {
+            showDialogTimeFormat()
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SettingFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SettingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun showDialogTimeFormat() = binding.apply {
+        val binding = DialogTimeFormatBinding.inflate(layoutInflater)
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setView(binding.root)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+        val format24Hour = sharedPrefersManager.format24Hour
+        binding.apply {
+            cbItem12Hour.isChecked = !format24Hour
+            cbItem24Hour.isChecked = format24Hour
+            lnItem12Hour.setOnClickListener {
+                cbItem12Hour.isChecked = true
+                cbItem24Hour.isChecked = false
             }
+            lnItem24Hour.setOnClickListener {
+                cbItem12Hour.isChecked = false
+                cbItem24Hour.isChecked = true
+            }
+            cbItem12Hour.setOnCheckedChangeListener { _, isChecked ->
+                cbItem12Hour.isChecked = isChecked
+                cbItem24Hour.isChecked = !isChecked
+            }
+            cbItem24Hour.setOnCheckedChangeListener { _, isChecked ->
+                cbItem12Hour.isChecked = !isChecked
+                cbItem24Hour.isChecked = isChecked
+            }
+            btnSave.setOnClickListener {
+                val textChoose =
+                    if (cbItem12Hour.isChecked) getString(R.string.dialog_time_format_12)
+                    else getString(R.string.dialog_time_format_24)
+                tvTimeFormat.text = textChoose
+                sharedPrefersManager.format24Hour = cbItem24Hour.isChecked
+                dialog.dismiss()
+            }
+        }
     }
 }

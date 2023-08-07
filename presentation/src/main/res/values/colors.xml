@@ -10,6 +10,9 @@
     <color name="grey">#F0F0F0</color>
 
     <color name="primary">#a2cf6e</color>
+    <color name="background_root_light">#F2F2F2</color>
+    <color name="background_root_night">#1A1B1D</color>
+    <color name="background_content_root_night">#292B2E</color>
     <color name="button_selected_bg">#EC0E0E</color>
     <color name="button_unselected_bg">#595959</color>
     <color name="system_gray_disable">#8F8D8D</color>

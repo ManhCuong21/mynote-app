@@ -7,22 +7,20 @@
     <string name="button_cancel">Cancel</string>
 
 
-    <!-- Text Bottom Nav-->
+    <!-- Text Bottom Nav -->
     <string name="title_home">Home</string>
     <string name="title_category">Category</string>
     <string name="title_setting">Setting</string>
 
-    <!-- Add Category-->
+    <!-- Add Category -->
     <string name="title_add_category">Add Category</string>
     <string name="category_name">Category Name</string>
     <string name="category">Category</string>
 
-    <!-- Dialog Category-->
+    <!-- Dialog Category -->
     <string name="title_dialog_category">Select Category</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!-- Add Note-->
+    <!-- Add Note -->
     <string name="title_add_note">New Note</string>
     <string name="input_title">Title…</string>
     <string name="text_dialog_camera">Camera</string>
@@ -31,5 +29,20 @@
     <string name="text_un_recording">Tap the button to start recording.</string>
     <string name="text_recording">Recording…</string>
     <string name="text_pause_recording">Tap the button to continue recording.</string>
+
+    <!-- Setting -->
+    <string name="title_general">General</string>
+    <string name="content_use_dark_theme">Use dark theme</string>
+    <string name="content_time_format">Time format</string>
+    <string name="content_date_format">Date format</string>
+    <string name="content_backup_restore"><![CDATA[Backup & Restore]]></string>
+    <string name="content_backup_on_device">Backup on device</string>
+    <string name="content_apps">Apps</string>
+    <string name="content_rate_app">Rate app</string>
+    <string name="content_privacy_policy">Privacy policy</string>
+    <string name="content_share_app">Share app</string>
+    <string name="dialog_time_format_title">Time Format</string>
+    <string name="dialog_time_format_12">12 hour</string>
+    <string name="dialog_time_format_24">24 hour</string>
 
 </resources>

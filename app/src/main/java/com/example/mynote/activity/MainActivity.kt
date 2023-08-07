@@ -13,13 +13,6 @@ class MainActivity : BaseMainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        if (sharedPrefersManager.darkModeTheme) {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//            sharedPrefersManager.darkModeTheme = false
-//        } else {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//            sharedPrefersManager.darkModeTheme = true
-//        }
     }
 
     override val navHostFragmentActivityMain: FragmentContainerView
