@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
 import com.example.core.core.external.combine
+import com.example.core.core.model.NoteUIModel
 import com.example.domain.mapper.NoteParams
 import com.example.domain.usecase.NoteUseCase
 import com.github.michaelbull.result.fold
@@ -108,6 +109,7 @@ class NoteViewModel @Inject constructor(
         updateListImage()
         updateListRecord()
         saveNote()
+        updateNote()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -119,6 +121,43 @@ class NoteViewModel @Inject constructor(
                     val uiState = stateFlow.value
                     noteUseCase.insertNote(
                         NoteParams(
+                            titleNote = uiState.titleNote.orEmpty(),
+                            contentNote = uiState.contentNote.orEmpty(),
+                            categoryNote = uiState.categoryNote,
+                            fileMediaNote = uiState.fileMediaNote.orEmpty(),
+                            colorTitleNote = uiState.colorTitleNote.orEmpty(),
+                            colorContentNote = uiState.colorContentNote.orEmpty(),
+                            timeNote = System.currentTimeMillis()
+                        )
+                    ).fold(
+                        success = {
+                            ResultContent.Content(it)
+                        },
+                        failure = {
+                            ResultContent.Error(it)
+                        }
+                    ).let { emit(it) }
+                }
+            }.onEach { lce ->
+                val event = when (lce) {
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> NoteSingleEvent.SaveNote.Success
+                    is ResultContent.Error -> NoteSingleEvent.SaveNote.Failed(error = lce.error)
+                }
+                event?.let { _singleEventChannel.send(it) }
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun updateNote() {
+        action<NoteAction.UpdateNote>()
+            .flatMapLatest {
+                flow {
+                    emit(ResultContent.Loading)
+                    val uiState = stateFlow.value
+                    noteUseCase.updateNote(
+                        NoteUIModel(
+                            idNote = it.noteModel.idNote,
                             titleNote = uiState.titleNote.orEmpty(),
                             contentNote = uiState.contentNote.orEmpty(),
                             categoryNote = uiState.categoryNote,

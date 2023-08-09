@@ -1,26 +1,32 @@
 package com.example.presentation.main.home.listnote
 
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_12_HOUR
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_24_HOUR
 import com.example.core.core.model.NoteUIModel
 import com.example.core.core.viewbinding.inflateViewBinding
+import com.example.presentation.databinding.DialogSettingNoteBinding
 import com.example.presentation.databinding.ItemListNoteBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class ListNoteAdapter(
-    private val format24Hour: Boolean
+    private val format24Hour: Boolean,
+    private val onItemClicked: (ActionNote, NoteUIModel) -> Unit
 ) : ListAdapter<NoteUIModel, ListNoteAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<NoteUIModel>() {
-        override fun areItemsTheSame(oldItem: NoteUIModel, newItem: NoteUIModel): Boolean = false
+        override fun areItemsTheSame(oldItem: NoteUIModel, newItem: NoteUIModel): Boolean =
+            oldItem.idNote == newItem.idNote
 
         override fun areContentsTheSame(oldItem: NoteUIModel, newItem: NoteUIModel): Boolean =
             oldItem == newItem
@@ -33,15 +39,12 @@ class ListNoteAdapter(
         holder.bind(getItem(position), format24Hour)
     }
 
-    class ViewHolder(private val binding: ItemListNoteBinding) :
+    inner class ViewHolder(private val binding: ItemListNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val context = binding.root.context
         fun bind(item: NoteUIModel, format24Hour: Boolean) = binding.apply {
             imgCategoryNote.setImageDrawable(
-                ContextCompat.getDrawable(
-                    context,
-                    item.categoryNote.imageCategory
-                )
+                ContextCompat.getDrawable(context, item.categoryNote.imageCategory)
             )
             if (bindingAdapterPosition == 0) {
                 vLineTop.visibility = View.INVISIBLE
@@ -53,6 +56,35 @@ class ListNoteAdapter(
             tvTitleNote.text = item.titleNote
             tvContentNote.text = item.contentNote
             tvTimeNote.text = formatDate(item.timeNote, format24Hour)
+            root.setOnClickListener {
+                val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
+                val builder = AlertDialog.Builder(context)
+                builder.setView(binding.root)
+                val dialog = builder.create()
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.show()
+                binding.apply {
+                    btnShowOnMap.setOnClickListener {
+                        onItemClicked(ActionNote.SHOW_ON_MAP, item)
+                        dialog.dismiss()
+                    }
+                    btnEditNote.setOnClickListener {
+                        onItemClicked(ActionNote.UPDATE_NOTE, item)
+                        dialog.dismiss()
+                    }
+                    btnChangeCategory.setOnClickListener {
+                        onItemClicked(ActionNote.CHANGE_CATEGORY, item)
+                        dialog.dismiss()
+                    }
+                    btnDeleteNote.setOnClickListener {
+                        onItemClicked(ActionNote.DELETE_NOTE, item)
+                        dialog.dismiss()
+                    }
+                    btnCancel.setOnClickListener {
+                        dialog.dismiss()
+                    }
+                }
+            }
         }
 
         private fun formatDate(time: Long, format24Hour: Boolean): String {

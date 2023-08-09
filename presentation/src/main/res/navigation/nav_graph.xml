@@ -23,13 +23,25 @@
         android:name="com.example.presentation.note.NoteFragment"
         tools:layout="@layout/fragment_note">
 
-        <action
-            android:id="@+id/action_noteFragment_to_recorderFragment"
-            app:destination="@id/recorderFragment" />
+        <argument
+            android:name="actionNote"
+            app:argType="com.example.core.core.external.ActionNote" />
 
         <argument
             android:name="category"
-            app:argType="com.example.core.core.model.CategoryUIModel" />
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.CategoryUIModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="noteModel"
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.NoteUIModel"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_noteFragment_to_recorderFragment"
+            app:destination="@id/recorderFragment" />
     </fragment>
 
     <fragment

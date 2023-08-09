@@ -20,7 +20,7 @@ data class NoteEntity(
     val fileMediaNote: String,
     @ColumnInfo(name = "colorTitleNote")
     val colorTitleNote: String,
-    @ColumnInfo("colorContentNote")
+    @ColumnInfo(name = "colorContentNote")
     val colorContentNote: String,
     @ColumnInfo(name = "timeNote")
     val timeNote: Long?

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.domain.usecase.CategoryUseCase
 import com.example.domain.usecase.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,12 +21,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ListNoteViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
+    private val categoryUseCase: CategoryUseCase,
     private val noteUseCase: NoteUseCase
 ) : BaseViewModel() {
     private val _mutableStateFlow =
@@ -43,7 +46,33 @@ class ListNoteViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
+        getListCategory()
         getListNote()
+        changeCategoryNote()
+        deleteNote()
+    }
+
+    private fun getListCategory() {
+        flow {
+            emit(ResultContent.Loading)
+            categoryUseCase.readAllCategory().fold(
+                success = {
+                    ResultContent.Content(it)
+                },
+                failure = {
+                    ResultContent.Error(it)
+                }
+            ).let { emit(it) }
+        }.onEach { result ->
+            when (result) {
+                is ResultContent.Loading -> {}
+                is ResultContent.Content -> _mutableStateFlow.update { state ->
+                    state.copy(listCategory = result.content)
+                }
+
+                is ResultContent.Error -> {}
+            }
+        }.launchIn(viewModelScope)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -53,7 +82,7 @@ class ListNoteViewModel @Inject constructor(
                 flow {
                     val database =
                         if (it.category.titleCategory == "All") noteUseCase.readAllNote()
-                        else noteUseCase.readNoteWithCategory(it.category.idCategory ?: 0)
+                        else noteUseCase.readNoteWithCategory(it.category.idCategory)
                     database.fold(
                         success = {
                             ResultContent.Content(it)
@@ -63,11 +92,60 @@ class ListNoteViewModel @Inject constructor(
                         }
                     ).let { emit(it) }
                 }
-            }.onEach { lce ->
-                val event = when (lce) {
+            }.onEach { result ->
+                val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListNoteSingleEvent.GetListNote.Success(lce.content)
-                    is ResultContent.Error -> ListNoteSingleEvent.GetListNote.Failed(error = lce.error)
+                    is ResultContent.Content -> ListNoteSingleEvent.GetListNote.Success(result.content)
+                    is ResultContent.Error -> ListNoteSingleEvent.GetListNote.Failed(error = result.error)
+                }
+                event?.let { _singleEventChannel.send(it) }
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun changeCategoryNote() {
+        action<ListNoteAction.ChangeCategoryNote>()
+            .flatMapLatest {
+                flow {
+                    noteUseCase.updateNote(it.noteUIModel.copy(categoryNote = it.category))
+                        .fold(
+                            success = {
+                                ResultContent.Content(it)
+                            },
+                            failure = {
+                                ResultContent.Error(it)
+                            }
+                        ).let { emit(it) }
+                }
+            }.onEach { result ->
+                val event = when (result) {
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> ListNoteSingleEvent.UpdateNote
+                    is ResultContent.Error -> null
+                }
+                event?.let { _singleEventChannel.send(it) }
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun deleteNote() {
+        action<ListNoteAction.DeleteNote>()
+            .flatMapLatest {
+                flow {
+                    noteUseCase.deleteNote(it.noteUIModel).fold(
+                        success = {
+                            ResultContent.Content(it)
+                        },
+                        failure = {
+                            ResultContent.Error(it)
+                        }
+                    ).let { emit(it) }
+                }
+            }.onEach { result ->
+                val event = when (result) {
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> ListNoteSingleEvent.DeleteNote
+                    is ResultContent.Error -> null
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

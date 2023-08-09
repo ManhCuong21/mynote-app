@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:cardCornerRadius="@dimen/dimen_16">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            style="@style/BackgroundContentRoot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="@dimen/dimen_320"
+            android:orientation="vertical"
+            android:padding="@dimen/dimen_16">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:text="@string/title_option" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btnShowOnMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dimen_16">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/dimen_24"
+                    android:layout_height="@dimen/dimen_24"
+                    android:layout_marginEnd="@dimen/dimen_16"
+                    android:src="@drawable/icon_map" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_show_on_map" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_1"
+                android:background="@color/grey" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btnEditNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dimen_16">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/dimen_24"
+                    android:layout_height="@dimen/dimen_24"
+                    android:layout_marginEnd="@dimen/dimen_16"
+                    android:src="@drawable/icon_edit" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_update_note" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_1"
+                android:background="@color/grey" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btnChangeCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dimen_16">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/dimen_24"
+                    android:layout_height="@dimen/dimen_24"
+                    android:layout_marginEnd="@dimen/dimen_16"
+                    android:src="@drawable/icon_category" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_change_category" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_1"
+                android:background="@color/grey" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btnDeleteNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/dimen_16">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/dimen_24"
+                    android:layout_height="@dimen/dimen_24"
+                    android:layout_marginEnd="@dimen/dimen_16"
+                    android:src="@drawable/icon_delete" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_delete" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/dimen_12"
+                android:text="@string/button_cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_20sp"
+                app:cornerRadius="@dimen/dimen_13" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

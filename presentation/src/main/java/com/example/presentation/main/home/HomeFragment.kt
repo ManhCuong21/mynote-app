@@ -61,7 +61,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     positiveButtonAction(getString(R.string.title_ok)) { indexItem ->
                         listCategory[indexItem].let {
                             mainNavigator.navigate(
-                                MainNavigator.Direction.MainFragmentToNoteFragment(
+                                MainNavigator.Direction.MainFragmentToAddNoteFragment(
                                     category = it
                                 )
                             )

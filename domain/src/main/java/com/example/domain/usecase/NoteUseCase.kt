@@ -1,7 +1,6 @@
 package com.example.domain.usecase
 
 import com.example.core.core.model.NoteUIModel
-import com.example.data.model.NoteEntity
 import com.example.data.repository.NoteRepository
 import com.example.domain.mapper.NoteParams
 import com.example.domain.mapper.toNoteEntity
@@ -25,9 +24,9 @@ class NoteUseCase @Inject constructor(
                 it.map { note -> note.toNoteUIModel() }
             }
 
-    suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable> =
-        noteRepository.updateNote(note)
+    suspend fun updateNote(note: NoteUIModel): Result<Unit, Throwable> =
+        noteRepository.updateNote(note.toNoteEntity())
 
-    suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable> =
-        noteRepository.deleteNote(note)
+    suspend fun deleteNote(note: NoteUIModel): Result<Unit, Throwable> =
+        noteRepository.deleteNote(note.toNoteEntity())
 }

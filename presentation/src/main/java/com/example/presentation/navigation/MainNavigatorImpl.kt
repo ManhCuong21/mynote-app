@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import com.example.core.core.external.ActionNote
 import com.example.core.core.external.checkMainThread
 import com.example.core.core.external.safeNavigate
 import javax.inject.Inject
@@ -35,8 +36,16 @@ class MainNavigatorImpl @Inject constructor(
 
 
 private fun Direction.toNavDirections(): NavDirections = when (this) {
-    is Direction.MainFragmentToNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
-        category
+    is Direction.MainFragmentToAddNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
+        actionNote = ActionNote.INSERT_NOTE,
+        category = category,
+        noteModel = null
+    )
+
+    is Direction.MainFragmentToUpdateNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
+        actionNote = ActionNote.UPDATE_NOTE,
+        category = null,
+        noteModel = noteModel
     )
 
     is Direction.MainFragmentToCategoryFragment -> MainFragmentDirections.actionMainFragmentToCategoryFragment()

@@ -64,6 +64,7 @@
         android:minLines="10"
         android:padding="16dp"
         android:singleLine="false"
+        android:textColor="@color/black"
         app:color_line="#FF7A00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTitleNote" />
@@ -90,7 +91,7 @@
         app:layout_constraintBottom_toTopOf="@+id/rvChooseColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/item_list_image_edit_note" />
+        tools:listitem="@layout/item_list_image_note" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChooseColor"

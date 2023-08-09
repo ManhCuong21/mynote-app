@@ -2,6 +2,7 @@ package com.example.presentation.note
 
 import android.os.Parcelable
 import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.NoteUIModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface NoteAction {
@@ -14,6 +15,7 @@ sealed interface NoteAction {
     data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
     data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
     object InsertNote : NoteAction
+    data class UpdateNote(val noteModel: NoteUIModel) : NoteAction
 }
 
 sealed interface NoteSingleEvent {

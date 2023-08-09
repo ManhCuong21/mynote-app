@@ -19,6 +19,7 @@
 
     <!-- Dialog Category -->
     <string name="title_dialog_category">Select Category</string>
+    <string name="title_dialog_change_category">Change Category</string>
 
     <!-- Add Note -->
     <string name="title_add_note">New Note</string>
@@ -44,5 +45,12 @@
     <string name="dialog_time_format_title">Time Format</string>
     <string name="dialog_time_format_12">12 hour</string>
     <string name="dialog_time_format_24">24 hour</string>
+
+    <!-- Setting Note -->
+    <string name="title_option">Option</string>
+    <string name="title_update_note">Update note</string>
+    <string name="title_change_category">Change Category</string>
+    <string name="title_show_on_map">Show on map</string>
+    <string name="title_delete">Delete</string>
 
 </resources>

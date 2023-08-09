@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.model.ItemImage
 import com.example.core.core.viewbinding.inflateViewBinding
-import com.example.presentation.databinding.ItemListImageEditNoteBinding
+import com.example.presentation.databinding.ItemListImageNoteBinding
 import java.io.IOException
 
 class NoteListImageAdapter(
@@ -23,7 +23,7 @@ class NoteListImageAdapter(
             oldItem == newItem
     }
 ) {
-    inner class ViewHolder(val binding: ItemListImageEditNoteBinding) :
+    inner class ViewHolder(val binding: ItemListImageNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ItemImage) = binding.apply {
             imgItem.setImageBitmap(rotateImage(item.pathImage, item.image))

@@ -40,5 +40,5 @@
         android:layout_height="@dimen/dimen_1"
         android:layout_marginStart="@dimen/dimen_16"
         android:layout_marginEnd="@dimen/dimen_26"
-        android:background="@color/system_gray_disable" />
+        android:background="@color/grey" />
 </androidx.appcompat.widget.LinearLayoutCompat>

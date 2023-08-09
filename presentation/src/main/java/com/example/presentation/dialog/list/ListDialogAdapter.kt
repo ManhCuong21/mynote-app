@@ -11,6 +11,7 @@ import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.databinding.ItemListDialogBinding
 
 class ListDialogAdapter(
+    private val position: Int,
     private val onItemClicked: (Int) -> Unit
 ) : ListAdapter<ListDialogItem, ListDialogAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ListDialogItem>() {
@@ -30,7 +31,7 @@ class ListDialogAdapter(
         holder.bind(getItem(position))
     }
 
-    private var selectedPosition = 0
+    private var selectedPosition = position
 
     inner class ViewHolder(
         val binding: ItemListDialogBinding

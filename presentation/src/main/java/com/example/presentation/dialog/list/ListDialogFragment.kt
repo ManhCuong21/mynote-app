@@ -27,12 +27,11 @@ class ListDialogFragment : DialogFragment() {
     private var builder: Builder? = null
     private lateinit var binding: FragmentListDialogBinding
 
-    private var positionSelected = 0
-
     private val dialogAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        ListDialogAdapter(onItemClicked = { position ->
-            positionSelected = position
-        })
+        ListDialogAdapter(position = builder?.positionSelected ?: 0,
+            onItemClicked = { position ->
+                builder?.positionSelected(position)
+            })
     }
 
     override fun onStart() {
@@ -70,7 +69,7 @@ class ListDialogFragment : DialogFragment() {
                 binding.btnPositive.let {
                     it.text = positiveButtonText
                     it.setOnClickListener {
-                        positiveButtonClickListener(positionSelected)
+                        positiveButtonClickListener(positionSelected ?: 0)
                         dismiss()
                     }
                 }
@@ -96,6 +95,8 @@ class ListDialogFragment : DialogFragment() {
             private set
         internal var list: List<ListDialogItem>? = null
             private set
+        internal var positionSelected: Int? = null
+            private set
         internal var positiveButtonText: String? = null
             private set
         internal var positiveButtonClickListener: (Int) -> Unit = { }
@@ -112,6 +113,10 @@ class ListDialogFragment : DialogFragment() {
 
         fun listItem(listItem: List<ListDialogItem>) {
             list = listItem
+        }
+
+        fun positionSelected(position: Int) {
+            positionSelected = position
         }
 
         fun positiveButtonAction(

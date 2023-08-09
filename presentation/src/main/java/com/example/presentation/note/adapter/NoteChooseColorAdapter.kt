@@ -11,6 +11,7 @@ import com.example.presentation.R
 import com.example.presentation.databinding.ItemListChooseColorBinding
 
 class NoteChooseColorAdapter(
+    private val defaultPosition: Int,
     private val onItemClicked: (Int) -> Unit
 ) : ListAdapter<ItemChooseColor, NoteChooseColorAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ItemChooseColor>() {
@@ -32,7 +33,7 @@ class NoteChooseColorAdapter(
         holder.bind(getItem(position))
     }
 
-    private var selectedPosition = 0
+    private var selectedPosition = defaultPosition
 
     inner class ViewHolder(private val binding: ItemListChooseColorBinding) :
         RecyclerView.ViewHolder(binding.root) {
