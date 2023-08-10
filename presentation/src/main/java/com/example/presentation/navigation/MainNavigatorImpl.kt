@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import com.example.core.core.external.ActionCategory
 import com.example.core.core.external.ActionNote
 import com.example.core.core.external.checkMainThread
 import com.example.core.core.external.safeNavigate
@@ -48,7 +49,16 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
         noteModel = noteModel
     )
 
-    is Direction.MainFragmentToCategoryFragment -> MainFragmentDirections.actionMainFragmentToCategoryFragment()
+    is Direction.MainFragmentToAddCategoryFragment -> MainFragmentDirections.actionMainFragmentToCategoryFragment(
+        actionCategory = ActionCategory.INSERT_CATEGORY,
+        category = null
+    )
+
+    is Direction.MainFragmentToUpdateCategoryFragment -> MainFragmentDirections.actionMainFragmentToCategoryFragment(
+        actionCategory = ActionCategory.UPDATE_CATEGORY,
+        category = category
+    )
+
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment(
         fileMediaName
     )

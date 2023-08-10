@@ -3,8 +3,11 @@ package com.example.presentation.category
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
+import com.example.core.core.external.ActionCategory
 import com.example.core.core.external.loadImage
+import com.example.core.core.model.ItemCategory
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
@@ -25,6 +28,12 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
 
     override val binding: FragmentCategoryBinding by viewBinding()
     override val viewModel: CategoryViewModel by viewModels()
+
+    private val actionCategory by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<CategoryFragmentArgs>().value.actionCategory }
+
+    private val categoryModel by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<CategoryFragmentArgs>().value.category }
 
     private val listCategory = listOf(
         ItemCategory(title = "Ex", image = R.drawable.icon_ex),
@@ -64,16 +73,18 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     private val categoryAdapter by lazy(LazyThreadSafetyMode.NONE) {
         CategoryAdapter(
             isDarkMode = sharedPrefersManager.darkModeTheme,
+            defaultPosition = getDefaultPosition(),
             onItemClicked = { item ->
                 binding.edtCategoryName.editText?.setText(item.title)
                 binding.imgItemCategory.loadImage(item.image)
-                viewModel.dispatch(AddCategoryAction.TitleCategoryChanged(item.title))
-                viewModel.dispatch(AddCategoryAction.ImageCategoryChanged(item.image))
+                viewModel.dispatch(CategoryAction.TitleCategoryChanged(item.title))
+                viewModel.dispatch(CategoryAction.ImageCategoryChanged(item.image))
             })
     }
 
     override fun setupViews() {
         setupInitialValues()
+        setupInitCategory()
         setupRecyclerView()
         setupClickListener()
         setupCategoryTitleInput()
@@ -83,21 +94,6 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
         setHasFixedSize(true)
         adapter = categoryAdapter
         categoryAdapter.submitList(listCategory)
-    }
-
-    private fun setupClickListener() = binding.apply {
-        btnSaveCategory.setOnClickListener {
-            val title = edtCategoryName.editText?.text
-            if (title.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "Title category is not empty", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                viewModel.dispatch(AddCategoryAction.SaveCategory)
-            }
-        }
-        btnBack.setOnClickListener {
-            mainNavigator.popBackStack()
-        }
     }
 
     override fun bindViewModel() {
@@ -120,19 +116,62 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
         val state = viewModel.stateFlow.value
         edtCategoryName.editText?.setText(state.title)
         imgItemCategory.setImageResource(state.image)
-        viewModel.dispatch(AddCategoryAction.TitleCategoryChanged(state.title))
-        viewModel.dispatch(AddCategoryAction.ImageCategoryChanged(state.image))
+        viewModel.dispatch(CategoryAction.TitleCategoryChanged(state.title))
+        viewModel.dispatch(CategoryAction.ImageCategoryChanged(state.image))
     }
+
+    private fun setupInitCategory() = binding.apply {
+        categoryModel?.let {
+            edtCategoryName.editText?.setText(it.titleCategory)
+            imgItemCategory.setImageResource(it.imageCategory)
+            viewModel.dispatch(CategoryAction.ImageCategoryChanged(it.imageCategory))
+            viewModel.dispatch(CategoryAction.TitleCategoryChanged(it.titleCategory))
+        }
+    }
+
+    private fun setupClickListener() = binding.apply {
+        btnSaveCategory.setOnClickListener {
+            val title = edtCategoryName.editText?.text
+            if (title.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Title category is not empty", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                if (actionCategory == ActionCategory.UPDATE_CATEGORY) {
+                    categoryModel?.let { viewModel.dispatch(CategoryAction.UpdateCategory(it)) }
+                } else {
+                    viewModel.dispatch(CategoryAction.InsertCategory)
+                }
+            }
+        }
+        btnBack.setOnClickListener {
+            mainNavigator.popBackStack()
+        }
+    }
+
 
     private fun setupCategoryTitleInput() = binding.edtCategoryName.run {
         editText?.apply {
             doOnTextChanged { text, _, _, _ ->
                 viewModel.dispatch(
-                    AddCategoryAction.TitleCategoryChanged(
+                    CategoryAction.TitleCategoryChanged(
                         text?.toString().orEmpty()
                     )
                 )
             }
         }
+    }
+
+    private fun getDefaultPosition(): Int {
+        var position = 0
+        if (categoryModel != null) {
+            listCategory.forEachIndexed { index, category ->
+                run {
+                    if (category.image == categoryModel?.imageCategory) {
+                        position = index
+                    }
+                }
+            }
+        }
+        return position
     }
 }

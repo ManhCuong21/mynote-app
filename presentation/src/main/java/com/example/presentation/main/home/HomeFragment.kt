@@ -2,7 +2,9 @@ package com.example.presentation.main.home
 
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.example.core.base.BaseFragment
 import com.example.core.core.model.CategoryUIModel
@@ -78,25 +80,27 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     override fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
-                when (event) {
-                    is HomeSingleEvent.GetListCategory.Success -> {
-                        val list =
-                            arrayListOf(
-                                CategoryUIModel(
-                                    idCategory = -1,
-                                    titleCategory = "All",
-                                    imageCategory = R.drawable.icon_clock
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
+                    when (event) {
+                        is HomeSingleEvent.GetListCategory.Success -> {
+                            val list =
+                                arrayListOf(
+                                    CategoryUIModel(
+                                        idCategory = -1,
+                                        titleCategory = "All",
+                                        imageCategory = R.drawable.icon_clock
+                                    )
                                 )
-                            )
-                        list.addAll(event.list)
-                        categoryAdapter.submitList(list)
-                        setUpViewPager(list)
-                        viewModel.dispatch(HomeAction.ListCategoryChanged(list))
-                    }
+                            list.addAll(event.list)
+                            categoryAdapter.submitList(list)
+                            setUpViewPager(list)
+                            viewModel.dispatch(HomeAction.ListCategoryChanged(list))
+                        }
 
-                    is HomeSingleEvent.GetListCategory.Failed -> {
-                        Timber.e(event.error)
+                        is HomeSingleEvent.GetListCategory.Failed -> {
+                            Timber.e(event.error)
+                        }
                     }
                 }
             }

@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.loadImage
+import com.example.core.core.model.ItemCategory
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.ItemListAddCategoryBinding
 
 class CategoryAdapter(
+    defaultPosition: Int,
     private val isDarkMode: Boolean,
     private val onItemClicked: (ItemCategory) -> Unit
 ) : ListAdapter<ItemCategory, CategoryAdapter.ViewHolder>(
@@ -27,7 +29,7 @@ class CategoryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(parent inflateViewBinding false)
 
-    private var selectedPosition = 0
+    private var selectedPosition = defaultPosition
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
         val background = if (isDarkMode) ContextCompat.getColor(

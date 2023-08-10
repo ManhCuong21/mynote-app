@@ -4,11 +4,11 @@ import com.example.core.core.model.CategoryUIModel
 
 sealed interface ListCategoryAction {
     object GetListCategory : ListCategoryAction
+    data class DeleteCategory(val categoryModel: CategoryUIModel) : ListCategoryAction
 }
 
 sealed interface ListCategorySingleEvent {
-    sealed interface GetListCategory : ListCategorySingleEvent {
-        data class Success(val list: List<CategoryUIModel>) : GetListCategory
-        data class Failed(val error: Throwable) : GetListCategory
-    }
+    data class GetListCategorySuccess(val list: List<CategoryUIModel>) : ListCategorySingleEvent
+    object DeleteCategorySuccess : ListCategorySingleEvent
+    data class SingleEventFailed(val error: Throwable) : ListCategorySingleEvent
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.core.core.model.CategoryUIModel
 import com.example.domain.mapper.CategoryParams
 import com.example.domain.usecase.CategoryUseCase
 import com.github.michaelbull.result.fold
@@ -35,35 +36,36 @@ class CategoryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val categoryUseCase: CategoryUseCase
 ) : BaseViewModel() {
-    private val _mutableStateFlow: MutableStateFlow<AddCategoryUiState>
-    val stateFlow: StateFlow<AddCategoryUiState>
+    private val _mutableStateFlow: MutableStateFlow<CategoryUiState>
+    val stateFlow: StateFlow<CategoryUiState>
 
-    private val _actionSharedFlow = MutableSharedFlow<AddCategoryAction>(extraBufferCapacity = 64)
-    private inline fun <reified T : AddCategoryAction> action() =
+    private val _actionSharedFlow = MutableSharedFlow<CategoryAction>(extraBufferCapacity = 64)
+    private inline fun <reified T : CategoryAction> action() =
         _actionSharedFlow.filterIsInstance<T>()
 
     private val _singleEventChannel = Channel<AddCategorySingleEvent>(Channel.UNLIMITED).addToBag()
     val singleEventFlow: Flow<AddCategorySingleEvent> get() = _singleEventChannel.receiveAsFlow()
 
-    fun dispatch(action: AddCategoryAction) =
+    fun dispatch(action: CategoryAction) =
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
         val initialUiState =
-            savedStateHandle.get<AddCategoryUiState?>(STATE_KEY)?.copy()
-                ?: AddCategoryUiState.INITIAL
+            savedStateHandle.get<CategoryUiState?>(STATE_KEY)?.copy()
+                ?: CategoryUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
 
-        saveCategory()
+        insertCategory()
+        updateCategory()
 
-        val categoryTitleFlow = action<AddCategoryAction.TitleCategoryChanged>()
+        val categoryTitleFlow = action<CategoryAction.TitleCategoryChanged>()
             .map { it.value }
             .onStart { emit(initialUiState.title) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-        val imageFlow = action<AddCategoryAction.ImageCategoryChanged>()
+        val imageFlow = action<CategoryAction.ImageCategoryChanged>()
             .map { it.value }
             .onStart { initialUiState.image }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
@@ -74,15 +76,15 @@ class CategoryViewModel @Inject constructor(
         stateFlow = combine(
             title,
             image,
-            ::buildAddCategoryUiState
+            ::buildCategoryUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
         }.stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun saveCategory() {
-        action<AddCategoryAction.SaveCategory>()
+    private fun insertCategory() {
+        action<CategoryAction.InsertCategory>()
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
@@ -90,6 +92,37 @@ class CategoryViewModel @Inject constructor(
                         CategoryParams(
                             title = stateFlow.value.title,
                             image = stateFlow.value.image
+                        )
+                    ).fold(
+                        success = {
+                            ResultContent.Content(it)
+                        },
+                        failure = {
+                            ResultContent.Error(it)
+                        }
+                    ).let { emit(it) }
+                }
+            }.onEach { lce ->
+                val event = when (lce) {
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> AddCategorySingleEvent.SaveCategory.Success
+                    is ResultContent.Error -> AddCategorySingleEvent.SaveCategory.Failed(error = lce.error)
+                }
+                event?.let { _singleEventChannel.send(it) }
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun updateCategory() {
+        action<CategoryAction.UpdateCategory>()
+            .flatMapLatest {
+                flow {
+                    emit(ResultContent.Loading)
+                    categoryUseCase.updateCategory(
+                        CategoryUIModel(
+                            idCategory = it.categoryModel.idCategory,
+                            titleCategory = stateFlow.value.title,
+                            imageCategory = stateFlow.value.image
                         )
                     ).fold(
                         success = {

@@ -1,7 +1,9 @@
 package com.example.presentation.main.home.listnote
 
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
 import com.example.core.core.model.CategoryUIModel
@@ -81,22 +83,24 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
 
     override fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
-                when (event) {
-                    is ListNoteSingleEvent.GetListNote.Success -> {
-                        listNoteAdapter.submitList(event.listNote)
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
+                    when (event) {
+                        is ListNoteSingleEvent.GetListNoteSuccess -> {
+                            listNoteAdapter.submitList(event.listNote)
+                        }
 
-                    is ListNoteSingleEvent.GetListNote.Failed -> {
-                        Timber.e(event.error)
-                    }
+                        is ListNoteSingleEvent.UpdateNote -> {
+                            viewModel.dispatch(ListNoteAction.GetListNote(categoryNote))
+                        }
 
-                    is ListNoteSingleEvent.UpdateNote -> {
-                        viewModel.dispatch(ListNoteAction.GetListNote(categoryNote))
-                    }
+                        is ListNoteSingleEvent.DeleteNoteSuccess -> {
+                            viewModel.dispatch(ListNoteAction.GetListNote(categoryNote))
+                        }
 
-                    is ListNoteSingleEvent.DeleteNote -> {
-                        viewModel.dispatch(ListNoteAction.GetListNote(categoryNote))
+                        is ListNoteSingleEvent.SingleEventFailed -> {
+                            Timber.e(event.error)
+                        }
                     }
                 }
             }

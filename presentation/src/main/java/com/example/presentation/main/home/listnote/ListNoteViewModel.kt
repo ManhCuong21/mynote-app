@@ -70,7 +70,7 @@ class ListNoteViewModel @Inject constructor(
                     state.copy(listCategory = result.content)
                 }
 
-                is ResultContent.Error -> {}
+                is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
             }
         }.launchIn(viewModelScope)
     }
@@ -95,8 +95,8 @@ class ListNoteViewModel @Inject constructor(
             }.onEach { result ->
                 val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListNoteSingleEvent.GetListNote.Success(result.content)
-                    is ResultContent.Error -> ListNoteSingleEvent.GetListNote.Failed(error = result.error)
+                    is ResultContent.Content -> ListNoteSingleEvent.GetListNoteSuccess(result.content)
+                    is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
@@ -121,7 +121,7 @@ class ListNoteViewModel @Inject constructor(
                 val event = when (result) {
                     is ResultContent.Loading -> null
                     is ResultContent.Content -> ListNoteSingleEvent.UpdateNote
-                    is ResultContent.Error -> null
+                    is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
@@ -144,8 +144,8 @@ class ListNoteViewModel @Inject constructor(
             }.onEach { result ->
                 val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListNoteSingleEvent.DeleteNote
-                    is ResultContent.Error -> null
+                    is ResultContent.Content -> ListNoteSingleEvent.DeleteNoteSuccess
+                    is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

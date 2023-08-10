@@ -14,13 +14,10 @@ sealed interface ListNoteAction {
 }
 
 sealed interface ListNoteSingleEvent {
-    sealed interface GetListNote : ListNoteSingleEvent {
-        data class Success(val listNote: List<NoteUIModel>) : GetListNote
-        data class Failed(val error: Throwable) : GetListNote
-    }
-
+    data class GetListNoteSuccess(val listNote: List<NoteUIModel>) : ListNoteSingleEvent
     object UpdateNote : ListNoteSingleEvent
-    object DeleteNote : ListNoteSingleEvent
+    object DeleteNoteSuccess : ListNoteSingleEvent
+    data class SingleEventFailed(val error: Throwable) : ListNoteSingleEvent
 }
 
 @Parcelize

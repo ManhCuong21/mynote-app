@@ -65,6 +65,15 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     override val binding: FragmentNoteBinding by viewBinding()
     override val viewModel: NoteViewModel by activityViewModels()
 
+    private val actionNote by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<NoteFragmentArgs>().value.actionNote }
+
+    private val categoryNote by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<NoteFragmentArgs>().value.category }
+
+    private val noteModel by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<NoteFragmentArgs>().value.noteModel }
+
     private val listPermission =
         arrayOf(
             Manifest.permission.CAMERA,
@@ -80,12 +89,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         ItemChooseColor(R.color.redTitle, R.color.redContent),
         ItemChooseColor(R.color.blackTitle, R.color.blackContent),
     )
-    private val actionNote by lazy(LazyThreadSafetyMode.NONE)
-    { navArgs<NoteFragmentArgs>().value.actionNote }
-
-    private val categoryNote by lazy(LazyThreadSafetyMode.NONE) { navArgs<NoteFragmentArgs>().value.category }
-
-    private val noteModel by lazy(LazyThreadSafetyMode.NONE) { navArgs<NoteFragmentArgs>().value.noteModel }
 
     private var pathFile = PATH_MEDIA_NOTE + SimpleDateFormat(
         AppConstants.FILE_NAME_FORMAT,
@@ -94,7 +97,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val chooseColorAdapter by lazy {
         NoteChooseColorAdapter(
-            defaultPosition = getDefaultPosition(noteModel?.colorTitleNote),
+            defaultPosition = getDefaultPosition(),
             onItemClicked = { position ->
                 val colorTitle = resources.getString(listColor[position].colorTitle)
                 val colorContent = resources.getString(listColor[position].colorContent)
@@ -161,7 +164,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     override fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
                         is NoteSingleEvent.UpdateListImage -> {
@@ -386,13 +389,13 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         return false
     }
 
-    private fun getDefaultPosition(colorTitleNote: String?): Int {
+    private fun getDefaultPosition(): Int {
         var position = 0
         if (noteModel != null) {
             listColor.forEachIndexed { index, itemChooseColor ->
                 run {
                     if (resources.getString(itemChooseColor.colorTitle)
-                            .equals(colorTitleNote, true)
+                            .equals(noteModel?.colorTitleNote, true)
                     ) {
                         position = index
                     }

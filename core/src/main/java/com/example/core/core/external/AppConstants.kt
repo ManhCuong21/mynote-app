@@ -20,3 +20,10 @@ enum class ActionNote : Parcelable {
     CHANGE_CATEGORY,
     DELETE_NOTE
 }
+
+@Parcelize
+enum class ActionCategory : Parcelable {
+    INSERT_CATEGORY,
+    UPDATE_CATEGORY,
+    DELETE_CATEGORY
+}

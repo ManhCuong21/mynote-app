@@ -47,7 +47,17 @@
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.example.presentation.category.CategoryFragment"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_category">
+        <argument
+            android:name="actionCategory"
+            app:argType="com.example.core.core.external.ActionCategory" />
+
+        <argument
+            android:name="category"
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.CategoryUIModel"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/recorderFragment"

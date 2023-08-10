@@ -13,7 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
@@ -71,8 +73,10 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     override fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
-                binding.tvTimerRecord.text = time
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
+                    binding.tvTimerRecord.text = time
+                }
             }
         }
     }

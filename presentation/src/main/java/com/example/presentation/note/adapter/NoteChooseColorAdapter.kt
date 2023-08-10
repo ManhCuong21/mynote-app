@@ -11,7 +11,7 @@ import com.example.presentation.R
 import com.example.presentation.databinding.ItemListChooseColorBinding
 
 class NoteChooseColorAdapter(
-    private val defaultPosition: Int,
+    defaultPosition: Int,
     private val onItemClicked: (Int) -> Unit
 ) : ListAdapter<ItemChooseColor, NoteChooseColorAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ItemChooseColor>() {

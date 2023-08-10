@@ -34,6 +34,7 @@ class ListCategoryViewModel @Inject constructor(
 
     init {
         getListCategory()
+        deleteCategory()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -54,11 +55,33 @@ class ListCategoryViewModel @Inject constructor(
             }.onEach { result ->
                 val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListCategorySingleEvent.GetListCategory.Success(
-                        result.content
-                    )
+                    is ResultContent.Content -> ListCategorySingleEvent.GetListCategorySuccess(result.content)
+                    is ResultContent.Error -> ListCategorySingleEvent.SingleEventFailed(error = result.error)
+                }
+                event?.let { _singleEventChannel.send(it) }
+            }.launchIn(viewModelScope)
+    }
 
-                    is ResultContent.Error -> ListCategorySingleEvent.GetListCategory.Failed(error = result.error)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun deleteCategory() {
+        action<ListCategoryAction.DeleteCategory>()
+            .flatMapLatest {
+                flow {
+                    emit(ResultContent.Loading)
+                    categoryUseCase.deleteCategory(it.categoryModel).fold(
+                        success = {
+                            ResultContent.Content(it)
+                        },
+                        failure = {
+                            ResultContent.Error(it)
+                        }
+                    ).let { emit(it) }
+                }
+            }.onEach { result ->
+                val event = when (result) {
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> ListCategorySingleEvent.DeleteCategorySuccess
+                    is ResultContent.Error -> ListCategorySingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

@@ -1,14 +1,15 @@
 package com.example.presentation.category
 
 import android.os.Parcelable
+import com.example.core.core.model.CategoryUIModel
 import com.example.presentation.R
 import kotlinx.parcelize.Parcelize
 
-sealed interface AddCategoryAction {
-    data class TitleCategoryChanged(val value: String) : AddCategoryAction
-    data class ImageCategoryChanged(val value: Int) : AddCategoryAction
-    object SaveCategory : AddCategoryAction
-
+sealed interface CategoryAction {
+    data class TitleCategoryChanged(val value: String) : CategoryAction
+    data class ImageCategoryChanged(val value: Int) : CategoryAction
+    object InsertCategory : CategoryAction
+    data class UpdateCategory(val categoryModel: CategoryUIModel) : CategoryAction
 }
 
 sealed interface AddCategorySingleEvent {
@@ -19,24 +20,22 @@ sealed interface AddCategorySingleEvent {
 }
 
 @Parcelize
-data class AddCategoryUiState(
+data class CategoryUiState(
     val title: String,
     val image: Int
 ) : Parcelable {
     companion object {
-        val INITIAL = AddCategoryUiState(
+        val INITIAL = CategoryUiState(
             title = "Ex",
             image = R.drawable.icon_ex
         )
     }
 }
 
-fun buildAddCategoryUiState(
+fun buildCategoryUiState(
     title: String,
     image: Int,
-): AddCategoryUiState = AddCategoryUiState(
+): CategoryUiState = CategoryUiState(
     title = title,
     image = image
 )
-
-data class ItemCategory(val title: String, val image: Int)
