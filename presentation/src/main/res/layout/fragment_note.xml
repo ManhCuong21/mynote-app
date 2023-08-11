@@ -70,19 +70,19 @@
         app:layout_constraintTop_toBottomOf="@+id/edtTitleNote" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRecordNote"
+        android:id="@+id/rvImageNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/rvImageNote"
+        app:layout_constraintBottom_toTopOf="@+id/rvRecordNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/item_list_record_edit_note" />
+        tools:listitem="@layout/item_list_image_note" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvImageNote"
+        android:id="@+id/rvRecordNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -91,7 +91,7 @@
         app:layout_constraintBottom_toTopOf="@+id/rvChooseColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/item_list_image_note" />
+        tools:listitem="@layout/item_list_record_edit_note" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChooseColor"

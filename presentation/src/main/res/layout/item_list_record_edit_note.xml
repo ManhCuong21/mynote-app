@@ -28,6 +28,7 @@
             android:textColor="#FD5454" />
 
         <com.example.presentation.canvas.AudioWave
+            android:id="@+id/audioWave"
             android:layout_width="@dimen/dimen_100"
             android:layout_height="@dimen/dimen_45" />
 

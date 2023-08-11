@@ -2,25 +2,32 @@ package com.example.presentation.main.home.listnote
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_12_HOUR
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_24_HOUR
+import com.example.core.core.external.getDate
+import com.example.core.core.file.image.ImageFile
+import com.example.core.core.file.record.RecordFile
 import com.example.core.core.model.NoteUIModel
 import com.example.core.core.viewbinding.inflateViewBinding
+import com.example.presentation.R
 import com.example.presentation.databinding.DialogSettingNoteBinding
 import com.example.presentation.databinding.ItemListNoteBinding
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.launch
 
 class ListNoteAdapter(
+    private val fragmentActivity: FragmentActivity,
+    private val imageFile: ImageFile,
+    private val recordFile: RecordFile,
     private val format24Hour: Boolean,
     private val onItemClicked: (ActionNote, NoteUIModel) -> Unit
 ) : ListAdapter<NoteUIModel, ListNoteAdapter.ViewHolder>(
@@ -46,16 +53,14 @@ class ListNoteAdapter(
             imgCategoryNote.setImageDrawable(
                 ContextCompat.getDrawable(context, item.categoryNote.imageCategory)
             )
-            if (bindingAdapterPosition == 0) {
-                vLineTop.visibility = View.INVISIBLE
-            }
-            if (bindingAdapterPosition == (bindingAdapter?.itemCount ?: 1) - 1) {
-                vLineBottom.visibility = View.INVISIBLE
-            }
             vColorNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
             tvTitleNote.text = item.titleNote
             tvContentNote.text = item.contentNote
-            tvTimeNote.text = formatDate(item.timeNote, format24Hour)
+            val dateFormat =
+                if (!format24Hour) DATE_FORMAT_TIME_12_HOUR else DATE_FORMAT_TIME_24_HOUR
+            tvTimeNote.text =
+                context.getString(R.string.format_date_note, getDate(item.timeNote, dateFormat))
+            isVisibleImage(item.fileMediaNote)
             root.setOnClickListener {
                 val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
                 val builder = AlertDialog.Builder(context)
@@ -87,11 +92,13 @@ class ListNoteAdapter(
             }
         }
 
-        private fun formatDate(time: Long, format24Hour: Boolean): String {
-            val dateFormat =
-                if (!format24Hour) DATE_FORMAT_TIME_12_HOUR else DATE_FORMAT_TIME_24_HOUR
-            val simpleDateFormat = SimpleDateFormat(dateFormat, Locale.getDefault())
-            return simpleDateFormat.format(Date(time))
+        private fun isVisibleImage(pathFile: String) {
+            fragmentActivity.lifecycleScope.launch {
+                binding.vHaveImage.isVisible =
+                    imageFile.readImageFromFile(fragmentActivity, pathFile).isNotEmpty()
+                binding.vHaveRecord.isVisible =
+                    recordFile.readRecordFromFile(fragmentActivity, pathFile).isNotEmpty()
+            }
         }
     }
 }

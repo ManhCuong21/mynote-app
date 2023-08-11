@@ -53,5 +53,6 @@
     <string name="title_show_on_map">Show on map</string>
     <string name="title_delete">Delete</string>
     <string name="title_update_category">Update</string>
+    <string name="format_date_note">Edited: %s</string>
 
 </resources>

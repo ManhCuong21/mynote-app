@@ -106,6 +106,9 @@ class NoteListRecordAdapter(
                     e.printStackTrace()
                 }
             }
+            if (player?.audioSessionId != -1) {
+                binding.audioWave.addAmplitude(player?.audioSessionId!!.toFloat())
+            }
         }
 
         private fun pausePlaying() {
