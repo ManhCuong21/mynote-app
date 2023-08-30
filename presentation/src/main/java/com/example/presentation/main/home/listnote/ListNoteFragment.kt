@@ -1,5 +1,14 @@
 package com.example.presentation.main.home.listnote
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -8,13 +17,14 @@ import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
 import com.example.core.core.file.image.ImageFile
 import com.example.core.core.file.record.RecordFile
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentListNoteBinding
 import com.example.presentation.dialog.list.showListDialog
+import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.main.home.toListDialogItem
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +50,13 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     override val binding: FragmentListNoteBinding by viewBinding()
     override val viewModel: ListNoteViewModel by viewModels()
 
-    private lateinit var categoryNote: CategoryUIModel
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+
+    private val appPermissionSettingLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+
+    private lateinit var categoryNote: CategoryModel
     private val listNoteAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ListNoteAdapter(
             fragmentActivity = requireActivity(),
@@ -49,7 +65,24 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
             format24Hour = sharedPrefersManager.format24Hour,
             onItemClicked = { action, noteModel ->
                 when (action) {
-                    ActionNote.SHOW_ON_MAP -> {}
+                    ActionNote.NOTIFICATION -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            if (checkPermission()) {
+                                mainNavigator.navigate(
+                                    MainNavigator.Direction.MainFragmentToDateTimePickersFragment(
+                                        noteModel
+                                    )
+                                )
+                            }
+                        } else {
+                            mainNavigator.navigate(
+                                MainNavigator.Direction.MainFragmentToDateTimePickersFragment(
+                                    noteModel
+                                )
+                            )
+                        }
+                    }
+
                     ActionNote.UPDATE_NOTE -> {
                         mainNavigator.navigate(
                             MainNavigator.Direction.MainFragmentToUpdateNoteFragment(noteModel = noteModel)
@@ -66,7 +99,7 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
                                 listCategory[indexItem].let {
                                     viewModel.dispatch(
                                         ListNoteAction.ChangeCategoryNote(
-                                            noteUIModel = noteModel,
+                                            noteModel = noteModel,
                                             category = it
                                         )
                                     )
@@ -125,9 +158,40 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
         adapter = listNoteAdapter
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkPermission(): Boolean {
+        when {
+            PERMISSION_NOTIFICATION.any {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    PERMISSION_NOTIFICATION
+                ) == PackageManager.PERMISSION_GRANTED
+            } -> return true
+
+            shouldShowRequestPermissionRationale(PERMISSION_NOTIFICATION) -> {
+                requestPermissionLauncher.launch(PERMISSION_NOTIFICATION)
+            }
+
+            else -> {
+                showTextDialog {
+                    textTitle("Permission Denied")
+                    textContent("Please grant access in setting")
+                    positiveButtonAction("Open") {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.data = Uri.parse("package:${requireActivity().packageName}")
+                        appPermissionSettingLauncher.launch(intent)
+                    }
+                    negativeButtonAction("Cancel") {}
+                }
+            }
+        }
+        return false
+    }
 
     companion object {
-        fun newInstance(category: CategoryUIModel) = ListNoteFragment().apply {
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        const val PERMISSION_NOTIFICATION = Manifest.permission.POST_NOTIFICATIONS
+        fun newInstance(category: CategoryModel) = ListNoteFragment().apply {
             categoryNote = category
         }
     }

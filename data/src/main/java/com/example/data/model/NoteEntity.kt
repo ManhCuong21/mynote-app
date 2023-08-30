@@ -23,5 +23,7 @@ data class NoteEntity(
     @ColumnInfo(name = "colorContentNote")
     val colorContentNote: String,
     @ColumnInfo(name = "timeNote")
-    val timeNote: Long?
+    val timeNote: Long?,
+    @Embedded
+    val notificationEntity: NotificationEntity? = null
 )

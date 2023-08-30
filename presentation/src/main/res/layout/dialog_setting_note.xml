@@ -39,13 +39,13 @@
                     android:layout_width="@dimen/dimen_24"
                     android:layout_height="@dimen/dimen_24"
                     android:layout_marginEnd="@dimen/dimen_16"
-                    android:src="@drawable/icon_map" />
+                    android:src="@drawable/icon_notification" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/title_show_on_map" />
+                    android:text="@string/title_notification" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View

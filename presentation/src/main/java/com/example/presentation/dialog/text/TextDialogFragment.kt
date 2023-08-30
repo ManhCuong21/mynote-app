@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentTextDialogBinding
-import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 fun Fragment.showTextDialog(
@@ -29,9 +27,6 @@ fun Fragment.showTextDialog(
 
 @AndroidEntryPoint
 class TextDialogFragment : DialogFragment() {
-
-    @Inject
-    internal lateinit var mainNavigator: MainNavigator
 
     private var builder: Builder? = null
     private lateinit var binding: FragmentTextDialogBinding

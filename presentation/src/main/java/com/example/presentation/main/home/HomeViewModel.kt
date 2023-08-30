@@ -47,9 +47,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState =
-            savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy()
-                ?: HomeUiState.INITIAL
+        val initialUiState = savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy()
+            ?: HomeUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }

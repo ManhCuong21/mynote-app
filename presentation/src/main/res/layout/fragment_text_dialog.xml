@@ -16,14 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/dimen_16">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleDialog"
                 style="@style/Theme.TextViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/dimen_16"
                 tools:text="Title Dialog" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -35,7 +35,7 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/dimen_8"
                 android:gravity="end">
 
                 <androidx.appcompat.widget.AppCompatTextView

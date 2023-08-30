@@ -24,8 +24,8 @@ fun Fragment.showListDialog(
 
 class ListDialogFragment : DialogFragment() {
 
-    private var builder: Builder? = null
     private lateinit var binding: FragmentListDialogBinding
+    private var builder: Builder? = null
 
     private val dialogAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ListDialogAdapter(position = builder?.positionSelected ?: 0,

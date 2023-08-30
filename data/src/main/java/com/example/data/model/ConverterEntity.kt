@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 
 object ConverterEntity {
     @TypeConverter
-    fun toStringNote(list: List<String?>?): String? {
+    fun toStringListNote(list: List<String?>?): String? {
         if (list == null) {
             return null
         }
@@ -36,12 +36,32 @@ object ConverterEntity {
     }
 
     @TypeConverter
-    fun toList(value: String?): List<String?>? {
+    fun toListString(value: String?): List<String?>? {
         if (value == null) {
             return null
         }
         val gson = Gson()
         val type = object : TypeToken<List<String?>?>() {}.type
+        return gson.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun toStringListInt(list: List<Int?>?): String? {
+        if (list == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<Int?>?>() {}.type
+        return gson.toJson(list, type)
+    }
+
+    @TypeConverter
+    fun toListInt(value: String?): List<Int?>? {
+        if (value == null) {
+            return null
+        }
+        val gson = Gson()
+        val type = object : TypeToken<List<Int?>?>() {}.type
         return gson.fromJson(value, type)
     }
 }

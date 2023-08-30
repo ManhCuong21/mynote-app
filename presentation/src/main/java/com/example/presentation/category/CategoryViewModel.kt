@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.domain.mapper.CategoryParams
 import com.example.domain.usecase.CategoryUseCase
 import com.github.michaelbull.result.fold
@@ -50,9 +50,8 @@ class CategoryViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState =
-            savedStateHandle.get<CategoryUiState?>(STATE_KEY)?.copy()
-                ?: CategoryUiState.INITIAL
+        val initialUiState = savedStateHandle.get<CategoryUiState?>(STATE_KEY)?.copy()
+            ?: CategoryUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
@@ -119,7 +118,7 @@ class CategoryViewModel @Inject constructor(
                 flow {
                     emit(ResultContent.Loading)
                     categoryUseCase.updateCategory(
-                        CategoryUIModel(
+                        CategoryModel(
                             idCategory = it.categoryModel.idCategory,
                             titleCategory = stateFlow.value.title,
                             imageCategory = stateFlow.value.image

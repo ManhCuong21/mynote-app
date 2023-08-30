@@ -58,6 +58,9 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
         actionCategory = ActionCategory.UPDATE_CATEGORY,
         category = category
     )
+    is Direction.MainFragmentToDateTimePickersFragment -> MainFragmentDirections.actionMainFragmentToDateTimePickersFragment(
+        noteModel = noteModel
+    )
 
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment(
         fileMediaName

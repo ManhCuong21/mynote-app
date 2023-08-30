@@ -107,7 +107,7 @@ class ListNoteViewModel @Inject constructor(
         action<ListNoteAction.ChangeCategoryNote>()
             .flatMapLatest {
                 flow {
-                    noteUseCase.updateNote(it.noteUIModel.copy(categoryNote = it.category))
+                    noteUseCase.updateNote(it.noteModel.copy(categoryNote = it.category))
                         .fold(
                             success = {
                                 ResultContent.Content(it)
@@ -132,7 +132,7 @@ class ListNoteViewModel @Inject constructor(
         action<ListNoteAction.DeleteNote>()
             .flatMapLatest {
                 flow {
-                    noteUseCase.deleteNote(it.noteUIModel).fold(
+                    noteUseCase.deleteNote(it.noteModel).fold(
                         success = {
                             ResultContent.Content(it)
                         },

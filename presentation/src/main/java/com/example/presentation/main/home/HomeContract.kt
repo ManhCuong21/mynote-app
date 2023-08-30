@@ -1,28 +1,28 @@
 package com.example.presentation.main.home
 
 import android.os.Parcelable
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.ListDialogItem
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.NoteModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface HomeAction {
     object GetListCategory : HomeAction
-    data class ListCategoryChanged(val list: List<CategoryUIModel>) : HomeAction
-    data class ListNoteChanged(val list: List<NoteUIModel>) : HomeAction
+    data class ListCategoryChanged(val list: List<CategoryModel>) : HomeAction
+    data class ListNoteChanged(val list: List<NoteModel>) : HomeAction
 }
 
 sealed interface HomeSingleEvent {
     sealed interface GetListCategory : HomeSingleEvent {
-        data class Success(val list: List<CategoryUIModel>) : GetListCategory
+        data class Success(val list: List<CategoryModel>) : GetListCategory
         data class Failed(val error: Throwable) : GetListCategory
     }
 }
 
 @Parcelize
 data class HomeUiState(
-    val listCategory: List<CategoryUIModel>,
-    val listNote: List<NoteUIModel>
+    val listCategory: List<CategoryModel>,
+    val listNote: List<NoteModel>
 ) : Parcelable {
     companion object {
         val INITIAL = HomeUiState(
@@ -33,14 +33,14 @@ data class HomeUiState(
 }
 
 fun buildHomeUiState(
-    listCategory: List<CategoryUIModel>,
-    listNote: List<NoteUIModel>
+    listCategory: List<CategoryModel>,
+    listNote: List<NoteModel>
 ): HomeUiState = HomeUiState(
     listCategory = listCategory,
     listNote = listNote
 )
 
-internal fun CategoryUIModel.toListDialogItem() = ListDialogItem(
+internal fun CategoryModel.toListDialogItem() = ListDialogItem(
     title = titleCategory,
     image = imageCategory
 )

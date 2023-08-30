@@ -19,7 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
-import com.example.core.core.external.getDate
+import com.example.core.core.external.formatDate
 import com.example.core.core.file.FileExtension
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
@@ -160,7 +160,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
                 FileOutputStream(
                     File(
                         fileExtension.getOutputMediaDirectory(requireActivity(), fileNameMedia),
-                        "${getDate(System.currentTimeMillis(), FILE_NAME_FORMAT)}.mp4"
+                        "${formatDate(FILE_NAME_FORMAT, System.currentTimeMillis())}.mp4"
                     )
                 ).fd
             )

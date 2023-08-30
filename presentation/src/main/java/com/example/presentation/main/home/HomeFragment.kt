@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.example.core.base.BaseFragment
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
@@ -86,7 +86,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         is HomeSingleEvent.GetListCategory.Success -> {
                             val list =
                                 arrayListOf(
-                                    CategoryUIModel(
+                                    CategoryModel(
                                         idCategory = -1,
                                         titleCategory = "All",
                                         imageCategory = R.drawable.icon_clock
@@ -107,7 +107,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         }
     }
 
-    private fun setUpViewPager(list: List<CategoryUIModel>) = binding.apply {
+    private fun setUpViewPager(list: List<CategoryModel>) = binding.apply {
         viewPagerAdapter = NoteViewPagerAdapter(this@HomeFragment, list)
         viewPagerNote.adapter = viewPagerAdapter
         viewPagerNote.unregisterOnPageChangeCallback(onPageChangeCallback)

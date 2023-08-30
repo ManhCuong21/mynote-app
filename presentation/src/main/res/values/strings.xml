@@ -50,9 +50,10 @@
     <string name="title_option">Option</string>
     <string name="title_update_note">Update note</string>
     <string name="title_change_category">Change Category</string>
-    <string name="title_show_on_map">Show on map</string>
     <string name="title_delete">Delete</string>
     <string name="title_update_category">Update</string>
     <string name="format_date_note">Edited: %s</string>
-
+    <string name="title_notification">Notification</string>
+    <string name="format_date_time_picker_today">Today - %s</string>
+    <string name="format_date_time_picker_tomorrow">Tomorrow - %s</string>
 </resources>

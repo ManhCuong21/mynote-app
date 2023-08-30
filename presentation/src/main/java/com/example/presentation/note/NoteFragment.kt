@@ -29,7 +29,7 @@ import com.example.core.core.file.FileExtension
 import com.example.core.core.file.image.ImageFile
 import com.example.core.core.file.record.RecordFile
 import com.example.core.core.model.ItemChooseColor
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.viewBinding
 import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
@@ -210,7 +210,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         }
     }
 
-    private fun initItemNote(noteModel: NoteUIModel) = binding.apply {
+    private fun initItemNote(noteModel: NoteModel) = binding.apply {
         edtTitleNote.setText(noteModel.titleNote)
         edtContentNote.setText(noteModel.contentNote)
         val colorTitle =
@@ -229,10 +229,12 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private fun setupClickListener() = binding.apply {
         btnBack.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                val file = fileExtension.getOutputMediaDirectory(requireActivity(), pathFile)
-                fileExtension.deleteFile(file)
-                requireActivity().viewModelStore.clear()
+            if (actionNote == ActionNote.INSERT_NOTE) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val file = fileExtension.getOutputMediaDirectory(requireActivity(), pathFile)
+                    fileExtension.deleteFile(file)
+                    requireActivity().viewModelStore.clear()
+                }
             }
             mainNavigator.popBackStack()
         }

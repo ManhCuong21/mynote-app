@@ -1,11 +1,13 @@
 package com.example.domain.mapper
 
-import com.example.core.core.model.CategoryUIModel
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.CategoryModel
+import com.example.core.core.model.NoteModel
+import com.example.core.core.model.NotificationModel
 import com.example.data.model.NoteEntity
+import com.example.data.model.NotificationEntity
 
 data class NoteParams(
-    val categoryNote: CategoryUIModel,
+    val categoryNote: CategoryModel,
     val titleNote: String,
     val contentNote: String,
     val fileMediaNote: String,
@@ -21,10 +23,10 @@ fun NoteParams.toNoteEntity() = NoteEntity(
     fileMediaNote = fileMediaNote,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
-    timeNote = timeNote
+    timeNote = timeNote,
 )
 
-fun NoteUIModel.toNoteEntity() = NoteEntity(
+fun NoteModel.toNoteEntity() = NoteEntity(
     idNote = idNote,
     categoryEntity = categoryNote.toCategoryEntity(),
     titleNote = titleNote,
@@ -35,13 +37,42 @@ fun NoteUIModel.toNoteEntity() = NoteEntity(
     timeNote = timeNote
 )
 
-fun NoteEntity.toNoteUIModel() = NoteUIModel(
+fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
     idNote = idNote,
-    categoryNote = categoryEntity.toCategoryUIModel(),
+    categoryEntity = categoryNote.toCategoryEntity(),
     titleNote = titleNote,
     contentNote = contentNote,
     fileMediaNote = fileMediaNote,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
-    timeNote = timeNote ?: System.currentTimeMillis()
+    timeNote = timeNote,
+    notificationEntity = notificationModel?.toNotificationEntity()
+)
+
+fun NoteEntity.toNoteModel() = NoteModel(
+    idNote = idNote,
+    categoryNote = categoryEntity.toCategoryModel(),
+    titleNote = titleNote,
+    contentNote = contentNote,
+    fileMediaNote = fileMediaNote,
+    colorTitleNote = colorTitleNote,
+    colorContentNote = colorContentNote,
+    timeNote = timeNote ?: System.currentTimeMillis(),
+    notificationModel = notificationEntity?.toNotificationModel()
+)
+
+private fun NotificationModel.toNotificationEntity() = NotificationEntity(
+    idNotification = idNotification,
+    dayOfMonth = dayOfMonth,
+    dayOfWeek = dayOfWeek,
+    hour = hour,
+    minute = minute
+)
+
+private fun NotificationEntity.toNotificationModel() = NotificationModel(
+    idNotification = idNotification,
+    dayOfMonth = dayOfMonth,
+    dayOfWeek = dayOfWeek,
+    hour = hour,
+    minute = minute
 )

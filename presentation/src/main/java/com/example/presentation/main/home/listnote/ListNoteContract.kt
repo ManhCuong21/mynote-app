@@ -1,20 +1,20 @@
 package com.example.presentation.main.home.listnote
 
 import android.os.Parcelable
-import com.example.core.core.model.CategoryUIModel
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.CategoryModel
+import com.example.core.core.model.NoteModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface ListNoteAction {
-    data class GetListNote(val category: CategoryUIModel) : ListNoteAction
-    data class ChangeCategoryNote(val noteUIModel: NoteUIModel, val category: CategoryUIModel) :
+    data class GetListNote(val category: CategoryModel) : ListNoteAction
+    data class ChangeCategoryNote(val noteModel: NoteModel, val category: CategoryModel) :
         ListNoteAction
 
-    data class DeleteNote(val noteUIModel: NoteUIModel) : ListNoteAction
+    data class DeleteNote(val noteModel: NoteModel) : ListNoteAction
 }
 
 sealed interface ListNoteSingleEvent {
-    data class GetListNoteSuccess(val listNote: List<NoteUIModel>) : ListNoteSingleEvent
+    data class GetListNoteSuccess(val listNote: List<NoteModel>) : ListNoteSingleEvent
     object UpdateNote : ListNoteSingleEvent
     object DeleteNoteSuccess : ListNoteSingleEvent
     data class SingleEventFailed(val error: Throwable) : ListNoteSingleEvent
@@ -22,9 +22,9 @@ sealed interface ListNoteSingleEvent {
 
 @Parcelize
 data class ListNoteUiState(
-    val listCategory: List<CategoryUIModel>,
-    val category: CategoryUIModel?,
-    val listNote: List<NoteUIModel>
+    val listCategory: List<CategoryModel>,
+    val category: CategoryModel?,
+    val listNote: List<NoteModel>
 ) : Parcelable {
     companion object {
         val INITIAL = ListNoteUiState(

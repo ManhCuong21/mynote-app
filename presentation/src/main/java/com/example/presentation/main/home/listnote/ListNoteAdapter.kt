@@ -14,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_12_HOUR
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_24_HOUR
-import com.example.core.core.external.getDate
+import com.example.core.core.external.formatDate
 import com.example.core.core.file.image.ImageFile
 import com.example.core.core.file.record.RecordFile
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogSettingNoteBinding
@@ -29,13 +29,13 @@ class ListNoteAdapter(
     private val imageFile: ImageFile,
     private val recordFile: RecordFile,
     private val format24Hour: Boolean,
-    private val onItemClicked: (ActionNote, NoteUIModel) -> Unit
-) : ListAdapter<NoteUIModel, ListNoteAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<NoteUIModel>() {
-        override fun areItemsTheSame(oldItem: NoteUIModel, newItem: NoteUIModel): Boolean =
+    private val onItemClicked: (ActionNote, NoteModel) -> Unit
+) : ListAdapter<NoteModel, ListNoteAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<NoteModel>() {
+        override fun areItemsTheSame(oldItem: NoteModel, newItem: NoteModel): Boolean =
             oldItem.idNote == newItem.idNote
 
-        override fun areContentsTheSame(oldItem: NoteUIModel, newItem: NoteUIModel): Boolean =
+        override fun areContentsTheSame(oldItem: NoteModel, newItem: NoteModel): Boolean =
             oldItem == newItem
     }
 ) {
@@ -49,7 +49,7 @@ class ListNoteAdapter(
     inner class ViewHolder(private val binding: ItemListNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val context = binding.root.context
-        fun bind(item: NoteUIModel, format24Hour: Boolean) = binding.apply {
+        fun bind(item: NoteModel, format24Hour: Boolean) = binding.apply {
             imgCategoryNote.setImageDrawable(
                 ContextCompat.getDrawable(context, item.categoryNote.imageCategory)
             )
@@ -59,7 +59,7 @@ class ListNoteAdapter(
             val dateFormat =
                 if (!format24Hour) DATE_FORMAT_TIME_12_HOUR else DATE_FORMAT_TIME_24_HOUR
             tvTimeNote.text =
-                context.getString(R.string.format_date_note, getDate(item.timeNote, dateFormat))
+                context.getString(R.string.format_date_note, formatDate(dateFormat, item.timeNote))
             isVisibleImage(item.fileMediaNote)
             root.setOnClickListener {
                 val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
@@ -70,7 +70,7 @@ class ListNoteAdapter(
                 dialog.show()
                 binding.apply {
                     btnShowOnMap.setOnClickListener {
-                        onItemClicked(ActionNote.SHOW_ON_MAP, item)
+                        onItemClicked(ActionNote.NOTIFICATION, item)
                         dialog.dismiss()
                     }
                     btnEditNote.setOnClickListener {

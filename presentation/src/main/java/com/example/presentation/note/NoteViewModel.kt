@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
 import com.example.core.core.external.combine
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.NoteModel
 import com.example.domain.mapper.NoteParams
 import com.example.domain.usecase.NoteUseCase
 import com.github.michaelbull.result.fold
@@ -50,9 +50,8 @@ class NoteViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState =
-            savedStateHandle.get<NoteUiState?>(STATE_KEY)?.copy()
-                ?: NoteUiState.INITIAL
+        val initialUiState = savedStateHandle.get<NoteUiState?>(STATE_KEY)?.copy()
+            ?: NoteUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
@@ -156,7 +155,7 @@ class NoteViewModel @Inject constructor(
                     emit(ResultContent.Loading)
                     val uiState = stateFlow.value
                     noteUseCase.updateNote(
-                        NoteUIModel(
+                        NoteModel(
                             idNote = it.noteModel.idNote,
                             titleNote = uiState.titleNote.orEmpty(),
                             contentNote = uiState.contentNote.orEmpty(),

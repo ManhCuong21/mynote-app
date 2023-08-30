@@ -8,21 +8,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.ActionCategory
 import com.example.core.core.external.loadImage
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.ItemListCategoryBinding
 
 class ListCategoryAdapter(
-    private val onItemClicked: (ActionCategory, CategoryUIModel) -> Unit
-) : ListAdapter<CategoryUIModel, ListCategoryAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<CategoryUIModel>() {
-        override fun areItemsTheSame(oldItem: CategoryUIModel, newItem: CategoryUIModel): Boolean =
+    private val onItemClicked: (ActionCategory, CategoryModel) -> Unit
+) : ListAdapter<CategoryModel, ListCategoryAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<CategoryModel>() {
+        override fun areItemsTheSame(oldItem: CategoryModel, newItem: CategoryModel): Boolean =
             oldItem.idCategory == newItem.idCategory
 
         override fun areContentsTheSame(
-            oldItem: CategoryUIModel,
-            newItem: CategoryUIModel
+            oldItem: CategoryModel,
+            newItem: CategoryModel
         ): Boolean =
             oldItem == newItem
     }
@@ -40,7 +40,7 @@ class ListCategoryAdapter(
         private val context = binding.root.context
 
         @SuppressLint("DiscouragedPrivateApi")
-        fun bind(item: CategoryUIModel) = binding.apply {
+        fun bind(item: CategoryModel) = binding.apply {
             imgCategory.loadImage(item.imageCategory)
             tvTitleCategory.text = item.titleCategory
             btnOptions.setOnClickListener {

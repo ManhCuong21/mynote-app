@@ -1,8 +1,8 @@
 package com.example.presentation.note
 
 import android.os.Parcelable
-import com.example.core.core.model.CategoryUIModel
-import com.example.core.core.model.NoteUIModel
+import com.example.core.core.model.CategoryModel
+import com.example.core.core.model.NoteModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface NoteAction {
@@ -10,12 +10,12 @@ sealed interface NoteAction {
     object UpdateListRecord : NoteAction
     data class TitleNoteChanged(val titleNote: String) : NoteAction
     data class ContentNoteChanged(val contentNote: String) : NoteAction
-    data class CategoryNoteChanged(val categoryNote: CategoryUIModel) : NoteAction
+    data class CategoryNoteChanged(val categoryNote: CategoryModel) : NoteAction
     data class FileMediaNoteChanged(val fileMediaNote: String) : NoteAction
     data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
     data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
     object InsertNote : NoteAction
-    data class UpdateNote(val noteModel: NoteUIModel) : NoteAction
+    data class UpdateNote(val noteModel: NoteModel) : NoteAction
 }
 
 sealed interface NoteSingleEvent {
@@ -31,7 +31,7 @@ sealed interface NoteSingleEvent {
 data class NoteUiState(
     val titleNote: String?,
     val contentNote: String?,
-    val categoryNote: CategoryUIModel,
+    val categoryNote: CategoryModel,
     val fileMediaNote: String?,
     val colorTitleNote: String?,
     val colorContentNote: String?
@@ -40,7 +40,7 @@ data class NoteUiState(
         val INITIAL = NoteUiState(
             titleNote = null,
             contentNote = null,
-            categoryNote = CategoryUIModel(-1, "", 0),
+            categoryNote = CategoryModel(-1, "", 0),
             fileMediaNote = null,
             colorTitleNote = null,
             colorContentNote = null
@@ -51,7 +51,7 @@ data class NoteUiState(
 fun buildNoteUiState(
     titleNote: String,
     contentNote: String,
-    categoryNote: CategoryUIModel,
+    categoryNote: CategoryModel,
     fileMediaNote: String?,
     colorTitleNote: String?,
     colorContentNote: String?

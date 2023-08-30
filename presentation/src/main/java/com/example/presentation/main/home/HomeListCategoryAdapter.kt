@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.loadImage
-import com.example.core.core.model.CategoryUIModel
+import com.example.core.core.model.CategoryModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.ItemListCategoryHomeBinding
@@ -17,14 +17,14 @@ import com.example.presentation.databinding.ItemListCategoryHomeBinding
 class HomeListCategoryAdapter(
     private val isDarkMode: Boolean,
     private val onItemClicked: (Int) -> Unit
-) : ListAdapter<CategoryUIModel, HomeListCategoryAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<CategoryUIModel>() {
-        override fun areItemsTheSame(oldItem: CategoryUIModel, newItem: CategoryUIModel): Boolean =
+) : ListAdapter<CategoryModel, HomeListCategoryAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<CategoryModel>() {
+        override fun areItemsTheSame(oldItem: CategoryModel, newItem: CategoryModel): Boolean =
             oldItem.idCategory == newItem.idCategory
 
         override fun areContentsTheSame(
-            oldItem: CategoryUIModel,
-            newItem: CategoryUIModel
+            oldItem: CategoryModel,
+            newItem: CategoryModel
         ): Boolean =
             oldItem == newItem
     }
@@ -57,7 +57,7 @@ class HomeListCategoryAdapter(
         RecyclerView.ViewHolder(binding.root) {
         val context: Context = binding.root.context
         @SuppressLint("NotifyDataSetChanged")
-        fun bind(item: CategoryUIModel) = binding.apply {
+        fun bind(item: CategoryModel) = binding.apply {
             tvTitleCategory.text = item.titleCategory
             item.imageCategory.let { imgItemCategory.loadImage(it) }
             root.setOnClickListener {
