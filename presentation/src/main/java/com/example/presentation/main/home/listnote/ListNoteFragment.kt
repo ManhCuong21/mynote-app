@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -134,6 +135,8 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
                     when (event) {
                         is ListNoteSingleEvent.GetListNoteSuccess -> {
                             listNoteAdapter.submitList(event.listNote)
+                            binding.rvNote.isVisible = event.listNote.isNotEmpty()
+                            binding.lnEmptyNote.isVisible = event.listNote.isEmpty()
                         }
 
                         is ListNoteSingleEvent.UpdateNote -> {

@@ -1,13 +1,15 @@
 <resources>
     <string name="app_name">MyNote</string>
 
-    <string name="time_note">TimeNote</string>
     <string name="title_ok">OK</string>
     <string name="button_save">Save</string>
     <string name="button_cancel">Cancel</string>
 
+    <!-- Home -->
+    <string name="time_note">TimeNote</string>
+    <string name="title_empty_note">Empty Note</string>
 
-    <!-- Text Bottom Nav -->
+    <!-- Bottom Nav -->
     <string name="title_home">Home</string>
     <string name="title_category">Category</string>
     <string name="title_setting">Setting</string>
