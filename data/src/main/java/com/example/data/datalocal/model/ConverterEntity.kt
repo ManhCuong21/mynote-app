@@ -1,4 +1,4 @@
-package com.example.data.model
+package com.example.data.datalocal.model
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

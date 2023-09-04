@@ -10,6 +10,7 @@ interface MainNavigator {
     val navController: NavController
 
     sealed interface Direction {
+        object MainFragmentToSignUpFragment : Direction
         data class MainFragmentToAddNoteFragment(val category: CategoryModel) : Direction
         data class MainFragmentToUpdateNoteFragment(val noteModel: NoteModel) : Direction
         object MainFragmentToAddCategoryFragment : Direction

@@ -3,6 +3,9 @@ package com.example.presentation.category
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionCategory
@@ -15,6 +18,7 @@ import com.example.presentation.R
 import com.example.presentation.databinding.FragmentCategoryBinding
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -97,16 +101,23 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     }
 
     override fun bindViewModel() {
-        viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
-            when (event) {
-                is AddCategorySingleEvent.SaveCategory.Success -> {
-                    binding.edtCategoryName.editText?.text = null
-                    mainNavigator.popBackStack()
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
+                    when (event) {
+                        is AddCategorySingleEvent.SaveCategory.Success -> {
+                            binding.edtCategoryName.editText?.text = null
+                            mainNavigator.popBackStack()
+                        }
 
-                is AddCategorySingleEvent.SaveCategory.Failed -> {
-                    Toast.makeText(requireContext(), "Save category failed", Toast.LENGTH_SHORT)
-                        .show()
+                        is AddCategorySingleEvent.SaveCategory.Failed -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Save category failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             }
         }

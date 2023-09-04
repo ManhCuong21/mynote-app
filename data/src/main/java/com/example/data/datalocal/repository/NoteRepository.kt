@@ -1,12 +1,11 @@
-package com.example.data.repository
+package com.example.data.datalocal.repository
 
 import com.example.core.core.external.AppCoroutineDispatchers
-import com.example.data.model.NoteEntity
-import com.example.data.database.NoteDatabase
-import com.example.data.model.CategoryEntity
+import com.example.data.datalocal.database.NoteDatabase
+import com.example.data.datalocal.model.NoteEntity
+import com.github.michaelbull.result.Result
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import com.github.michaelbull.result.Result
 
 interface NoteRepository {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>

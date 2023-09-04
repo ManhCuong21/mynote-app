@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace 'com.example.mynote'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.mynote"
         minSdk 26
-        targetSdk 34
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -50,9 +50,8 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.7.1"
+    def nav_version = "2.6.0"
     def hilt_version = "2.44"
-    def firebase_version = "20.2.1"
 
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
@@ -69,9 +68,6 @@ dependencies {
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
-    //Firebase
-//    implementation "com.google.firebase:firebase-storage-ktx:$firebase_version"
 
     //import Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

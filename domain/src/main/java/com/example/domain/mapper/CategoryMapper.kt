@@ -1,7 +1,7 @@
 package com.example.domain.mapper
 
 import com.example.core.core.model.CategoryModel
-import com.example.data.model.CategoryEntity
+import com.example.data.datalocal.model.CategoryEntity
 
 data class CategoryParams(val title: String, val image: Int)
 

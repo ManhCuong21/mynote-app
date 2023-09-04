@@ -58,4 +58,15 @@
     <string name="title_notification">Notification</string>
     <string name="format_date_time_picker_today">Today - %s</string>
     <string name="format_date_time_picker_tomorrow">Tomorrow - %s</string>
+
+    <!-- Sign Up -->
+    <string name="title_email">Email</string>
+    <string name="title_password">Password</string>
+    <string name="signup_email_empty_error">Empty Email</string>
+    <string name="signup_email_length_error">Length Email</string>
+    <string name="signup_email_format_error">Format Email</string>
+    <string name="signup_password_empty_error">Empty Password</string>
+    <string name="signup_password_length_error">Length Password</string>
+    <string name="signup_password_confirm_not_match_error">Not Match Password</string>
+    <string name="signup_null_error" />
 </resources>

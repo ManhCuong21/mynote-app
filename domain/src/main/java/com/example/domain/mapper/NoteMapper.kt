@@ -3,8 +3,8 @@ package com.example.domain.mapper
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.NoteModel
 import com.example.core.core.model.NotificationModel
-import com.example.data.model.NoteEntity
-import com.example.data.model.NotificationEntity
+import com.example.data.datalocal.model.NoteEntity
+import com.example.data.datalocal.model.NotificationEntity
 
 data class NoteParams(
     val categoryNote: CategoryModel,

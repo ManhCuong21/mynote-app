@@ -1,7 +1,7 @@
-package com.example.data.database
+package com.example.data.datalocal.database
 
-import com.example.data.dao.AppDAO
-import com.example.data.model.CategoryEntity
+import com.example.data.datalocal.dao.AppDAO
+import com.example.data.datalocal.model.CategoryEntity
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
 import javax.inject.Inject

@@ -3,7 +3,7 @@ package com.example.presentation.main.listcategory
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.domain.usecase.CategoryUseCase
+import com.example.domain.usecase.local.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

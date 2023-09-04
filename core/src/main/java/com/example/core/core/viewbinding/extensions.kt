@@ -1,14 +1,10 @@
 package com.example.core.core.viewbinding
 
-import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
 import androidx.annotation.MainThread
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
@@ -43,80 +39,10 @@ inline fun <reified T : ViewBinding> Fragment.viewBinding(
     onDestroyView = onDestroyView
 )
 
-//
-// Activity
-//
-
-/**
- * Create [ViewBinding] property delegate for this [Activity].
- * @param bind a lambda function that creates a [ViewBinding] instance from [Activity]'s contentView, eg: `T::bind` static method can be used.
- */
 @Suppress("unused")
 @MainThread
-fun <T : ViewBinding> Activity.viewBinding(bind: (View) -> T): ActivityViewBindingDelegate<T> =
-    ActivityViewBindingDelegate.from(viewBindingBind = bind)
-
-/**
- * Create [ViewBinding] property delegate for this [Activity].
- */
-@Suppress("unused")
-@MainThread
-inline fun <reified T : ViewBinding> Activity.viewBinding(): ActivityViewBindingDelegate<T> =
-    ActivityViewBindingDelegate.from(viewBindingClazz = T::class.java)
-
-//
-// DialogFragment
-//
-
-/**
- * Create [ViewBinding] property delegate for the [Dialog] of this [DialogFragment].
- *
- * @param bind a lambda function that creates a [ViewBinding] instance from root view of the [Dialog] of this [DialogFragment],
- *        eg: `T::bind` static method can be used.
- */
-@MainThread
-fun <DF, T : ViewBinding> DF.dialogFragmentViewBinding(
-  @IdRes rootId: Int,
-  bind: (View) -> T,
-  onDestroyView: (T.() -> Unit)? = null
-): DialogFragmentViewBindingDelegate<T, DF> where DF : DialogFragment, DF : ViewBindingDialogFragment {
-  return DialogFragmentViewBindingDelegate.from(
-      fragment = this,
-      viewBindingBind = bind,
-      rootId = rootId,
-      onDestroyView = onDestroyView
-  )
-}
-
-/**
- * Create [ViewBinding] property delegate for the [Dialog] of this [DialogFragment].
- */
-@MainThread
-inline fun <DF, reified T : ViewBinding> DF.dialogFragmentViewBinding(
-  @IdRes rootId: Int,
-  noinline onDestroyView: (T.() -> Unit)? = null
-): DialogFragmentViewBindingDelegate<T, DF> where DF : DialogFragment, DF : ViewBindingDialogFragment {
-  return DialogFragmentViewBindingDelegate.from(
-      fragment = this,
-      viewBindingClazz = T::class.java,
-      rootId = rootId,
-      onDestroyView = onDestroyView
-  )
-}
-
-/**
- * Create [ViewBinding] property delegate for the [Dialog] of this [DefaultViewBindingDialogFragment].
- */
-@MainThread
-inline fun <reified T : ViewBinding> DefaultViewBindingDialogFragment.dialogFragmentViewBinding(
-  @IdRes rootId: Int,
-  noinline onDestroyView: (T.() -> Unit)? = null
-): DialogFragmentViewBindingDelegate<T, DefaultViewBindingDialogFragment> =
-  dialogFragmentViewBinding<DefaultViewBindingDialogFragment, T>(rootId, onDestroyView)
-
-//
-// ViewGroup
-//
+inline fun <reified T : ViewBinding> viewBinding(): ActivityViewBindingDelegate<T> =
+  ActivityViewBindingDelegate.from(viewBindingClazz = T::class.java)
 
 /**
  * Inflating a [ViewBinding] of given type [T], This [ViewGroup] is used as a parent.
@@ -166,12 +92,3 @@ inline fun <reified T : ViewBinding> Context.inflateViewBinding(
   parent: ViewGroup? = null,
   attachToParent: Boolean = parent != null
 ): T = LayoutInflater.from(this).inflateViewBinding(parent, attachToParent)
-
-fun View.onClickWithAvoidRapidAction(
-    timeDelay: Int = AvoidRapidAction.DEFAULT_DELAY_TIME,
-    click: () -> Unit
-) {
-  setOnClickListener {
-      AvoidRapidAction.action(timeDelay, click)
-  }
-}

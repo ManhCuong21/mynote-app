@@ -1,11 +1,11 @@
-package com.example.data.dao
+package com.example.data.datalocal.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.data.model.CategoryEntity
+import com.example.data.datalocal.model.CategoryEntity
 
 @Dao
 interface CategoryDAO {

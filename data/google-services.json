@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "135099186733",
+    "firebase_url": "https://my-note-e888c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "my-note-e888c",
+    "storage_bucket": "my-note-e888c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135099186733:android:c668e24fe14be42fac82a4",
+        "android_client_info": {
+          "package_name": "com.mynote.data"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "135099186733-2pgcvhfmfpncccd4sjdvi470ebohem52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-qeO3WbV5XhA9LrA-Hub-Ng6UNnHtcVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "135099186733-2pgcvhfmfpncccd4sjdvi470ebohem52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

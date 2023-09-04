@@ -1,7 +1,7 @@
-package com.example.domain.usecase
+package com.example.domain.usecase.local
 
 import com.example.core.core.model.CategoryModel
-import com.example.data.repository.CategoryRepository
+import com.example.data.datalocal.repository.CategoryRepository
 import com.example.domain.mapper.CategoryParams
 import com.example.domain.mapper.toCategoryEntity
 import com.example.domain.mapper.toCategoryModel

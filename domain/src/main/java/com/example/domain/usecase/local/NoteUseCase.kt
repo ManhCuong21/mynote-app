@@ -1,7 +1,7 @@
-package com.example.domain.usecase
+package com.example.domain.usecase.local
 
 import com.example.core.core.model.NoteModel
-import com.example.data.repository.NoteRepository
+import com.example.data.datalocal.repository.NoteRepository
 import com.example.domain.mapper.NoteParams
 import com.example.domain.mapper.toNoteEntity
 import com.example.domain.mapper.toNoteEntityWithNotification

@@ -1,11 +1,10 @@
-package com.example.data.database
+package com.example.data.datalocal.database
 
-import com.example.data.dao.AppDAO
-import com.example.data.model.CategoryEntity
-import com.example.data.model.NoteEntity
-import javax.inject.Inject
+import com.example.data.datalocal.dao.AppDAO
+import com.example.data.datalocal.model.NoteEntity
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
+import javax.inject.Inject
 
 interface NoteDatabase {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>

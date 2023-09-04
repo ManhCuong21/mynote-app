@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/BackgroundRoot"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:minWidth="@dimen/dimen_488"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -39,7 +40,6 @@
                 android:text="@string/title_add_category" />
         </FrameLayout>
 
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgItemCategory"
             android:layout_width="wrap_content"
@@ -52,19 +52,19 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edtCategoryName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dimen_16"
             android:clipToPadding="false"
             android:hint="@string/category_name"
-            android:minWidth="@dimen/dimen_488"
-            app:errorIconDrawable="@null">
+            app:errorIconDrawable="@null"
+            app:startIconDrawable="@drawable/baseline_category_24">
 
             <com.google.android.material.textfield.TextInputEditText
                 style="@style/TextContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="textPersonName"
                 android:maxEms="1"
                 android:maxLines="1"

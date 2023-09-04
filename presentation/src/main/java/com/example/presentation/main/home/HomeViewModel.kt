@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.domain.usecase.local.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val categoryUseCase: com.example.domain.usecase.CategoryUseCase
+    private val categoryUseCase: CategoryUseCase
 ) : BaseViewModel() {
     private val _mutableStateFlow: MutableStateFlow<HomeUiState>
     val stateFlow: StateFlow<HomeUiState>

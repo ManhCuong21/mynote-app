@@ -13,14 +13,15 @@
         android:layout_marginHorizontal="@dimen/dimen_16">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            style="@style/BackgroundContentRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/dimen_16">
+            android:padding="@dimen/dimen_20">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleDialog"
-                style="@style/Theme.TextViewTitle"
+                style="@style/TextTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dimen_16"
@@ -28,6 +29,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvContentDialog"
+                style="@style/TextContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Content dialog" />
@@ -42,7 +44,6 @@
                     android:id="@+id/btnNegative"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/dimen_8"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/dimen_16"
                     android:textColor="@color/primary"
@@ -52,6 +53,7 @@
                     android:id="@+id/btnPositive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dimen_8"
                     android:textAllCaps="false" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>

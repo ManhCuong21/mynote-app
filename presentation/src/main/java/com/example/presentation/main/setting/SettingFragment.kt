@@ -9,11 +9,15 @@ import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogTimeFormatBinding
 import com.example.presentation.databinding.FragmentSettingBinding
+import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingFragment : BaseFragment(R.layout.fragment_setting) {
+
+    @Inject
+    lateinit var mainNavigator: MainNavigator
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
@@ -54,6 +58,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     private fun setupClickListener() = binding.apply {
         btnTimeFormat.setOnClickListener {
             showDialogTimeFormat()
+        }
+        btnBackupDevice.setOnClickListener {
+            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignUpFragment)
         }
     }
 

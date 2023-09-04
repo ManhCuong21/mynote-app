@@ -2,15 +2,15 @@ package com.example.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.data.dao.AppDAO
-import com.example.data.database.CategoryDatabase
-import com.example.data.database.CategoryDatabaseImpl
-import com.example.data.database.NoteDatabase
-import com.example.data.database.NoteDatabaseImpl
-import com.example.data.repository.CategoryRepository
-import com.example.data.repository.CategoryRepositoryImpl
-import com.example.data.repository.NoteRepository
-import com.example.data.repository.NoteRepositoryImpl
+import com.example.data.datalocal.dao.AppDAO
+import com.example.data.datalocal.database.CategoryDatabase
+import com.example.data.datalocal.database.CategoryDatabaseImpl
+import com.example.data.datalocal.database.NoteDatabase
+import com.example.data.datalocal.database.NoteDatabaseImpl
+import com.example.data.datalocal.repository.CategoryRepository
+import com.example.data.datalocal.repository.CategoryRepositoryImpl
+import com.example.data.datalocal.repository.NoteRepository
+import com.example.data.datalocal.repository.NoteRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
