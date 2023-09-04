@@ -11,8 +11,8 @@
         tools:layout="@layout/fragment_main">
 
         <action
-            android:id="@+id/action_mainFragment_to_SignUpFragment"
-            app:destination="@+id/signUpFragment" />
+            android:id="@+id/action_mainFragment_to_SignInFragment"
+            app:destination="@+id/signInFragment" />
 
         <action
             android:id="@+id/action_mainFragment_to_NoteFragment"
@@ -66,6 +66,15 @@
             android:defaultValue="@null"
             app:argType="com.example.core.core.model.CategoryModel"
             app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.example.presentation.authentication.signin.SignInFragment"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signInFragment_to_SignUpFragment"
+            app:destination="@+id/signUpFragment" />
     </fragment>
 
     <fragment

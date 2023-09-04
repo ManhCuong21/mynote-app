@@ -6,6 +6,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class SharedPrefersManager(preferences: SharedPreferences) {
+    var userEmail by SharedPrefParameter(USER_EMAIL, preferences, null)
     var darkModeTheme by SharedPrefBooleanParameter(DARK_MODE_THEME, preferences, false)
     var format24Hour by SharedPrefBooleanParameter(FORMAT_TIME, preferences, false)
 }

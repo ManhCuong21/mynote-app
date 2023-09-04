@@ -22,6 +22,17 @@
             android:text="@string/title_setting" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/lnInformation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -273,5 +284,17 @@
                 android:src="@drawable/baseline_arrow_forward_ios_24" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnLogOut"
+            style="@style/BackgroundContentRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_16"
+            android:gravity="center"
+            android:paddingVertical="@dimen/dimen_10"
+            android:text="@string/title_log_out"
+            android:textColor="@color/redTitle"
+            android:textSize="@dimen/text_size_16sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.core.widget.NestedScrollView>

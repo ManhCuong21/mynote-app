@@ -10,6 +10,7 @@ import com.example.core.core.external.checkMainThread
 import com.example.core.core.external.safeNavigate
 import javax.inject.Inject
 import com.example.presentation.R
+import com.example.presentation.authentication.signin.SignInFragmentDirections
 import com.example.presentation.note.NoteFragmentDirections
 import com.example.presentation.main.MainFragmentDirections
 import com.example.presentation.navigation.MainNavigator.Direction
@@ -37,7 +38,8 @@ class MainNavigatorImpl @Inject constructor(
 
 
 private fun Direction.toNavDirections(): NavDirections = when (this) {
-    is Direction.MainFragmentToSignUpFragment -> MainFragmentDirections.actionMainFragmentToSignUpFragment()
+    is Direction.SignInFragmentToSignUpFragment -> SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
+    is Direction.MainFragmentToSignInFragment -> MainFragmentDirections.actionMainFragmentToSignInFragment()
     is Direction.MainFragmentToAddNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
         actionNote = ActionNote.INSERT_NOTE,
         category = category,
@@ -59,6 +61,7 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
         actionCategory = ActionCategory.UPDATE_CATEGORY,
         category = category
     )
+
     is Direction.MainFragmentToDateTimePickersFragment -> MainFragmentDirections.actionMainFragmentToDateTimePickersFragment(
         noteModel = noteModel
     )

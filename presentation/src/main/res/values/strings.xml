@@ -58,15 +58,20 @@
     <string name="title_notification">Notification</string>
     <string name="format_date_time_picker_today">Today - %s</string>
     <string name="format_date_time_picker_tomorrow">Tomorrow - %s</string>
+    <string name="title_log_out">Log out</string>
 
-    <!-- Sign Up -->
+    <!-- Authentication -->
     <string name="title_email">Email</string>
     <string name="title_password">Password</string>
-    <string name="signup_email_empty_error">Empty Email</string>
-    <string name="signup_email_length_error">Length Email</string>
-    <string name="signup_email_format_error">Format Email</string>
-    <string name="signup_password_empty_error">Empty Password</string>
-    <string name="signup_password_length_error">Length Password</string>
-    <string name="signup_password_confirm_not_match_error">Not Match Password</string>
-    <string name="signup_null_error" />
+    <string name="hint_email_empty_error">Empty Email</string>
+    <string name="hint_email_length_error">Length Email</string>
+    <string name="hint_email_format_error">Format Email</string>
+    <string name="hint_password_empty_error">Empty Password</string>
+    <string name="hint_password_length_error">Length Password</string>
+    <string name="hint_password_confirm_not_match_error">Not Match Password</string>
+    <string name="hint_null_error" />
+    <string name="title_not_have_an_account">Don\'t have an account?</string>
+    <string name="title_sign_up">Sign Up</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

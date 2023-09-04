@@ -2,15 +2,22 @@ package com.example.presentation.main.setting
 
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
+import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogTimeFormatBinding
 import com.example.presentation.databinding.FragmentSettingBinding
+import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,13 +33,39 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     override val viewModel: SettingViewModel by viewModels()
 
     override fun setupViews() {
+        setupInformationView()
         setupSwipeButton()
         setupClickListener()
         setupTextView()
     }
 
     override fun bindViewModel() {
-        //No TODO here
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
+                    when (event) {
+                        is SettingSingleEvent.SignOutUser.Success -> {
+                            sharedPrefersManager.userEmail = null
+                            setupInformationView()
+                        }
+
+                        is SettingSingleEvent.SignOutUser.Failed -> {
+                            showTextDialog {
+                                textTitle("Sign out failed")
+                                textContent(event.error.message.toString())
+                                negativeButtonAction("OK") {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupInformationView() = binding.apply {
+        lnInformation.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
+        btnLogOut.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
+        tvEmail.text = sharedPrefersManager.userEmail
     }
 
     private fun setupTextView() = binding.apply {
@@ -60,7 +93,10 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
             showDialogTimeFormat()
         }
         btnBackupDevice.setOnClickListener {
-            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignUpFragment)
+            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignInFragment)
+        }
+        btnLogOut.setOnClickListener {
+            viewModel.dispatch(SettingAction.SignOut)
         }
     }
 

@@ -13,4 +13,6 @@ class UserUseCase @Inject constructor(
     suspend fun signInUser(email: String, password: String): Result<Any, Throwable> =
         userRepository.signInUser(email, password)
 
+    suspend fun signOutUser(): Result<Any, Throwable> =
+        userRepository.signOutUser()
 }
