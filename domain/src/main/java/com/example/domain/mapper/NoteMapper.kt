@@ -11,6 +11,8 @@ data class NoteParams(
     val titleNote: String,
     val contentNote: String,
     val fileMediaNote: String,
+    val hasImage: Boolean,
+    val hasRecord: Boolean,
     var colorTitleNote: String,
     var colorContentNote: String,
     var timeNote: Long
@@ -21,9 +23,11 @@ fun NoteParams.toNoteEntity() = NoteEntity(
     titleNote = titleNote,
     contentNote = contentNote,
     fileMediaNote = fileMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
-    timeNote = timeNote,
+    timeNote = timeNote
 )
 
 fun NoteModel.toNoteEntity() = NoteEntity(
@@ -31,9 +35,12 @@ fun NoteModel.toNoteEntity() = NoteEntity(
     categoryEntity = categoryNote.toCategoryEntity(),
     titleNote = titleNote,
     contentNote = contentNote,
-    fileMediaNote = fileMediaNote,
+    fileMediaNote = nameMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
+    notificationEntity = notificationModel?.toNotificationEntity(),
     timeNote = timeNote
 )
 
@@ -42,7 +49,9 @@ fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
     categoryEntity = categoryNote.toCategoryEntity(),
     titleNote = titleNote,
     contentNote = contentNote,
-    fileMediaNote = fileMediaNote,
+    fileMediaNote = nameMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
     timeNote = timeNote,
@@ -54,7 +63,9 @@ fun NoteEntity.toNoteModel() = NoteModel(
     categoryNote = categoryEntity.toCategoryModel(),
     titleNote = titleNote,
     contentNote = contentNote,
-    fileMediaNote = fileMediaNote,
+    nameMediaNote = fileMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
     timeNote = timeNote ?: System.currentTimeMillis(),

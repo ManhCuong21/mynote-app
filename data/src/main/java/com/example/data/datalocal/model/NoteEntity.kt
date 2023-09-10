@@ -18,6 +18,10 @@ data class NoteEntity(
     val contentNote: String,
     @ColumnInfo(name = "fileMediaNote")
     val fileMediaNote: String,
+    @ColumnInfo(name = "hasImage")
+    val hasImage: Boolean,
+    @ColumnInfo(name = "hasRecord")
+    val hasRecord: Boolean,
     @ColumnInfo(name = "colorTitleNote")
     val colorTitleNote: String,
     @ColumnInfo(name = "colorContentNote")

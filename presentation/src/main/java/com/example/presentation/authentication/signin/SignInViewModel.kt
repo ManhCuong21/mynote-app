@@ -118,8 +118,8 @@ class SignInViewModel @Inject constructor(
                 flow {
                     emit(ResultContent.Loading)
                     userUseCase.signInUser(
-                        email = stateFlow.value.email ?: "",
-                        password = stateFlow.value.password ?: ""
+                        email = stateFlow.value.email.orEmpty(),
+                        password = stateFlow.value.password.orEmpty()
                     ).fold(
                         success = {
                             ResultContent.Content(it)

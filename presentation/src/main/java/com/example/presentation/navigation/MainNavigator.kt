@@ -17,7 +17,7 @@ interface MainNavigator {
         object MainFragmentToAddCategoryFragment : Direction
         data class MainFragmentToUpdateCategoryFragment(val category: CategoryModel) : Direction
         data class MainFragmentToDateTimePickersFragment(val noteModel: NoteModel) : Direction
-        data class NoteFragmentToRecorderFragment(val fileMediaName: String) : Direction
+        object NoteFragmentToRecorderFragment : Direction
     }
 
     @MainThread

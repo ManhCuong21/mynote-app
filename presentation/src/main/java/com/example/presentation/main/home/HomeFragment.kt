@@ -10,7 +10,7 @@ import com.example.core.base.BaseFragment
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentHomeBinding
 import com.example.presentation.dialog.list.showListDialog

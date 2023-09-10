@@ -133,8 +133,8 @@ class SignUpViewModel @Inject constructor(
                 flow {
                     emit(ResultContent.Loading)
                     userUseCase.signUpUser(
-                        email = stateFlow.value.email ?: "",
-                        password = stateFlow.value.password ?: ""
+                        email = stateFlow.value.email.orEmpty(),
+                        password = stateFlow.value.password.orEmpty()
                     ).fold(
                         success = {
                             ResultContent.Content(it)

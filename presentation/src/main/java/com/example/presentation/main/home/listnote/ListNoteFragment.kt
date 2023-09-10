@@ -16,12 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
-import com.example.core.core.file.image.ImageFile
-import com.example.core.core.file.record.RecordFile
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentListNoteBinding
 import com.example.presentation.dialog.list.showListDialog
@@ -42,12 +40,6 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
 
-    @Inject
-    lateinit var imageFile: ImageFile
-
-    @Inject
-    lateinit var recordFile: RecordFile
-
     override val binding: FragmentListNoteBinding by viewBinding()
     override val viewModel: ListNoteViewModel by viewModels()
 
@@ -60,9 +52,6 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     private lateinit var categoryNote: CategoryModel
     private val listNoteAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ListNoteAdapter(
-            fragmentActivity = requireActivity(),
-            imageFile = imageFile,
-            recordFile = recordFile,
             format24Hour = sharedPrefersManager.format24Hour,
             onItemClicked = { action, noteModel ->
                 when (action) {

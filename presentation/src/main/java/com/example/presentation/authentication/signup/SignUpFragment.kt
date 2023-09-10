@@ -9,7 +9,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.onDidEndEditing
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentSignUpBinding
 import com.example.presentation.dialog.text.showTextDialog
@@ -83,10 +83,6 @@ class SignUpFragment : BaseFragment(R.layout.fragment_sign_up) {
                         }
                     }
                 }
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
                     binding.btnSignUp.isEnabled =
                         state.validationErrors.isEmpty() && state.isActiveButton

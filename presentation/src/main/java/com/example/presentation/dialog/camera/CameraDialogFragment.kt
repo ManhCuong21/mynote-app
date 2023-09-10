@@ -16,15 +16,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
-import com.example.core.core.external.AppConstants.PATH_MEDIA_NOTE
-import com.example.core.core.file.FileExtension
+import com.example.core.core.external.formatDate
 import com.example.core.core.viewbinding.inflateViewBinding
+import com.example.domain.usecase.file.FileUseCase
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentCameraDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -46,7 +44,7 @@ fun Fragment.showCameraDialog(
 class CameraDialogFragment : DialogFragment() {
 
     @Inject
-    lateinit var fileExtension: FileExtension
+    lateinit var fileUseCase: FileUseCase
 
     private var builder: Builder? = null
     private lateinit var binding: FragmentCameraDialogBinding
@@ -137,16 +135,10 @@ class CameraDialogFragment : DialogFragment() {
         val imageCapture = imageCapture ?: return
 
         // Create time stamped name and MediaStore entry.
-        val pathFile = SimpleDateFormat(
-            FILE_NAME_FORMAT,
-            Locale.getDefault()
-        ).format(System.currentTimeMillis())
+        val fileName = formatDate(FILE_NAME_FORMAT)
         val file = File(
-            fileExtension.getOutputMediaDirectory(
-                fragmentActivity = requireActivity(),
-                pathDirectory = builder?.fileName ?: "${PATH_MEDIA_NOTE}$pathFile"
-            ),
-            "$pathFile.jpg"
+            fileUseCase.getOutputMediaDirectoryTemp(fragmentActivity = requireActivity()),
+            "$fileName.jpg"
         )
 
         // Create output options object which contains file + metadata
@@ -180,14 +172,8 @@ class CameraDialogFragment : DialogFragment() {
     }
 
     class Builder {
-        internal var fileName: String? = null
-            private set
         internal var takePictureClickListener: () -> Unit = { }
             private set
-
-        fun setFileNameImage(fileNameImage: String) {
-            fileName = fileNameImage
-        }
 
         fun takePictureAction(
             listener: () -> Unit,

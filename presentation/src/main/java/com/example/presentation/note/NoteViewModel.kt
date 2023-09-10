@@ -7,6 +7,9 @@ import com.example.core.core.external.ResultContent
 import com.example.core.core.external.combine
 import com.example.core.core.model.NoteModel
 import com.example.domain.mapper.NoteParams
+import com.example.domain.usecase.file.FileUseCase
+import com.example.domain.usecase.file.ImageFileUseCase
+import com.example.domain.usecase.file.RecordFileUseCase
 import com.example.domain.usecase.local.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +37,10 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val noteUseCase: NoteUseCase
+    private val noteUseCase: NoteUseCase,
+    private val fileUseCase: FileUseCase,
+    private val imageFileUseCase: ImageFileUseCase,
+    private val recordFileUseCase: RecordFileUseCase
 ) : BaseViewModel() {
     private val _mutableStateFlow: MutableStateFlow<NoteUiState>
     val stateFlow: StateFlow<NoteUiState>
@@ -55,7 +61,6 @@ class NoteViewModel @Inject constructor(
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
-
         val titleNoteFlow = action<NoteAction.TitleNoteChanged>()
             .map { it.titleNote }
             .onStart { emit(initialUiState.titleNote.orEmpty()) }
@@ -71,9 +76,19 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.categoryNote) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-        val fileMediaNoteFlow = action<NoteAction.FileMediaNoteChanged>()
+        val fileMediaNoteFlow = action<NoteAction.DirectoryNameNoteChanged>()
             .map { it.fileMediaNote }
-            .onStart { emit(initialUiState.fileMediaNote.orEmpty()) }
+            .onStart { emit(initialUiState.directoryName.orEmpty()) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+        val hasImageNoteFlow = action<NoteAction.HasImageNoteChanged>()
+            .map { it.hasImage }
+            .onStart { emit(initialUiState.hasImage ?: false) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+        val hasRecordNoteFlow = action<NoteAction.HasRecordNoteChanged>()
+            .map { it.hasRecord }
+            .onStart { emit(initialUiState.hasRecord ?: false) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
         val colorTitleNoteFlow = action<NoteAction.ColorTitleNoteChanged>()
@@ -86,27 +101,45 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.colorContentNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
+        val notificationNoteFlow = action<NoteAction.NotificationNoteChanged>()
+            .map { it.notificationModel }
+            .onStart { emit(initialUiState.notificationModel) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
         val titleNote = titleNoteFlow.distinctUntilChanged()
         val contentNote = contentNoteFlow.distinctUntilChanged()
         val categoryNote = categoryNoteFlow.distinctUntilChanged()
         val fileMediaNote = fileMediaNoteFlow.distinctUntilChanged()
+        val hasImageNote = hasImageNoteFlow.distinctUntilChanged()
+        val hasRecordNote = hasRecordNoteFlow.distinctUntilChanged()
         val colorTitleNote = colorTitleNoteFlow.distinctUntilChanged()
         val colorContentNote = colorContentNoteFlow.distinctUntilChanged()
+        val notificationNote = notificationNoteFlow.distinctUntilChanged()
 
         stateFlow = combine(
             titleNote,
             contentNote,
             categoryNote,
             fileMediaNote,
+            hasImageNote,
+            hasRecordNote,
             colorTitleNote,
             colorContentNote,
+            notificationNote,
             ::buildNoteUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
         }.stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
 
-        updateListImage()
-        updateListRecord()
+        deleteDirectory()
+        deleteDirectoryTemp()
+        saveFileMediaToTemp()
+        saveMediaToDirectory()
+        saveImageNote()
+        getListImage()
+        deleteImage()
+        getListRecord()
+        deleteRecord()
         saveNote()
         updateNote()
     }
@@ -117,13 +150,16 @@ class NoteViewModel @Inject constructor(
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
+                    dispatch(NoteAction.SaveMediaToDirectory(it.context))
                     val uiState = stateFlow.value
                     noteUseCase.insertNote(
                         NoteParams(
                             titleNote = uiState.titleNote.orEmpty(),
                             contentNote = uiState.contentNote.orEmpty(),
                             categoryNote = uiState.categoryNote,
-                            fileMediaNote = uiState.fileMediaNote.orEmpty(),
+                            fileMediaNote = uiState.directoryName.orEmpty(),
+                            hasImage = uiState.hasImage ?: false,
+                            hasRecord = uiState.hasRecord ?: false,
                             colorTitleNote = uiState.colorTitleNote.orEmpty(),
                             colorContentNote = uiState.colorContentNote.orEmpty(),
                             timeNote = System.currentTimeMillis()
@@ -160,9 +196,12 @@ class NoteViewModel @Inject constructor(
                             titleNote = uiState.titleNote.orEmpty(),
                             contentNote = uiState.contentNote.orEmpty(),
                             categoryNote = uiState.categoryNote,
-                            fileMediaNote = uiState.fileMediaNote.orEmpty(),
+                            nameMediaNote = uiState.directoryName.orEmpty(),
+                            hasImage = uiState.hasImage ?: false,
+                            hasRecord = uiState.hasRecord ?: false,
                             colorTitleNote = uiState.colorTitleNote.orEmpty(),
                             colorContentNote = uiState.colorContentNote.orEmpty(),
+                            notificationModel = uiState.notificationModel,
                             timeNote = System.currentTimeMillis()
                         )
                     ).fold(
@@ -184,15 +223,80 @@ class NoteViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    private fun updateListImage() {
-        action<NoteAction.UpdateListImage>()
-            .onEach { _singleEventChannel.send(NoteSingleEvent.UpdateListImage) }
+    private fun saveFileMediaToTemp() {
+        action<NoteAction.SaveFileMediaToTemp>()
+            .onEach {
+                fileUseCase.saveFileToTemp(it.context, it.directoryName)
+            }.launchIn(viewModelScope)
+    }
+
+    private fun saveMediaToDirectory() {
+        action<NoteAction.SaveMediaToDirectory>()
+            .onEach {
+                fileUseCase.saveFileToDirectory(it.context, stateFlow.value.directoryName.orEmpty())
+            }.launchIn(viewModelScope)
+    }
+
+    private fun deleteDirectoryTemp() {
+        action<NoteAction.DeleteDirectoryTemp>()
+            .onEach {
+                fileUseCase.deleteDirectoryTemp(it.context)
+            }.launchIn(viewModelScope)
+    }
+
+    private fun deleteDirectory() {
+        action<NoteAction.DeleteDirectory>()
+            .onEach {
+                fileUseCase.deleteDirectory(
+                    fileUseCase.getOutputMediaDirectory(
+                        it.context,
+                        stateFlow.value.directoryName.orEmpty()
+                    )
+                )
+            }.launchIn(viewModelScope)
+    }
+
+    private fun saveImageNote() {
+        action<NoteAction.SaveImageNote>()
+            .onEach {
+                imageFileUseCase.saveImageToTemp(it.context, it.bitmap)
+                dispatch(NoteAction.GetListImageNote(it.context))
+            }.launchIn(viewModelScope)
+    }
+
+    private fun getListImage() {
+        action<NoteAction.GetListImageNote>()
+            .onEach {
+                val listImage = imageFileUseCase.readImage(it.context)
+                dispatch(NoteAction.HasImageNoteChanged(listImage.isNotEmpty()))
+                _singleEventChannel.send(NoteSingleEvent.GetListImage(listImage))
+            }.launchIn(viewModelScope)
+    }
+
+    private fun deleteImage() {
+        action<NoteAction.DeleteImageNote>()
+            .onEach {
+                imageFileUseCase.deleteImage(it.pathImage)
+                dispatch(NoteAction.GetListImageNote(it.context))
+            }
             .launchIn(viewModelScope)
     }
 
-    private fun updateListRecord() {
-        action<NoteAction.UpdateListRecord>()
-            .onEach { _singleEventChannel.send(NoteSingleEvent.UpdateListRecord) }
+    private fun getListRecord() {
+        action<NoteAction.GetListRecordNote>()
+            .onEach {
+                val listRecord = recordFileUseCase.readRecord(it.context)
+                dispatch(NoteAction.HasRecordNoteChanged(listRecord.isNotEmpty()))
+                _singleEventChannel.send(NoteSingleEvent.GetListRecord(listRecord))
+            }.launchIn(viewModelScope)
+    }
+
+    private fun deleteRecord() {
+        action<NoteAction.DeleteRecordNote>()
+            .onEach {
+                recordFileUseCase.deleteRecord(it.pathRecord)
+                dispatch(NoteAction.GetListRecordNote(it.context))
+            }
             .launchIn(viewModelScope)
     }
 

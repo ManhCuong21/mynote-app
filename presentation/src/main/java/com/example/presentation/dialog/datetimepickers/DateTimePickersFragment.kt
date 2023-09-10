@@ -9,7 +9,7 @@ import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants.FORMAT_TIME_DEFAULT_NOTIFICATION
 import com.example.core.core.external.formatDate
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentDateTimePickersBinding
 import com.example.presentation.main.home.alarmclock.NotificationUtils

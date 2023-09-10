@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,19 +13,13 @@ import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_12_HOUR
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_24_HOUR
 import com.example.core.core.external.formatDate
-import com.example.core.core.file.image.ImageFile
-import com.example.core.core.file.record.RecordFile
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogSettingNoteBinding
 import com.example.presentation.databinding.ItemListNoteBinding
-import kotlinx.coroutines.launch
 
 class ListNoteAdapter(
-    private val fragmentActivity: FragmentActivity,
-    private val imageFile: ImageFile,
-    private val recordFile: RecordFile,
     private val format24Hour: Boolean,
     private val onItemClicked: (ActionNote, NoteModel) -> Unit
 ) : ListAdapter<NoteModel, ListNoteAdapter.ViewHolder>(
@@ -60,7 +52,9 @@ class ListNoteAdapter(
                 if (!format24Hour) DATE_FORMAT_TIME_12_HOUR else DATE_FORMAT_TIME_24_HOUR
             tvTimeNote.text =
                 context.getString(R.string.format_date_note, formatDate(dateFormat, item.timeNote))
-            isVisibleImage(item.fileMediaNote)
+            vHaveImage.isVisible = item.hasImage
+            vHaveRecord.isVisible = item.hasRecord
+            vHaveNotification.isVisible = item.notificationModel != null
             root.setOnClickListener {
                 val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
                 val builder = AlertDialog.Builder(context)
@@ -89,15 +83,6 @@ class ListNoteAdapter(
                         dialog.dismiss()
                     }
                 }
-            }
-        }
-
-        private fun isVisibleImage(pathFile: String) {
-            fragmentActivity.lifecycleScope.launch {
-                binding.vHaveImage.isVisible =
-                    imageFile.readImageFromFile(fragmentActivity, pathFile).isNotEmpty()
-                binding.vHaveRecord.isVisible =
-                    recordFile.readRecordFromFile(fragmentActivity, pathFile).isNotEmpty()
             }
         }
     }

@@ -16,20 +16,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
 import com.example.core.core.external.formatDate
-import com.example.core.core.file.FileExtension
+import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
-import com.example.presentation.note.NoteAction
-import com.example.presentation.note.NoteViewModel
-import com.example.presentation.dialog.text.showTextDialog
+import com.example.domain.usecase.file.FileUseCase
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentRecorderBinding
+import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
+import com.example.presentation.note.NoteAction
+import com.example.presentation.note.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -45,7 +44,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     lateinit var mainNavigator: MainNavigator
 
     @Inject
-    lateinit var fileExtension: FileExtension
+    lateinit var fileUseCase: FileUseCase
 
     override val binding: FragmentRecorderBinding by viewBinding()
     override val viewModel: RecorderViewModel by viewModels()
@@ -55,10 +54,8 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     private val listPermission =
         arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
-    private val fileNameMedia by lazy(LazyThreadSafetyMode.NONE) { navArgs<RecorderFragmentArgs>().value.fileNameMedia }
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-
     private val appPermissionSettingLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
@@ -100,13 +97,15 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         }
         btnSaveRecord.setOnClickListener {
             stopRecording()
-            noteViewModel.dispatch(NoteAction.UpdateListRecord)
+            noteViewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
             mainNavigator.popBackStack()
         }
         btnCancel.setOnClickListener {
+            stopRecording()
             mainNavigator.popBackStack()
         }
         btnBack.setOnClickListener {
+            stopRecording()
             mainNavigator.popBackStack()
         }
     }
@@ -159,8 +158,8 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
             setOutputFile(
                 FileOutputStream(
                     File(
-                        fileExtension.getOutputMediaDirectory(requireActivity(), fileNameMedia),
-                        "${formatDate(FILE_NAME_FORMAT, System.currentTimeMillis())}.mp4"
+                        fileUseCase.getOutputMediaDirectoryTemp(requireActivity()),
+                        "${formatDate(FILE_NAME_FORMAT)}.mp4"
                     )
                 ).fd
             )

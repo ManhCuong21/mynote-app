@@ -94,11 +94,6 @@
     <fragment
         android:id="@+id/recorderFragment"
         android:name="com.example.presentation.note.record.RecorderFragment"
-        tools:layout="@layout/fragment_recorder">
-
-        <argument
-            android:name="fileNameMedia"
-            app:argType="string" />
-    </fragment>
+        tools:layout="@layout/fragment_recorder" />
 
 </navigation>

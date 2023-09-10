@@ -1,4 +1,4 @@
-package com.example.mynote.core.external
+package com.example.core.core.lifecycle
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle

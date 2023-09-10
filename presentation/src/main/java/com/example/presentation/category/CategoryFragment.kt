@@ -13,7 +13,7 @@ import com.example.core.core.external.loadImage
 import com.example.core.core.model.ItemCategory
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentCategoryBinding
 import com.example.presentation.navigation.MainNavigator

@@ -24,14 +24,11 @@ import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants
-import com.example.core.core.external.AppConstants.PATH_MEDIA_NOTE
-import com.example.core.core.file.FileExtension
-import com.example.core.core.file.image.ImageFile
-import com.example.core.core.file.record.RecordFile
+import com.example.core.core.external.formatDate
+import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.DialogChooseImageAddNoteBinding
 import com.example.presentation.databinding.FragmentNoteBinding
@@ -43,8 +40,6 @@ import com.example.presentation.note.adapter.NoteListImageAdapter
 import com.example.presentation.note.adapter.NoteListRecordAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -52,15 +47,6 @@ import javax.inject.Inject
 class NoteFragment : BaseFragment(R.layout.fragment_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
-
-    @Inject
-    lateinit var fileExtension: FileExtension
-
-    @Inject
-    lateinit var imageFile: ImageFile
-
-    @Inject
-    lateinit var recordFile: RecordFile
 
     override val binding: FragmentNoteBinding by viewBinding()
     override val viewModel: NoteViewModel by activityViewModels()
@@ -90,11 +76,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         ItemChooseColor(R.color.blackTitle, R.color.blackContent),
     )
 
-    private var pathFile = PATH_MEDIA_NOTE + SimpleDateFormat(
-        AppConstants.FILE_NAME_FORMAT,
-        Locale.getDefault()
-    ).format(System.currentTimeMillis())
-
     private val chooseColorAdapter by lazy {
         NoteChooseColorAdapter(
             defaultPosition = getDefaultPosition(),
@@ -109,18 +90,16 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val listImageAdapter by lazy {
         NoteListImageAdapter(onItemDelete = {
-            viewLifecycleOwner.lifecycleScope.launch {
-                imageFile.deleteImageFromFile(pathImage = it)
-                viewModel.dispatch(NoteAction.UpdateListImage)
-            }
+            viewModel.dispatch(NoteAction.DeleteImageNote(requireActivity(), it))
         })
     }
 
     private val listRecordAdapter by lazy {
         NoteListRecordAdapter(onItemDelete = {
             viewLifecycleOwner.lifecycleScope.launch {
-                recordFile.deleteRecordFromFile(pathRecord = it)
-                viewModel.dispatch(NoteAction.UpdateListRecord)
+                viewModel.dispatch(
+                    NoteAction.DeleteRecordNote(requireActivity(), it)
+                )
             }
         })
     }
@@ -133,15 +112,12 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent: Intent? = result.data
                 val selectedPhotoUri = intent?.data
-                selectedPhotoUri?.let {
-                    if (intent.clipData != null) {
-                        for (i in 0 until intent.clipData!!.itemCount) {
-                            saveImage(intent.clipData!!.getItemAt(i).uri)
-                        }
-                    } else if (intent.data != null) {
-                        saveImage(selectedPhotoUri)
+                if (intent?.clipData != null) {
+                    for (i in 0 until intent.clipData!!.itemCount) {
+                        saveImage(intent.clipData!!.getItemAt(i).uri)
                     }
-                    viewModel.dispatch(NoteAction.UpdateListImage)
+                } else if (intent?.data != null) {
+                    selectedPhotoUri?.let { saveImage(it) }
                 }
             }
         }
@@ -151,6 +127,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
         requestPermissionLauncher.launch(listPermission)
     }
 
@@ -167,22 +144,14 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
-                        is NoteSingleEvent.UpdateListImage -> {
-                            val listImage = imageFile.readImageFromFile(
-                                fragmentActivity = requireActivity(),
-                                pathFile = pathFile
-                            )
-                            binding.rvImageNote.isVisible = listImage.isNotEmpty()
-                            listImageAdapter.submitList(listImage)
+                        is NoteSingleEvent.GetListImage -> {
+                            binding.rvImageNote.isVisible = event.list.isNotEmpty()
+                            listImageAdapter.submitList(event.list)
                         }
 
-                        is NoteSingleEvent.UpdateListRecord -> {
-                            val listRecord = recordFile.readRecordFromFile(
-                                fragmentActivity = requireActivity(),
-                                pathFile = pathFile
-                            )
-                            binding.rvRecordNote.isVisible = listRecord.isNotEmpty()
-                            listRecordAdapter.submitList(listRecord)
+                        is NoteSingleEvent.GetListRecord -> {
+                            binding.rvRecordNote.isVisible = event.list.isNotEmpty()
+                            listRecordAdapter.submitList(event.list)
                         }
 
                         is NoteSingleEvent.SaveNote.Success -> {
@@ -202,15 +171,25 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private fun setCategoryId() {
         if (actionNote == ActionNote.UPDATE_NOTE) {
-            noteModel?.fileMediaNote?.let { pathFile = it }
-            noteModel?.categoryNote?.let { viewModel.dispatch(NoteAction.CategoryNoteChanged(it)) }
             noteModel?.let { initItemNote(it) }
         } else {
             categoryNote?.let { viewModel.dispatch(NoteAction.CategoryNoteChanged(it)) }
+            viewModel.dispatch(
+                NoteAction.DirectoryNameNoteChanged(
+                    AppConstants.PATH_MEDIA_NOTE + formatDate(AppConstants.FILE_NAME_FORMAT)
+                )
+            )
         }
     }
 
     private fun initItemNote(noteModel: NoteModel) = binding.apply {
+        noteModel.nameMediaNote.let {
+            viewModel.dispatch(NoteAction.DirectoryNameNoteChanged(fileMediaNote = it))
+            viewModel.dispatch(NoteAction.SaveFileMediaToTemp(requireActivity(), it))
+            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
+            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
+        }
+        viewModel.dispatch(NoteAction.CategoryNoteChanged(noteModel.categoryNote))
         edtTitleNote.setText(noteModel.titleNote)
         edtContentNote.setText(noteModel.contentNote)
         val colorTitle =
@@ -218,24 +197,17 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         val colorContent =
             noteModel.colorContentNote.ifEmpty { resources.getString(listColor[0].colorContent) }
         setupColorTextInput(colorTitle, colorContent)
-        viewModel.dispatch(NoteAction.UpdateListImage)
-        viewModel.dispatch(NoteAction.UpdateListRecord)
         viewModel.dispatch(NoteAction.TitleNoteChanged(titleNote = noteModel.titleNote))
         viewModel.dispatch(NoteAction.ContentNoteChanged(contentNote = noteModel.contentNote))
         viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
         viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
-        viewModel.dispatch(NoteAction.FileMediaNoteChanged(fileMediaNote = pathFile))
+        viewModel.dispatch(NoteAction.NotificationNoteChanged(notificationModel = noteModel.notificationModel))
     }
 
     private fun setupClickListener() = binding.apply {
         btnBack.setOnClickListener {
-            if (actionNote == ActionNote.INSERT_NOTE) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val file = fileExtension.getOutputMediaDirectory(requireActivity(), pathFile)
-                    fileExtension.deleteFile(file)
-                    requireActivity().viewModelStore.clear()
-                }
-            }
+            viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
+            requireActivity().viewModelStore.clear()
             mainNavigator.popBackStack()
         }
         btnChooseColor.setOnClickListener {
@@ -245,14 +217,17 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             showDialogChooseImage()
         }
         btnChooseRecord.setOnClickListener {
-            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment(pathFile))
+            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
         }
         btnSaveNote.setOnClickListener {
+            viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))
+            viewModel.dispatch(NoteAction.SaveMediaToDirectory(requireActivity()))
             if (actionNote == ActionNote.UPDATE_NOTE) {
                 noteModel?.let { viewModel.dispatch(NoteAction.UpdateNote(it)) }
             } else {
-                viewModel.dispatch(NoteAction.InsertNote)
+                viewModel.dispatch(NoteAction.InsertNote(requireActivity()))
             }
+            viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
         }
     }
 
@@ -285,7 +260,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         setupColorTextInput(colorTitle, colorContent)
         viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
         viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
-        viewModel.dispatch(NoteAction.FileMediaNoteChanged(fileMediaNote = pathFile))
     }
 
     private fun setupColorTextInput(colorTitle: String, colorContent: String) = binding.apply {
@@ -327,9 +301,8 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         binding.btnCamera.setOnClickListener {
             if (checkPermission()) {
                 showCameraDialog {
-                    setFileNameImage(pathFile)
                     takePictureAction {
-                        viewModel.dispatch(NoteAction.UpdateListImage)
+                        viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
                     }
                 }
             }
@@ -351,7 +324,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             )
             ImageDecoder.decodeBitmap(source)
         }
-        imageFile.saveImageToFile(requireActivity(), pathFile, bitmap)
+        viewModel.dispatch(NoteAction.SaveImageNote(requireActivity(), bitmap))
     }
 
     private fun checkPermission(): Boolean {

@@ -7,7 +7,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionCategory
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.core.external.collectIn
+import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentListCategoryBinding
 import com.example.presentation.navigation.MainNavigator
