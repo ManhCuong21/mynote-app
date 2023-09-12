@@ -20,8 +20,9 @@ class FileUseCase @Inject constructor(
     fun saveFileToTemp(fragmentActivity: FragmentActivity, directoryName: String) =
         fileRepository.saveFileToTemp(fragmentActivity, directoryName)
 
-    suspend fun deleteFile(file: File) = fileRepository.deleteFile(file)
-    suspend fun deleteDirectory(file: File) = fileRepository.deleteDirectory(file)
+    suspend fun deleteDirectory(fragmentActivity: FragmentActivity, directoryName: String) =
+        fileRepository.deleteDirectory(fragmentActivity, directoryName)
+
     suspend fun deleteDirectoryTemp(fragmentActivity: FragmentActivity) =
         fileRepository.deleteDirectoryTemp(fragmentActivity)
 }

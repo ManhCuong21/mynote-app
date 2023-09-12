@@ -247,12 +247,7 @@ class NoteViewModel @Inject constructor(
     private fun deleteDirectory() {
         action<NoteAction.DeleteDirectory>()
             .onEach {
-                fileUseCase.deleteDirectory(
-                    fileUseCase.getOutputMediaDirectory(
-                        it.context,
-                        stateFlow.value.directoryName.orEmpty()
-                    )
-                )
+                fileUseCase.deleteDirectory(it.context, stateFlow.value.directoryName.orEmpty())
             }.launchIn(viewModelScope)
     }
 

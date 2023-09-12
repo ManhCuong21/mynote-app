@@ -36,31 +36,6 @@ class RecordFileRepositoryImpl @Inject constructor(
                     e.printStackTrace()
                 }
             }
-//        val pathFile = SimpleDateFormat(
-//            FILE_NAME_FORMAT,
-//            Locale.getDefault()
-//        ).format(System.currentTimeMillis())
-//        val recordCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_INTERNAL)
-//        } else MediaStore.Images.Media.INTERNAL_CONTENT_URI
-//        val contentValues = ContentValues().apply {
-//            put(MediaStore.Images.Media.DISPLAY_NAME, "$pathFile.jpg")
-//            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-//            put(MediaStore.Images.Media.WIDTH, bitmap.width)
-//            put(MediaStore.Images.Media.HEIGHT, bitmap.height)
-//        }
-//        val contentResolver = fragmentActivity.contentResolver
-//        try {
-//            contentResolver.insert(recordCollection, contentValues)?.also { uri ->
-//                contentResolver.openOutputStream(uri).use { outputStream ->
-//                    if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)) {
-//                        throw IOException("Couldn't save bitmap")
-//                    }
-//                }
-//            }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
     }
 
     override suspend fun readRecord(fragmentActivity: FragmentActivity): List<ItemRecord> {

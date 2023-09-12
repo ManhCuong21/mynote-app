@@ -6,10 +6,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
-import com.example.core.core.external.AppConstants.FORMAT_TIME_DEFAULT_NOTIFICATION
-import com.example.core.core.external.formatDate
-import com.example.core.core.viewbinding.viewBinding
 import com.example.core.core.lifecycle.collectIn
+import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentDateTimePickersBinding
 import com.example.presentation.main.home.alarmclock.NotificationUtils
@@ -52,7 +50,7 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
     }
 
     override fun setupViews() {
-        if (noteModel.notificationModel != null) initialValue() else setupTextDateOfMonthDefault()
+        initialValue()
         setupRecyclerView()
         setupClickListener()
     }
@@ -62,12 +60,8 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
-                        is DateTimePickersSingleEvent.UpdateTextDayOfMonth -> {
-                            setupTextDateOfMonth(event.dateOfMonth)
-                        }
-
-                        is DateTimePickersSingleEvent.UpdateTextDayOfWeek -> {
-                            setupTextDayOfWeek(event.dayOfWeek.sorted())
+                        is DateTimePickersSingleEvent.UpdateTextNotification -> {
+                            binding.tvDateNotification.text = event.text
                         }
 
                         is DateTimePickersSingleEvent.SaveNotification.Success -> {
@@ -121,6 +115,12 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
                     viewModel.dispatch(DateTimePickersAction.UpdateDayOfWeek(it))
                 }
             }
+        } else {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            viewModel.dispatch(
+                DateTimePickersAction.UpdateDayOfMonth(calendar.timeInMillis, true)
+            )
         }
     }
 
@@ -157,56 +157,6 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
     private fun setupRecyclerView() = binding.rvDayOfWeek.apply {
         adapter = dayOfWeekPickersAdapter
         dayOfWeekPickersAdapter.submitList(listDayOfWeek)
-    }
-
-    private fun setupTextDateOfMonthDefault() = binding.apply {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
-        viewModel.dispatch(DateTimePickersAction.UpdateDayOfMonth(calendar.timeInMillis))
-    }
-
-    private fun setupTextDateOfMonth(date: Long) = binding.tvDateNotification.apply {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = date
-        val calendarToday = Calendar.getInstance()
-        val calendarNextDay = Calendar.getInstance()
-        calendarNextDay.add(Calendar.DAY_OF_YEAR, 1)
-        val textDate = when (calendar.get(Calendar.DAY_OF_YEAR)) {
-            calendarToday.get(Calendar.DAY_OF_YEAR) -> getString(
-                R.string.format_date_time_picker_today,
-                formatDate(FORMAT_TIME_DEFAULT_NOTIFICATION, date)
-            )
-
-            calendarNextDay.get(Calendar.DAY_OF_YEAR) -> getString(
-                R.string.format_date_time_picker_tomorrow,
-                formatDate(FORMAT_TIME_DEFAULT_NOTIFICATION, date)
-            )
-
-            else -> formatDate(FORMAT_TIME_DEFAULT_NOTIFICATION, date)
-        }
-        text = textDate
-    }
-
-    private fun setupTextDayOfWeek(list: List<Int>) = binding.tvDateNotification.apply {
-        var textDate = ""
-        list.forEach {
-            when (it) {
-                Calendar.MONDAY -> textDate = plusText(textDate, "Mon")
-                Calendar.TUESDAY -> textDate = plusText(textDate, "Tue")
-                Calendar.WEDNESDAY -> textDate = plusText(textDate, "Wed")
-                Calendar.THURSDAY -> textDate = plusText(textDate, "Thu")
-                Calendar.FRIDAY -> textDate = plusText(textDate, "Fri")
-                Calendar.SATURDAY -> textDate = plusText(textDate, "Sat")
-                Calendar.SUNDAY -> textDate = plusText(textDate, "Sun")
-            }
-        }
-        if (textDate.isNotEmpty()) text = textDate else setupTextDateOfMonthDefault()
-    }
-
-    private fun plusText(oldText: String, text: String): String {
-        return if (oldText.isEmpty()) {
-            oldText.plus("Every $text")
-        } else oldText.plus(",$text")
     }
 
     companion object {

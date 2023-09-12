@@ -3,7 +3,9 @@ package com.example.presentation.dialog.datetimepickers
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
+import com.example.core.core.external.AppConstants
 import com.example.core.core.external.ResultContent
+import com.example.core.core.external.formatDate
 import com.example.core.core.model.NoteModel
 import com.example.core.core.model.NotificationModel
 import com.example.domain.usecase.local.NoteUseCase
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,20 +67,22 @@ class DateTimePickersViewModel @Inject constructor(
 
     private fun updateDayOfMonth() {
         action<DateTimePickersAction.UpdateDayOfMonth>()
-            .map {
-                if (!it.isDefault) {
-                    it.dayOfMonth?.let { dayOfMonth ->
-                        _singleEventChannel.send(
-                            DateTimePickersSingleEvent.UpdateTextDayOfMonth(dayOfMonth)
-                        )
-                    }
-                }
-                it.dayOfMonth
-            }
             .onEach {
                 _mutableStateFlow.update { state ->
-                    state.copy(dayOfMonth = it, dayOfWeek = emptyList())
+                    state.copy(dayOfMonth = it.dayOfMonth, dayOfWeek = emptyList())
                 }
+                val textDate = if (!it.isDefault) {
+                    it.dayOfMonth?.let { dayOfMonth ->
+                        setupTextDateOfMonth(dayOfMonth)
+                    }
+                } else {
+                    val calendar = Calendar.getInstance()
+                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+                    setupTextDateOfMonth(calendar.timeInMillis)
+                }
+                _singleEventChannel.send(
+                    DateTimePickersSingleEvent.UpdateTextNotification(textDate.orEmpty())
+                )
             }.launchIn(viewModelScope)
     }
 
@@ -101,12 +106,55 @@ class DateTimePickersViewModel @Inject constructor(
                 _mutableStateFlow.update { state ->
                     state.copy(dayOfMonth = null, dayOfWeek = it)
                 }
-                _singleEventChannel.send(
-                    DateTimePickersSingleEvent.UpdateTextDayOfWeek(
-                        it
-                    )
-                )
+                if (it.isNotEmpty()) {
+                    val textDate = setupTextDayOfWeek(it)
+                    _singleEventChannel.send(DateTimePickersSingleEvent.UpdateTextNotification(textDate))
+                } else {
+                    val calendar = Calendar.getInstance()
+                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+                    dispatch(DateTimePickersAction.UpdateDayOfMonth(calendar.timeInMillis))
+                }
             }.launchIn(viewModelScope)
+    }
+
+    private fun setupTextDayOfWeek(list: List<Int>): String {
+        var textDate = ""
+        list.forEach {
+            when (it) {
+                Calendar.MONDAY -> textDate = plusText(textDate, "Mon")
+                Calendar.TUESDAY -> textDate = plusText(textDate, "Tue")
+                Calendar.WEDNESDAY -> textDate = plusText(textDate, "Wed")
+                Calendar.THURSDAY -> textDate = plusText(textDate, "Thu")
+                Calendar.FRIDAY -> textDate = plusText(textDate, "Fri")
+                Calendar.SATURDAY -> textDate = plusText(textDate, "Sat")
+                Calendar.SUNDAY -> textDate = plusText(textDate, "Sun")
+            }
+        }
+        return textDate
+    }
+
+    private fun plusText(oldText: String, text: String): String {
+        return if (oldText.isEmpty()) {
+            oldText.plus("Every $text")
+        } else oldText.plus(",$text")
+    }
+
+    private fun setupTextDateOfMonth(date: Long): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = date
+        val calendarToday = Calendar.getInstance()
+        val calendarNextDay = Calendar.getInstance()
+        calendarNextDay.add(Calendar.DAY_OF_YEAR, 1)
+        val textDate = when (calendar.get(Calendar.DAY_OF_YEAR)) {
+            calendarToday.get(Calendar.DAY_OF_YEAR) -> "Today - " +
+                    formatDate(AppConstants.FORMAT_TIME_DEFAULT_NOTIFICATION, date)
+
+            calendarNextDay.get(Calendar.DAY_OF_YEAR) -> "Tomorrow - " +
+                    formatDate(AppConstants.FORMAT_TIME_DEFAULT_NOTIFICATION, date)
+
+            else -> formatDate(AppConstants.FORMAT_TIME_DEFAULT_NOTIFICATION, date)
+        }
+        return textDate.orEmpty()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

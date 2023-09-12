@@ -16,8 +16,7 @@ sealed interface DateTimePickersAction {
 }
 
 sealed interface DateTimePickersSingleEvent {
-    data class UpdateTextDayOfMonth(val dateOfMonth: Long) : DateTimePickersSingleEvent
-    data class UpdateTextDayOfWeek(val dayOfWeek: List<Int>) : DateTimePickersSingleEvent
+    data class UpdateTextNotification(val text: String) : DateTimePickersSingleEvent
     sealed interface SaveNotification : DateTimePickersSingleEvent {
         object Success : SaveNotification
         object Cancel : SaveNotification
@@ -37,11 +36,3 @@ data class DateTimePickersUiState(
         )
     }
 }
-
-fun buildDateTimePickersUiState(
-    dayOfMonth: Long?,
-    dayOfWeek: List<Int>
-): DateTimePickersUiState = DateTimePickersUiState(
-    dayOfMonth = dayOfMonth,
-    dayOfWeek = dayOfWeek
-)

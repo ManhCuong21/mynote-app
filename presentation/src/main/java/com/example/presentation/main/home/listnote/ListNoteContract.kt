@@ -1,6 +1,7 @@
 package com.example.presentation.main.home.listnote
 
 import android.os.Parcelable
+import androidx.fragment.app.FragmentActivity
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.NoteModel
 import kotlinx.parcelize.Parcelize
@@ -10,7 +11,7 @@ sealed interface ListNoteAction {
     data class ChangeCategoryNote(val noteModel: NoteModel, val category: CategoryModel) :
         ListNoteAction
 
-    data class DeleteNote(val noteModel: NoteModel) : ListNoteAction
+    data class DeleteNote(val context: FragmentActivity, val noteModel: NoteModel) : ListNoteAction
 }
 
 sealed interface ListNoteSingleEvent {

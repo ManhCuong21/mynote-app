@@ -14,8 +14,7 @@ interface FileRepository {
     fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File
     fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String)
     fun saveFileToTemp(fragmentActivity: FragmentActivity, directoryName: String)
-    suspend fun deleteFile(file: File)
-    suspend fun deleteDirectory(file: File)
+    suspend fun deleteDirectory(fragmentActivity: FragmentActivity, directoryName: String)
     suspend fun deleteDirectoryTemp(fragmentActivity: FragmentActivity)
 }
 
@@ -83,21 +82,12 @@ class FileRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun deleteFile(file: File) {
+    override suspend fun deleteDirectory(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ) {
         withContext(appCoroutineDispatchers.io) {
-            if (file.exists()) {
-                file.delete()
-            }
-            if (file.isDirectory) {
-                file.listFiles()?.forEach {
-                    deleteFile(it)
-                }
-            }
-        }
-    }
-
-    override suspend fun deleteDirectory(file: File) {
-        withContext(appCoroutineDispatchers.io) {
+            val file = getOutputMediaDirectory(fragmentActivity, directoryName)
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {

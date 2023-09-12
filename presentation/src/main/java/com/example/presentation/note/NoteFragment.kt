@@ -42,7 +42,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class NoteFragment : BaseFragment(R.layout.fragment_note) {
     @Inject
@@ -63,6 +62,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     private val listPermission =
         arrayOf(
             Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
@@ -133,7 +133,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     override fun setupViews() {
         initialValue()
-        setCategoryId()
+        setupViewModel()
         setupRecyclerView()
         setupClickListener()
         setupTextInput()
@@ -169,7 +169,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         }
     }
 
-    private fun setCategoryId() {
+    private fun setupViewModel() {
         if (actionNote == ActionNote.UPDATE_NOTE) {
             noteModel?.let { initItemNote(it) }
         } else {
@@ -345,6 +345,10 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             }
 
             shouldShowRequestPermissionRationale(listPermission[2]) -> {
+                requestPermissionLauncher.launch(listPermission)
+            }
+
+            shouldShowRequestPermissionRationale(listPermission[3]) -> {
                 requestPermissionLauncher.launch(listPermission)
             }
 

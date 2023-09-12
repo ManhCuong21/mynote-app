@@ -100,7 +100,7 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
                     }
 
                     ActionNote.DELETE_NOTE -> {
-                        viewModel.dispatch(ListNoteAction.DeleteNote(noteModel))
+                        viewModel.dispatch(ListNoteAction.DeleteNote(requireActivity(), noteModel))
                     }
 
                     else -> {}

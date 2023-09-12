@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.domain.usecase.file.FileUseCase
 import com.example.domain.usecase.local.CategoryUseCase
 import com.example.domain.usecase.local.NoteUseCase
 import com.github.michaelbull.result.fold
@@ -29,7 +30,8 @@ import javax.inject.Inject
 class ListNoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val categoryUseCase: CategoryUseCase,
-    private val noteUseCase: NoteUseCase
+    private val noteUseCase: NoteUseCase,
+    private val fileUseCase: FileUseCase
 ) : BaseViewModel() {
     private val _mutableStateFlow =
         MutableStateFlow(savedStateHandle[STATE_KEY] ?: ListNoteUiState.INITIAL)
@@ -132,6 +134,7 @@ class ListNoteViewModel @Inject constructor(
         action<ListNoteAction.DeleteNote>()
             .flatMapLatest {
                 flow {
+                    fileUseCase.deleteDirectory(it.context, it.noteModel.nameMediaNote)
                     noteUseCase.deleteNote(it.noteModel).fold(
                         success = {
                             ResultContent.Content(it)
