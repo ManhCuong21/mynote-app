@@ -1,4 +1,4 @@
-package com.example.domain.usecase.local
+package com.example.domain.usecase.data
 
 import com.example.core.core.model.NoteModel
 import com.example.data.datalocal.repository.NoteRepository
@@ -19,11 +19,9 @@ class NoteUseCase @Inject constructor(
     suspend fun readAllNote(): Result<List<NoteModel>, Throwable> =
         noteRepository.readAllNote().map { it.map { note -> note.toNoteModel() } }
 
-    suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteModel>, Throwable> =
-        noteRepository.readNoteWithCategory(categoryId)
-            .map {
-                it.map { note -> note.toNoteModel() }
-            }
+    suspend fun readNoteWithCategory(idCategory: Long): Result<List<NoteModel>, Throwable> =
+        noteRepository.readNoteWithCategory(idCategory)
+            .map { it.map { note -> note.toNoteModel() } }
 
     suspend fun updateNote(note: NoteModel): Result<Unit, Throwable> =
         noteRepository.updateNote(note.toNoteEntity())

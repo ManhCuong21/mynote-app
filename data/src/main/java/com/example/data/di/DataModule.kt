@@ -7,8 +7,8 @@ import com.example.data.datalocal.database.CategoryDatabase
 import com.example.data.datalocal.database.CategoryDatabaseImpl
 import com.example.data.datalocal.database.NoteDatabase
 import com.example.data.datalocal.database.NoteDatabaseImpl
-import com.example.data.datalocal.repository.CategoryRepository
-import com.example.data.datalocal.repository.CategoryRepositoryImpl
+import com.example.data.datalocal.repository.CategoryLocalRepository
+import com.example.data.datalocal.repository.CategoryLocalRepositoryImpl
 import com.example.data.datalocal.repository.NoteRepository
 import com.example.data.datalocal.repository.NoteRepositoryImpl
 import dagger.Binds
@@ -33,7 +33,7 @@ internal interface DataModule {
     fun noteRepository(impl: NoteRepositoryImpl): NoteRepository
 
     @Binds
-    fun categoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
+    fun categoryLocalRepository(impl: CategoryLocalRepositoryImpl): CategoryLocalRepository
 
     companion object {
         @Singleton

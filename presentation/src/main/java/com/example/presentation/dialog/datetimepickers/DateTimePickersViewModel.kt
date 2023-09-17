@@ -8,7 +8,7 @@ import com.example.core.core.external.ResultContent
 import com.example.core.core.external.formatDate
 import com.example.core.core.model.NoteModel
 import com.example.core.core.model.NotificationModel
-import com.example.domain.usecase.local.NoteUseCase
+import com.example.domain.usecase.data.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

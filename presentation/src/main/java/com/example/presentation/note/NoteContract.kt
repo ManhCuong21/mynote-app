@@ -60,7 +60,7 @@ data class NoteUiState(
         val INITIAL = NoteUiState(
             titleNote = null,
             contentNote = null,
-            categoryNote = CategoryModel(-1, "", 0),
+            categoryNote = CategoryModel(-1, "", 0, 0),
             directoryName = null,
             hasImage = null,
             hasRecord = null,

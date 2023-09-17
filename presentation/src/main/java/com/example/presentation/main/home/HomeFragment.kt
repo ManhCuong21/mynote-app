@@ -14,6 +14,7 @@ import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentHomeBinding
 import com.example.presentation.dialog.list.showListDialog
+import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -89,7 +90,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                                     CategoryModel(
                                         idCategory = -1,
                                         titleCategory = "All",
-                                        imageCategory = R.drawable.icon_clock
+                                        imageCategory = R.drawable.icon_clock,
+                                        typeCategory = 0
                                     )
                                 )
                             list.addAll(event.list)
@@ -102,6 +104,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                             Timber.e(event.error)
                         }
                     }
+                }
+                viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+                    renderLoadingUI(state.isLoading)
                 }
             }
         }

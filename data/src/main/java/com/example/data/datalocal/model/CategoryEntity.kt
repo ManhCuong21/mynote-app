@@ -8,9 +8,11 @@ import androidx.room.PrimaryKey
 data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "idCategory")
-    var idCategory: Int = 0,
+    val idCategory: Long = 0,
     @ColumnInfo(name = "titleCategory")
-    var titleCategory: String,
+    val titleCategory: String,
     @ColumnInfo(name = "imageCategory")
-    var imageCategory: Int
+    val imageCategory: Int,
+    @ColumnInfo(name = "typeCategory")
+    val typeCategory: Int = 0
 )

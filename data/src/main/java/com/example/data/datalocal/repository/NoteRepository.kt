@@ -10,7 +10,7 @@ import javax.inject.Inject
 interface NoteRepository {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
-    suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable>
+    suspend fun readNoteWithCategory(idCategory: Long): Result<List<NoteEntity>, Throwable>
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
 }
@@ -29,9 +29,9 @@ class NoteRepositoryImpl @Inject constructor(
             noteDatabase.readAllNote()
         }
 
-    override suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable> =
+    override suspend fun readNoteWithCategory(idCategory: Long): Result<List<NoteEntity>, Throwable> =
         withContext(appCoroutineDispatchers.io) {
-            noteDatabase.readNoteWithCategory(categoryId)
+            noteDatabase.readNoteWithCategory(idCategory)
         }
 
     override suspend fun updateNote(note: NoteEntity) =

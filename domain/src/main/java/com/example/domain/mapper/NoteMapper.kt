@@ -60,7 +60,7 @@ fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
 
 fun NoteEntity.toNoteModel() = NoteModel(
     idNote = idNote,
-    categoryNote = categoryEntity.toCategoryModel(),
+    categoryNote = categoryEntity.toCategory(),
     titleNote = titleNote,
     contentNote = contentNote,
     nameMediaNote = fileMediaNote,

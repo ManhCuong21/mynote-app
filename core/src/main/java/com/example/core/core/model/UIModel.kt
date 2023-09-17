@@ -5,9 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CategoryModel(
-    val idCategory: Int,
+    val idCategory: Long,
     val titleCategory: String,
-    val imageCategory: Int
+    val imageCategory: Int,
+    val typeCategory: Int
 ) : Parcelable
 
 @Parcelize

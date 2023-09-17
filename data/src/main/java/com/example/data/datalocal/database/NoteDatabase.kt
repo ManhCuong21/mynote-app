@@ -9,7 +9,7 @@ import javax.inject.Inject
 interface NoteDatabase {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
-    suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable>
+    suspend fun readNoteWithCategory(categoryId: Long): Result<List<NoteEntity>, Throwable>
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
 }
@@ -26,7 +26,7 @@ class NoteDatabaseImpl @Inject constructor(
         noteDAO.readAllNote()
     }
 
-    override suspend fun readNoteWithCategory(categoryId: Int): Result<List<NoteEntity>, Throwable> =
+    override suspend fun readNoteWithCategory(categoryId: Long): Result<List<NoteEntity>, Throwable> =
         runCatching {
             noteDAO.readNoteWithCategory(categoryId)
         }

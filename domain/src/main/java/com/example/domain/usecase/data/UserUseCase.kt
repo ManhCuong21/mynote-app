@@ -1,4 +1,4 @@
-package com.example.domain.usecase.remote
+package com.example.domain.usecase.data
 
 import com.example.data.dataremote.repository.UserRepository
 import com.github.michaelbull.result.Result

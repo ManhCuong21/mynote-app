@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.domain.usecase.local.CategoryUseCase
+import com.example.domain.usecase.data.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +49,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState = savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy()
+        val initialUiState = savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy(isLoading = false)
             ?: HomeUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
@@ -96,10 +97,24 @@ class HomeViewModel @Inject constructor(
                     ).let { emit(it) }
                 }
             }.onEach { result ->
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
+                }
                 val event = when (result) {
-                    is ResultContent.Loading -> null
-                    is ResultContent.Content -> HomeSingleEvent.GetListCategory.Success(result.content)
-                    is ResultContent.Error -> HomeSingleEvent.GetListCategory.Failed(error = result.error)
+                    is ResultContent.Loading -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = true) }
+                        null
+                    }
+
+                    is ResultContent.Content -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
+                        HomeSingleEvent.GetListCategory.Success(result.content)
+                    }
+
+                    is ResultContent.Error -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
+                        HomeSingleEvent.GetListCategory.Failed(error = result.error)
+                    }
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

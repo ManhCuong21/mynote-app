@@ -3,7 +3,7 @@ package com.example.presentation.main.listcategory
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
-import com.example.domain.usecase.local.CategoryUseCase
+import com.example.domain.usecase.data.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ListCategoryViewModel @Inject constructor(
-    private val categoryUseCase: CategoryUseCase
+    private val categoryLocalUseCase: CategoryUseCase
 ) : BaseViewModel() {
     private val _actionSharedFlow = MutableSharedFlow<ListCategoryAction>(extraBufferCapacity = 64)
     private val _singleEventChannel = Channel<ListCategorySingleEvent>(Channel.UNLIMITED).addToBag()
@@ -43,7 +43,7 @@ class ListCategoryViewModel @Inject constructor(
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
-                    categoryUseCase.readAllCategory().fold(
+                    categoryLocalUseCase.readAllCategory().fold(
                         success = {
                             ResultContent.Content(it)
                         },
@@ -55,7 +55,10 @@ class ListCategoryViewModel @Inject constructor(
             }.onEach { result ->
                 val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListCategorySingleEvent.GetListCategorySuccess(result.content)
+                    is ResultContent.Content -> ListCategorySingleEvent.GetListCategorySuccess(
+                        result.content
+                    )
+
                     is ResultContent.Error -> ListCategorySingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
@@ -68,7 +71,7 @@ class ListCategoryViewModel @Inject constructor(
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
-                    categoryUseCase.deleteCategory(it.categoryModel).fold(
+                    categoryLocalUseCase.deleteCategory(it.categoryModel).fold(
                         success = {
                             ResultContent.Content(it)
                         },

@@ -1,5 +1,7 @@
 package com.example.data.di
 
+import com.example.data.dataremote.repository.CategoryRemoteRepository
+import com.example.data.dataremote.repository.CategoryRemoteRepositoryImpl
 import com.example.data.dataremote.repository.UserRepository
 import com.example.data.dataremote.repository.UserRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +18,9 @@ internal interface DataRemoteModule {
 
     @Binds
     fun userRepository(impl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    fun categoryRemoteRepository(impl: CategoryRemoteRepositoryImpl): CategoryRemoteRepository
 
     companion object {
         @Provides

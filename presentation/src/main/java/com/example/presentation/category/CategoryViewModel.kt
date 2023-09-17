@@ -6,7 +6,7 @@ import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
 import com.example.core.core.model.CategoryModel
 import com.example.domain.mapper.CategoryParams
-import com.example.domain.usecase.local.CategoryUseCase
+import com.example.domain.usecase.data.CategoryUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -121,7 +121,8 @@ class CategoryViewModel @Inject constructor(
                         CategoryModel(
                             idCategory = it.categoryModel.idCategory,
                             titleCategory = stateFlow.value.title,
-                            imageCategory = stateFlow.value.image
+                            imageCategory = stateFlow.value.image,
+                            typeCategory = it.categoryModel.typeCategory
                         )
                     ).fold(
                         success = {
