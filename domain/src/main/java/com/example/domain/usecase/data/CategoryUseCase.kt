@@ -1,5 +1,6 @@
 package com.example.domain.usecase.data
 
+import com.example.core.core.external.AppConstants.TYPE_REMOTE
 import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
@@ -24,12 +25,12 @@ class CategoryUseCase @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
     private val sharedPrefersManager: SharedPrefersManager,
     private val categoryRepository: CategoryLocalRepository,
-    private val categoryRemoteDataSource: CategoryRemoteRepository
+    private val categoryRemoteRepository: CategoryRemoteRepository
 ) {
     suspend fun insertCategory(category: CategoryParams): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             if (!sharedPrefersManager.userEmail.isNullOrEmpty()) {
-                categoryRemoteDataSource.insertCategory(category.toCategoryRemote())
+                categoryRemoteRepository.insertCategory(category.toCategoryRemote())
             } else {
                 categoryRepository.insertCategory(category.toCategoryEntity())
             }
@@ -40,7 +41,7 @@ class CategoryUseCase @Inject constructor(
             if (!sharedPrefersManager.userEmail.isNullOrEmpty()) {
                 runCatching {
                     val listRemoteCall = async {
-                        categoryRemoteDataSource.readAllCategory().map { flow ->
+                        categoryRemoteRepository.readAllCategory().map { flow ->
                             flow.first().toListCategoryModel()
                         }
                     }
@@ -80,15 +81,15 @@ class CategoryUseCase @Inject constructor(
     suspend fun updateCategory(category: CategoryModel): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             if (!sharedPrefersManager.userEmail.isNullOrEmpty()) {
-                categoryRemoteDataSource.updateCategory(category.toCategoryRemote())
+                categoryRemoteRepository.updateCategory(category.toCategoryRemote())
             } else {
                 categoryRepository.updateCategory(category.toCategoryEntity())
             }
         }
 
     suspend fun deleteCategory(category: CategoryModel): Result<Unit, Throwable> =
-        if (!sharedPrefersManager.userEmail.isNullOrEmpty() && category.typeCategory == 1) {
-            categoryRemoteDataSource.deleteCategory(category.toCategoryRemote())
+        if (!sharedPrefersManager.userEmail.isNullOrEmpty() && category.typeCategory == TYPE_REMOTE) {
+            categoryRemoteRepository.deleteCategory(category.toCategoryRemote())
         } else {
             categoryRepository.deleteCategory(category.toCategoryEntity())
         }

@@ -3,6 +3,7 @@ package com.example.data.datalocal.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.core.core.external.AppConstants.TYPE_LOCAL
 
 @Entity
 data class CategoryEntity(
@@ -14,5 +15,5 @@ data class CategoryEntity(
     @ColumnInfo(name = "imageCategory")
     val imageCategory: Int,
     @ColumnInfo(name = "typeCategory")
-    val typeCategory: Int = 0
+    val typeCategory: Int = TYPE_LOCAL
 )

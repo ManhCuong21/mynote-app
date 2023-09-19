@@ -7,7 +7,7 @@ import com.github.michaelbull.result.Result
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface NoteRepository {
+interface NoteLocalRepository {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
     suspend fun readNoteWithCategory(idCategory: Long): Result<List<NoteEntity>, Throwable>
@@ -15,10 +15,10 @@ interface NoteRepository {
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
 }
 
-class NoteRepositoryImpl @Inject constructor(
+class NoteLocalRepositoryImpl @Inject constructor(
     private val noteDatabase: NoteDatabase,
     private val appCoroutineDispatchers: AppCoroutineDispatchers
-) : NoteRepository {
+) : NoteLocalRepository {
     override suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             noteDatabase.insertNote(note)

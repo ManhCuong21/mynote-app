@@ -189,7 +189,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
             viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
         }
-        viewModel.dispatch(NoteAction.CategoryNoteChanged(noteModel.categoryNote))
+        noteModel.categoryNote?.let { viewModel.dispatch(NoteAction.CategoryNoteChanged(it)) }
         edtTitleNote.setText(noteModel.titleNote)
         edtContentNote.setText(noteModel.contentNote)
         val colorTitle =

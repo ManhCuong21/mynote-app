@@ -4,14 +4,15 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.core.core.external.AppConstants.TYPE_LOCAL
 
 @Entity
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "idNote")
-    val idNote: Int = 0,
+    val idNote: Long = 0,
     @Embedded
-    val categoryEntity: CategoryEntity,
+    val categoryEntity: CategoryEntity?,
     @ColumnInfo(name = "titleNote")
     val titleNote: String,
     @ColumnInfo(name = "contentNote")
@@ -28,6 +29,8 @@ data class NoteEntity(
     val colorContentNote: String,
     @ColumnInfo(name = "timeNote")
     val timeNote: Long?,
+    @ColumnInfo(name = "typeNote")
+    val typeNote: Int = TYPE_LOCAL,
     @Embedded
     val notificationEntity: NotificationEntity? = null
 )

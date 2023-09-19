@@ -13,8 +13,8 @@ data class CategoryModel(
 
 @Parcelize
 data class NoteModel(
-    val idNote: Int,
-    val categoryNote: CategoryModel,
+    val idNote: Long,
+    val categoryNote: CategoryModel?,
     val titleNote: String,
     val contentNote: String,
     val nameMediaNote: String,
@@ -23,14 +23,15 @@ data class NoteModel(
     var colorTitleNote: String,
     var colorContentNote: String,
     var timeNote: Long,
-    var notificationModel: NotificationModel? = null,
+    val typeNote: Int,
+    var notificationModel: NotificationModel? = null
 ) : Parcelable
 
 @Parcelize
 data class NotificationModel(
-    val idNotification: Int,
+    val idNotification: Long?,
     val dayOfMonth: Long?,
     val dayOfWeek: List<Int>?,
-    val hour: Int,
-    val minute: Int
+    val hour: Int?,
+    val minute: Int?
 ) : Parcelable

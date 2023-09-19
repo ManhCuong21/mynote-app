@@ -82,6 +82,7 @@ class ListNoteViewModel @Inject constructor(
         action<ListNoteAction.GetListNote>()
             .flatMapLatest {
                 flow {
+                    emit(ResultContent.Loading)
                     val database =
                         if (it.category.titleCategory == "All") noteUseCase.readAllNote()
                         else noteUseCase.readNoteWithCategory(it.category.idCategory)
@@ -96,9 +97,20 @@ class ListNoteViewModel @Inject constructor(
                 }
             }.onEach { result ->
                 val event = when (result) {
-                    is ResultContent.Loading -> null
-                    is ResultContent.Content -> ListNoteSingleEvent.GetListNoteSuccess(result.content)
-                    is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
+                    is ResultContent.Loading -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = true) }
+                        null
+                    }
+
+                    is ResultContent.Content -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
+                        ListNoteSingleEvent.GetListNoteSuccess(result.content)
+                    }
+
+                    is ResultContent.Error -> {
+                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
+                        ListNoteSingleEvent.SingleEventFailed(error = result.error)
+                    }
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

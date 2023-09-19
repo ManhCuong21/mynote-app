@@ -8,13 +8,13 @@ import com.google.gson.annotations.SerializedName
 data class NotificationEntity(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("idNotification")
-    val idNotification: Int = 0,
+    val idNotification: Long? = 0,
     @SerializedName("dayOfMonth")
     val dayOfMonth: Long?,
     @SerializedName("dayOfWeek")
     val dayOfWeek: List<Int>?,
     @SerializedName("hour")
-    val hour: Int,
+    val hour: Int?,
     @SerializedName("minute")
-    val minute: Int
+    val minute: Int?
 )

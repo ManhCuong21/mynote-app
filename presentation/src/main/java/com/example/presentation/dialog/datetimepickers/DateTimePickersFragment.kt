@@ -73,7 +73,7 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
                                     time = viewModel.stateFlow.value.dayOfMonth!!,
                                     hour = binding.timePicker.hour,
                                     minute = binding.timePicker.minute,
-                                    requestCode = noteModel.idNote
+                                    requestCode = noteModel.idNote.toInt()
                                 )
                             } else {
                                 NotificationUtils.setNotificationDayOfWeek(
@@ -83,14 +83,17 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
                                     dayOfWeek = viewModel.stateFlow.value.dayOfWeek,
                                     hour = binding.timePicker.hour,
                                     minute = binding.timePicker.minute,
-                                    requestCode = noteModel.idNote
+                                    requestCode = noteModel.idNote.toInt()
                                 )
                             }
                             mainNavigator.popBackStack()
                         }
 
                         is DateTimePickersSingleEvent.SaveNotification.Cancel -> {
-                            NotificationUtils.cancelAlarm(requireContext(), noteModel.idNote)
+                            NotificationUtils.cancelAlarm(
+                                requireContext(),
+                                noteModel.idNote.toInt()
+                            )
                             mainNavigator.popBackStack()
                         }
 
@@ -105,9 +108,9 @@ class DateTimePickersFragment : BaseFragment(R.layout.fragment_date_time_pickers
 
     private fun initialValue() = binding.apply {
         val notification = noteModel.notificationModel
-        if (notification != null) {
-            timePicker.hour = notification.hour
-            timePicker.minute = notification.minute
+        if (notification?.idNotification != null) {
+            timePicker.hour = notification.hour!!
+            timePicker.minute = notification.minute!!
             if (notification.dayOfMonth != null) {
                 viewModel.dispatch(DateTimePickersAction.UpdateDayOfMonth(notification.dayOfMonth))
             } else if (notification.dayOfWeek != null) {

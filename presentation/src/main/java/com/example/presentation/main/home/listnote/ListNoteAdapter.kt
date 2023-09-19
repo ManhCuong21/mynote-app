@@ -43,7 +43,7 @@ class ListNoteAdapter(
         private val context = binding.root.context
         fun bind(item: NoteModel, format24Hour: Boolean) = binding.apply {
             imgCategoryNote.setImageDrawable(
-                ContextCompat.getDrawable(context, item.categoryNote.imageCategory)
+                item.categoryNote?.let { ContextCompat.getDrawable(context, it.imageCategory) }
             )
             vColorNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
             tvTitleNote.text = item.titleNote
@@ -54,7 +54,7 @@ class ListNoteAdapter(
                 context.getString(R.string.format_date_note, formatDate(dateFormat, item.timeNote))
             vHaveImage.isVisible = item.hasImage
             vHaveRecord.isVisible = item.hasRecord
-            vHaveNotification.isVisible = item.notificationModel != null
+            vHaveNotification.isVisible = item.notificationModel?.idNotification != null
             root.setOnClickListener {
                 val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
                 val builder = AlertDialog.Builder(context)

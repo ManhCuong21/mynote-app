@@ -108,7 +108,11 @@ class DateTimePickersViewModel @Inject constructor(
                 }
                 if (it.isNotEmpty()) {
                     val textDate = setupTextDayOfWeek(it)
-                    _singleEventChannel.send(DateTimePickersSingleEvent.UpdateTextNotification(textDate))
+                    _singleEventChannel.send(
+                        DateTimePickersSingleEvent.UpdateTextNotification(
+                            textDate
+                        )
+                    )
                 } else {
                     val calendar = Calendar.getInstance()
                     calendar.add(Calendar.DAY_OF_YEAR, 1)
@@ -175,6 +179,7 @@ class DateTimePickersViewModel @Inject constructor(
                             colorTitleNote = it.noteModel.colorTitleNote,
                             colorContentNote = it.noteModel.colorContentNote,
                             timeNote = it.noteModel.timeNote,
+                            typeNote = it.noteModel.typeNote,
                             notificationModel = NotificationModel(
                                 idNotification = it.noteModel.idNote,
                                 dayOfMonth = stateFlow.value.dayOfMonth,
@@ -222,6 +227,7 @@ class DateTimePickersViewModel @Inject constructor(
                             colorTitleNote = it.noteModel.colorTitleNote,
                             colorContentNote = it.noteModel.colorContentNote,
                             timeNote = it.noteModel.timeNote,
+                            typeNote = it.noteModel.typeNote,
                             notificationModel = null
                         )
                     ).fold(

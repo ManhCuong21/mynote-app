@@ -1,24 +1,41 @@
 package com.example.data.dataremote.model
 
+import com.example.core.core.external.AppConstants.TYPE_REMOTE
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class NoteRemote(
-    val idNote: Int = 0,
-    var idCategory: Long,
-    var titleCategory: String,
-    var imageCategory: Int,
-    val titleNote: String,
-    val contentNote: String,
-    val fileMediaNote: String,
-    val hasImage: Boolean,
-    val hasRecord: Boolean,
-    val colorTitleNote: String,
-    val colorContentNote: String,
-    val timeNote: Long,
-    val idNotification: Int? = null,
-    val dayOfMonth: Long? = null,
-    val dayOfWeek: List<Int>? = null,
-    val hour: Int? = null,
-    val minute: Int? = null
-)
+    val categoryRemote: CategoryRemote? = null,
+    // Note
+    val idNote: Long = System.currentTimeMillis(),
+    val titleNote: String? = null,
+    val contentNote: String? = null,
+    val fileMediaNote: String? = null,
+    val hasImage: Boolean? = null,
+    val hasRecord: Boolean? = null,
+    val colorTitleNote: String? = null,
+    val colorContentNote: String? = null,
+    val timeNote: Long? = null,
+    val typeNote: Int = TYPE_REMOTE,
+    // Notification
+    val notificationRemote: NotificationRemote? = null
+) {
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "idNote" to idNote,
+            "categoryRemote" to categoryRemote,
+            "titleNote" to titleNote,
+            "contentNote" to contentNote,
+            "fileMediaNote" to fileMediaNote,
+            "hasImage" to hasImage,
+            "hasRecord" to hasRecord,
+            "colorTitleNote" to colorTitleNote,
+            "colorContentNote" to colorContentNote,
+            "timeNote" to timeNote,
+            "typeNote" to typeNote,
+            "notificationRemote" to notificationRemote
+        )
+    }
+}

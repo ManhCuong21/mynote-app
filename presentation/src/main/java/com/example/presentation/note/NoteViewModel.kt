@@ -201,8 +201,9 @@ class NoteViewModel @Inject constructor(
                             hasRecord = uiState.hasRecord ?: false,
                             colorTitleNote = uiState.colorTitleNote.orEmpty(),
                             colorContentNote = uiState.colorContentNote.orEmpty(),
-                            notificationModel = uiState.notificationModel,
-                            timeNote = System.currentTimeMillis()
+                            timeNote = System.currentTimeMillis(),
+                            typeNote = it.noteModel.typeNote,
+                            notificationModel = uiState.notificationModel
                         )
                     ).fold(
                         success = {

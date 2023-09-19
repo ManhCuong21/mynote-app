@@ -15,6 +15,9 @@ object AppConstants {
     const val KEY_CHANNEL_ID_NOTIFICATION = "channelIdNotification"
     const val KEY_TITLE_NOTIFICATION = "titleNotification"
     const val KEY_CONTENT_NOTIFICATION = "contentNotification"
+
+    const val TYPE_LOCAL = 0
+    const val TYPE_REMOTE = 1
 }
 
 @Parcelize

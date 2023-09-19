@@ -5,6 +5,8 @@ import com.example.core.core.model.NoteModel
 import com.example.core.core.model.NotificationModel
 import com.example.data.datalocal.model.NoteEntity
 import com.example.data.datalocal.model.NotificationEntity
+import com.example.data.dataremote.model.NoteRemote
+import com.example.data.dataremote.model.NotificationRemote
 
 data class NoteParams(
     val categoryNote: CategoryModel,
@@ -30,9 +32,23 @@ fun NoteParams.toNoteEntity() = NoteEntity(
     timeNote = timeNote
 )
 
+fun NoteParams.toNoteRemote() = NoteRemote(
+    // Category
+    categoryRemote = categoryNote.toCategoryRemote(),
+    // Note
+    titleNote = titleNote,
+    contentNote = contentNote,
+    fileMediaNote = fileMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
+    colorTitleNote = colorTitleNote,
+    colorContentNote = colorContentNote,
+    timeNote = timeNote
+)
+
 fun NoteModel.toNoteEntity() = NoteEntity(
     idNote = idNote,
-    categoryEntity = categoryNote.toCategoryEntity(),
+    categoryEntity = categoryNote?.toCategoryEntity(),
     titleNote = titleNote,
     contentNote = contentNote,
     fileMediaNote = nameMediaNote,
@@ -44,9 +60,32 @@ fun NoteModel.toNoteEntity() = NoteEntity(
     timeNote = timeNote
 )
 
+fun NoteModel.toNoteRemote() = NoteRemote(
+    // Category
+    categoryRemote = categoryNote?.toCategoryRemote(),
+    // Note
+    idNote = idNote,
+    titleNote = titleNote,
+    contentNote = contentNote,
+    fileMediaNote = nameMediaNote,
+    hasImage = hasImage,
+    hasRecord = hasRecord,
+    colorTitleNote = colorTitleNote,
+    colorContentNote = colorContentNote,
+    timeNote = timeNote,
+    // Notification
+    notificationRemote = NotificationRemote(
+        idNotification = notificationModel?.idNotification,
+        dayOfMonth = notificationModel?.dayOfMonth,
+        dayOfWeek = notificationModel?.dayOfWeek,
+        hour = notificationModel?.hour,
+        minute = notificationModel?.minute
+    )
+)
+
 fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
     idNote = idNote,
-    categoryEntity = categoryNote.toCategoryEntity(),
+    categoryEntity = categoryNote?.toCategoryEntity(),
     titleNote = titleNote,
     contentNote = contentNote,
     fileMediaNote = nameMediaNote,
@@ -60,7 +99,7 @@ fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
 
 fun NoteEntity.toNoteModel() = NoteModel(
     idNote = idNote,
-    categoryNote = categoryEntity.toCategory(),
+    categoryNote = categoryEntity?.toCategory(),
     titleNote = titleNote,
     contentNote = contentNote,
     nameMediaNote = fileMediaNote,
@@ -69,7 +108,23 @@ fun NoteEntity.toNoteModel() = NoteModel(
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
     timeNote = timeNote ?: System.currentTimeMillis(),
-    notificationModel = notificationEntity?.toNotificationModel()
+    typeNote = typeNote,
+    notificationModel = notificationEntity?.toNotification()
+)
+
+fun NoteRemote.toNoteModel() = NoteModel(
+    idNote = idNote,
+    categoryNote = categoryRemote?.toCategoryModel(),
+    titleNote = titleNote.orEmpty(),
+    contentNote = contentNote.orEmpty(),
+    nameMediaNote = fileMediaNote.orEmpty(),
+    hasImage = hasImage ?: false,
+    hasRecord = hasRecord ?: false,
+    colorTitleNote = colorTitleNote.orEmpty(),
+    colorContentNote = colorContentNote.orEmpty(),
+    timeNote = timeNote ?: System.currentTimeMillis(),
+    typeNote = typeNote,
+    notificationModel = notificationRemote?.toNotificationModel()
 )
 
 private fun NotificationModel.toNotificationEntity() = NotificationEntity(
@@ -80,7 +135,15 @@ private fun NotificationModel.toNotificationEntity() = NotificationEntity(
     minute = minute
 )
 
-private fun NotificationEntity.toNotificationModel() = NotificationModel(
+private fun NotificationEntity.toNotification() = NotificationModel(
+    idNotification = idNotification,
+    dayOfMonth = dayOfMonth,
+    dayOfWeek = dayOfWeek,
+    hour = hour,
+    minute = minute
+)
+
+private fun NotificationRemote.toNotificationModel() = NotificationModel(
     idNotification = idNotification,
     dayOfMonth = dayOfMonth,
     dayOfWeek = dayOfWeek,

@@ -9,8 +9,8 @@ import com.example.data.datalocal.database.NoteDatabase
 import com.example.data.datalocal.database.NoteDatabaseImpl
 import com.example.data.datalocal.repository.CategoryLocalRepository
 import com.example.data.datalocal.repository.CategoryLocalRepositoryImpl
-import com.example.data.datalocal.repository.NoteRepository
-import com.example.data.datalocal.repository.NoteRepositoryImpl
+import com.example.data.datalocal.repository.NoteLocalRepository
+import com.example.data.datalocal.repository.NoteLocalRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,7 +30,7 @@ internal interface DataModule {
     fun provideNoteDatabase(impl: NoteDatabaseImpl): NoteDatabase
 
     @Binds
-    fun noteRepository(impl: NoteRepositoryImpl): NoteRepository
+    fun noteRepository(impl: NoteLocalRepositoryImpl): NoteLocalRepository
 
     @Binds
     fun categoryLocalRepository(impl: CategoryLocalRepositoryImpl): CategoryLocalRepository
@@ -43,6 +43,6 @@ internal interface DataModule {
         ) = Room.databaseBuilder(
             context,
             AppDAO::class.java, "database-name"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 }
