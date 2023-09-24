@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import kotlin.math.min
 
 class AudioWave(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private var paint = Paint()
@@ -29,26 +30,25 @@ class AudioWave(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     fun addAmplitude(amp:Float){
-        var norm = Math.min(amp.toInt()/7,400).toFloat()
+        val norm = min(amp.toInt()/7,400).toFloat()
         amplitudes.add(norm)
 
         spikes.clear()
-        var amps = amplitudes.takeLast(maxSpikes)
+        val amps = amplitudes.takeLast(maxSpikes)
         for (i in amps.indices){
-            var left = sw - i*(w+d)
+            val left = sw - i*(w+d)
             val top = sh/2 - amps[i]/2
             val right = left+w
-            var bottom = top+amps[i]
+            val bottom = top+amps[i]
             spikes.add(RectF(left,top,right,bottom))
         }
         invalidate()
     }
 
-    override fun draw(canvas: Canvas?) {
+    override fun draw(canvas: Canvas) {
         super.draw(canvas)
         spikes.forEach{
-            canvas?.drawRoundRect(it,radius,radius,paint)
-
+            canvas.drawRoundRect(it,radius,radius,paint)
         }
     }
 }
