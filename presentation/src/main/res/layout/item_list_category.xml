@@ -1,33 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/BackgroundContentRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/dimen_1"
-    android:gravity="center_vertical">
+    android:layout_marginHorizontal="@dimen/dimen_1"
+    android:layout_marginBottom="@dimen/dimen_1">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imgCategory"
-        android:layout_width="@dimen/dimen_24"
-        android:layout_height="@dimen/dimen_24"
-        android:layout_margin="@dimen/dimen_16"
-        android:src="@drawable/icon_default" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvTitleCategory"
-        style="@style/TextContent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="1"
-        android:textSize="@dimen/text_size_18sp"
-        tools:text="All" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/btnOptions"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_16"
-        android:src="@drawable/icon_dots" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        android:layout_gravity="center"
+        android:layout_marginVertical="@dimen/dimen_8"
+        app:cardCornerRadius="@dimen/dimen_16">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/flCategory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/dimen_16"
+                android:paddingVertical="@dimen/dimen_8">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="@dimen/dimen_50">
+
+                        <FrameLayout
+                            android:id="@+id/flImgCategory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/imgCategory"
+                                android:layout_width="@dimen/dimen_24"
+                                android:layout_height="@dimen/dimen_24"
+                                android:layout_margin="@dimen/dimen_16"
+                                android:src="@drawable/icon_default" />
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvTitleCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:maxLines="2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_18sp"
+                        tools:text="All" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btnOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|right"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:src="@drawable/icon_dots" />
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

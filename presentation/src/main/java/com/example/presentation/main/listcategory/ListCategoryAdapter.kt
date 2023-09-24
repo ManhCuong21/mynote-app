@@ -1,8 +1,10 @@
 package com.example.presentation.main.listcategory
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +14,9 @@ import com.example.core.core.model.CategoryModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.ItemListCategoryBinding
+import java.util.Random
+import kotlin.math.roundToInt
+
 
 class ListCategoryAdapter(
     private val onItemClicked: (ActionCategory, CategoryModel) -> Unit
@@ -43,6 +48,10 @@ class ListCategoryAdapter(
         fun bind(item: CategoryModel) = binding.apply {
             imgCategory.loadImage(item.imageCategory)
             tvTitleCategory.text = item.titleCategory
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+            flCategory.setBackgroundColor(color)
+            flImgCategory.setBackgroundColor(adjustAlpha(color, 0.6f))
             btnOptions.setOnClickListener {
                 val popupMenu = PopupMenu(context, it)
                 popupMenu.inflate(R.menu.popup_menu_category)
@@ -74,6 +83,15 @@ class ListCategoryAdapter(
                 }
                 popupMenu.show()
             }
+        }
+
+        @ColorInt
+        fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
+            val alpha = (Color.alpha(color) * factor).roundToInt()
+            val red = Color.red(color)
+            val green = Color.green(color)
+            val blue = Color.blue(color)
+            return Color.argb(alpha, red, green, blue)
         }
     }
 }
