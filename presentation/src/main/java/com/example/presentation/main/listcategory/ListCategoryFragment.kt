@@ -1,5 +1,6 @@
 package com.example.presentation.main.listcategory
 
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -63,7 +64,9 @@ class ListCategoryFragment : BaseFragment(R.layout.fragment_list_category) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
                         is ListCategorySingleEvent.GetListCategorySuccess -> {
-                            categoryAdapter.submitList(event.list)
+                            categoryAdapter.submitList(event.listCategory)
+                            binding.rvCategory.isVisible = event.listCategory.isNotEmpty()
+                            binding.lnEmptyCategory.isVisible = event.listCategory.isEmpty()
                         }
 
                         is ListCategorySingleEvent.DeleteCategorySuccess -> {

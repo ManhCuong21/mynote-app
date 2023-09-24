@@ -125,7 +125,7 @@ class NoteUseCase @Inject constructor(
 
     suspend fun updateNote(note: NoteModel): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
-            if (!sharedPrefersManager.userEmail.isNullOrEmpty()) {
+            if (!sharedPrefersManager.userEmail.isNullOrEmpty() && note.typeNote == TYPE_REMOTE) {
                 noteRemoteRepository.updateNote(note.toNoteRemote())
             } else {
                 noteLocalRepository.updateNote(note.toNoteEntity())

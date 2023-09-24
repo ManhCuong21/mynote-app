@@ -20,11 +20,11 @@ data class NoteModel(
     val nameMediaNote: String,
     val hasImage: Boolean,
     val hasRecord: Boolean,
-    var colorTitleNote: String,
-    var colorContentNote: String,
-    var timeNote: Long,
+    val colorTitleNote: String,
+    val colorContentNote: String,
+    val timeNote: Long,
     val typeNote: Int,
-    var notificationModel: NotificationModel? = null
+    val notificationModel: NotificationModel? = null
 ) : Parcelable
 
 @Parcelize

@@ -8,7 +8,9 @@ sealed interface ListCategoryAction {
 }
 
 sealed interface ListCategorySingleEvent {
-    data class GetListCategorySuccess(val list: List<CategoryModel>) : ListCategorySingleEvent
+    data class GetListCategorySuccess(val listCategory: List<CategoryModel>) :
+        ListCategorySingleEvent
+
     object DeleteCategorySuccess : ListCategorySingleEvent
     data class SingleEventFailed(val error: Throwable) : ListCategorySingleEvent
 }

@@ -1,16 +1,22 @@
 package com.example.presentation.note
 
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
+import com.example.core.core.external.ActionNote
+import com.example.core.core.external.AppConstants.TYPE_LOCAL
+import com.example.core.core.external.AppConstants.TYPE_REMOTE
 import com.example.core.core.external.ResultContent
 import com.example.core.core.external.combine
 import com.example.core.core.model.NoteModel
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.domain.mapper.NoteParams
+import com.example.domain.usecase.data.FirebaseStorageUseCase
+import com.example.domain.usecase.data.NoteUseCase
 import com.example.domain.usecase.file.FileUseCase
 import com.example.domain.usecase.file.ImageFileUseCase
 import com.example.domain.usecase.file.RecordFileUseCase
-import com.example.domain.usecase.data.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +26,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,6 +38,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,10 +49,13 @@ class NoteViewModel @Inject constructor(
     private val noteUseCase: NoteUseCase,
     private val fileUseCase: FileUseCase,
     private val imageFileUseCase: ImageFileUseCase,
-    private val recordFileUseCase: RecordFileUseCase
+    private val recordFileUseCase: RecordFileUseCase,
+    private val firebaseStorageUseCase: FirebaseStorageUseCase,
+    private val sharedPrefersManager: SharedPrefersManager
 ) : BaseViewModel() {
     private val _mutableStateFlow: MutableStateFlow<NoteUiState>
     val stateFlow: StateFlow<NoteUiState>
+    val uiStateFlow: StateFlow<NoteUiState>
 
     private val _actionSharedFlow = MutableSharedFlow<NoteAction>(extraBufferCapacity = 64)
     private inline fun <reified T : NoteAction> action() =
@@ -61,6 +73,8 @@ class NoteViewModel @Inject constructor(
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
+        stateFlow = _mutableStateFlow.asStateFlow()
+
         val titleNoteFlow = action<NoteAction.TitleNoteChanged>()
             .map { it.titleNote }
             .onStart { emit(initialUiState.titleNote.orEmpty()) }
@@ -101,11 +115,6 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.colorContentNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-        val notificationNoteFlow = action<NoteAction.NotificationNoteChanged>()
-            .map { it.notificationModel }
-            .onStart { emit(initialUiState.notificationModel) }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
-
         val titleNote = titleNoteFlow.distinctUntilChanged()
         val contentNote = contentNoteFlow.distinctUntilChanged()
         val categoryNote = categoryNoteFlow.distinctUntilChanged()
@@ -114,9 +123,8 @@ class NoteViewModel @Inject constructor(
         val hasRecordNote = hasRecordNoteFlow.distinctUntilChanged()
         val colorTitleNote = colorTitleNoteFlow.distinctUntilChanged()
         val colorContentNote = colorContentNoteFlow.distinctUntilChanged()
-        val notificationNote = notificationNoteFlow.distinctUntilChanged()
 
-        stateFlow = combine(
+        uiStateFlow = combine(
             titleNote,
             contentNote,
             categoryNote,
@@ -125,7 +133,6 @@ class NoteViewModel @Inject constructor(
             hasRecordNote,
             colorTitleNote,
             colorContentNote,
-            notificationNote,
             ::buildNoteUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
@@ -134,78 +141,134 @@ class NoteViewModel @Inject constructor(
         deleteDirectory()
         deleteDirectoryTemp()
         saveFileMediaToTemp()
-        saveMediaToDirectory()
+        saveNote()
         saveImageNote()
         getListImage()
         deleteImage()
         getListRecord()
         deleteRecord()
-        saveNote()
-        updateNote()
     }
+
+    private fun insertNoteFlow() =
+        flow {
+            emit(ResultContent.Loading)
+            val uiState = uiStateFlow.value
+            noteUseCase.insertNote(
+                NoteParams(
+                    titleNote = uiState.titleNote.orEmpty(),
+                    contentNote = uiState.contentNote.orEmpty(),
+                    categoryNote = uiState.categoryNote,
+                    fileMediaNote = uiState.directoryName.orEmpty(),
+                    hasImage = uiState.hasImage ?: false,
+                    hasRecord = uiState.hasRecord ?: false,
+                    colorTitleNote = uiState.colorTitleNote.orEmpty(),
+                    colorContentNote = uiState.colorContentNote.orEmpty(),
+                    timeNote = System.currentTimeMillis()
+                )
+            ).fold(
+                success = {
+                    ResultContent.Content(it)
+                },
+                failure = {
+                    ResultContent.Error(it)
+                }
+            ).let { emit(it) }
+        }
+
+    private fun updateNoteFlow(noteModel: NoteModel?) =
+        flow {
+            emit(ResultContent.Loading)
+            val uiState = uiStateFlow.value
+            if (noteModel != null) {
+                noteUseCase.updateNote(
+                    NoteModel(
+                        idNote = noteModel.idNote,
+                        titleNote = uiState.titleNote.orEmpty(),
+                        contentNote = uiState.contentNote.orEmpty(),
+                        categoryNote = uiState.categoryNote,
+                        nameMediaNote = uiState.directoryName.orEmpty(),
+                        hasImage = uiState.hasImage ?: false,
+                        hasRecord = uiState.hasRecord ?: false,
+                        colorTitleNote = uiState.colorTitleNote.orEmpty(),
+                        colorContentNote = uiState.colorContentNote.orEmpty(),
+                        timeNote = System.currentTimeMillis(),
+                        typeNote = noteModel.typeNote,
+                        notificationModel = noteModel.notificationModel
+                    )
+                ).fold(
+                    success = {
+                        ResultContent.Content(it)
+                    },
+                    failure = {
+                        ResultContent.Error(it)
+                    }
+                ).let { emit(it) }
+            }
+        }
+
+    private fun saveMediaFlow(context: FragmentActivity, noteModel: NoteModel?) =
+        flow {
+            emit(ResultContent.Loading)
+            val type = noteModel?.typeNote
+                ?: if (sharedPrefersManager.userEmail.isNullOrEmpty()) TYPE_LOCAL else TYPE_REMOTE
+            if (type == TYPE_REMOTE) {
+                firebaseStorageUseCase.deleteDirectory(uiStateFlow.value.directoryName.orEmpty())
+                firebaseStorageUseCase.saveFile(
+                    context,
+                    uiStateFlow.value.directoryName.orEmpty()
+                )
+            } else {
+                fileUseCase.saveFileToDirectory(
+                    context,
+                    uiStateFlow.value.directoryName.orEmpty()
+                )
+            }.fold(
+                success = {
+                    ResultContent.Content(it)
+                },
+                failure = {
+                    ResultContent.Error(it)
+                }
+            ).let { emit(it) }
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun saveNote() {
-        action<NoteAction.InsertNote>()
+        action<NoteAction.SaveNote>()
             .flatMapLatest {
-                flow {
-                    emit(ResultContent.Loading)
-                    dispatch(NoteAction.SaveMediaToDirectory(it.context))
-                    val uiState = stateFlow.value
-                    noteUseCase.insertNote(
-                        NoteParams(
-                            titleNote = uiState.titleNote.orEmpty(),
-                            contentNote = uiState.contentNote.orEmpty(),
-                            categoryNote = uiState.categoryNote,
-                            fileMediaNote = uiState.directoryName.orEmpty(),
-                            hasImage = uiState.hasImage ?: false,
-                            hasRecord = uiState.hasRecord ?: false,
-                            colorTitleNote = uiState.colorTitleNote.orEmpty(),
-                            colorContentNote = uiState.colorContentNote.orEmpty(),
-                            timeNote = System.currentTimeMillis()
-                        )
-                    ).fold(
-                        success = {
-                            ResultContent.Content(it)
-                        },
-                        failure = {
-                            ResultContent.Error(it)
-                        }
-                    ).let { emit(it) }
+                saveMediaFlow(it.context, it.noteModel).zip(
+                    if (it.action == ActionNote.UPDATE_NOTE) updateNoteFlow(it.noteModel) else insertNoteFlow()
+                ) { result, _ ->
+                    result
                 }
-            }.onEach { lce ->
-                val event = when (lce) {
+            }.onEach { result ->
+                val event = when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> NoteSingleEvent.SaveNote.Success
-                    is ResultContent.Error -> NoteSingleEvent.SaveNote.Failed(error = lce.error)
+                    is ResultContent.Content -> NoteSingleEvent.SaveNoteSuccess
+                    is ResultContent.Error -> NoteSingleEvent.Failed(error = result.error)
+                }
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun updateNote() {
-        action<NoteAction.UpdateNote>()
+    private fun saveFileMediaToTemp() {
+        action<NoteAction.SaveFileMediaToTemp>()
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
-                    val uiState = stateFlow.value
-                    noteUseCase.updateNote(
-                        NoteModel(
-                            idNote = it.noteModel.idNote,
-                            titleNote = uiState.titleNote.orEmpty(),
-                            contentNote = uiState.contentNote.orEmpty(),
-                            categoryNote = uiState.categoryNote,
-                            nameMediaNote = uiState.directoryName.orEmpty(),
-                            hasImage = uiState.hasImage ?: false,
-                            hasRecord = uiState.hasRecord ?: false,
-                            colorTitleNote = uiState.colorTitleNote.orEmpty(),
-                            colorContentNote = uiState.colorContentNote.orEmpty(),
-                            timeNote = System.currentTimeMillis(),
-                            typeNote = it.noteModel.typeNote,
-                            notificationModel = uiState.notificationModel
+                    val saveFile = if (it.noteModel.typeNote == TYPE_REMOTE) {
+                        firebaseStorageUseCase.saveListFileToTemp(
+                            it.context,
+                            it.noteModel.nameMediaNote
                         )
-                    ).fold(
+                    } else {
+                        fileUseCase.saveFileToTemp(it.context, it.noteModel.nameMediaNote)
+                    }
+                    saveFile.fold(
                         success = {
                             ResultContent.Content(it)
                         },
@@ -214,27 +277,15 @@ class NoteViewModel @Inject constructor(
                         }
                     ).let { emit(it) }
                 }
-            }.onEach { lce ->
-                val event = when (lce) {
+            }.onEach { result ->
+                when (result) {
                     is ResultContent.Loading -> null
-                    is ResultContent.Content -> NoteSingleEvent.SaveNote.Success
-                    is ResultContent.Error -> NoteSingleEvent.SaveNote.Failed(error = lce.error)
+                    is ResultContent.Content -> NoteSingleEvent.SaveFileToTempSuccess
+                    is ResultContent.Error -> NoteSingleEvent.Failed(error = result.error)
+                }.let { event -> event?.let { _singleEventChannel.send(it) } }
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
                 }
-                event?.let { _singleEventChannel.send(it) }
-            }.launchIn(viewModelScope)
-    }
-
-    private fun saveFileMediaToTemp() {
-        action<NoteAction.SaveFileMediaToTemp>()
-            .onEach {
-                fileUseCase.saveFileToTemp(it.context, it.directoryName)
-            }.launchIn(viewModelScope)
-    }
-
-    private fun saveMediaToDirectory() {
-        action<NoteAction.SaveMediaToDirectory>()
-            .onEach {
-                fileUseCase.saveFileToDirectory(it.context, stateFlow.value.directoryName.orEmpty())
             }.launchIn(viewModelScope)
     }
 
@@ -248,7 +299,7 @@ class NoteViewModel @Inject constructor(
     private fun deleteDirectory() {
         action<NoteAction.DeleteDirectory>()
             .onEach {
-                fileUseCase.deleteDirectory(it.context, stateFlow.value.directoryName.orEmpty())
+                fileUseCase.deleteDirectory(it.context, uiStateFlow.value.directoryName.orEmpty())
             }.launchIn(viewModelScope)
     }
 

@@ -95,6 +95,12 @@ class SignUpFragment : BaseFragment(R.layout.fragment_sign_up) {
         btnSignUp.setOnClickListener {
             viewModel.dispatch(SignUpAction.SignUp)
         }
+        btnSignIn.setOnClickListener {
+            mainNavigator.popBackStack()
+        }
+        btnBack.setOnClickListener {
+            mainNavigator.popBackStack()
+        }
     }
 
     private fun setupInitialValues() {

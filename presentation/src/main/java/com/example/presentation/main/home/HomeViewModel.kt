@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,7 +48,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState = savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy(isLoading = false)
+        val initialUiState = savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy()
             ?: HomeUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
@@ -97,24 +96,10 @@ class HomeViewModel @Inject constructor(
                     ).let { emit(it) }
                 }
             }.onEach { result ->
-                _mutableStateFlow.update { state ->
-                    state.copy(isLoading = result is ResultContent.Loading)
-                }
                 val event = when (result) {
-                    is ResultContent.Loading -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = true) }
-                        null
-                    }
-
-                    is ResultContent.Content -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
-                        HomeSingleEvent.GetListCategory.Success(result.content)
-                    }
-
-                    is ResultContent.Error -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
-                        HomeSingleEvent.GetListCategory.Failed(error = result.error)
-                    }
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> HomeSingleEvent.GetListCategory.Success(result.content)
+                    is ResultContent.Error -> HomeSingleEvent.GetListCategory.Failed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

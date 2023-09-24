@@ -28,6 +28,10 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="BackgroundBorderTop">
+        <item name="android:background">@drawable/border_top_background_light</item>
+    </style>
+
     <style name="TextTitle">
         <item name="android:background">@color/white</item>
         <item name="android:textSize">@dimen/text_size_20sp</item>
@@ -37,6 +41,10 @@
 
     <style name="TextContent">
         <item name="android:textSize">@dimen/text_size_16sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextColor">
         <item name="android:textColor">@color/black</item>
     </style>
 
@@ -52,7 +60,7 @@
         <item name="android:paddingTop">@dimen/dimen_30</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textCursorDrawable">@drawable/textinputlayout_edittext_cursor</item>
-        <item name="android:importantForAutofill" >no</item>
+        <item name="android:importantForAutofill">no</item>
     </style>
 
     <style name="Theme.AlertDialogFullScreenTransparent" parent="Theme.MaterialComponents.Light.Dialog">

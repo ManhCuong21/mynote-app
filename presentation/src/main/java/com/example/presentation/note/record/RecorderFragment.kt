@@ -97,6 +97,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         }
         btnSaveRecord.setOnClickListener {
             stopRecording()
+            noteViewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
             noteViewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
             mainNavigator.popBackStack()
         }

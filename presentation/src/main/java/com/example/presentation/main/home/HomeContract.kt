@@ -21,13 +21,11 @@ sealed interface HomeSingleEvent {
 
 @Parcelize
 data class HomeUiState(
-    val isLoading: Boolean,
     val listCategory: List<CategoryModel>,
     val listNote: List<NoteModel>
 ) : Parcelable {
     companion object {
         val INITIAL = HomeUiState(
-            isLoading = false,
             listCategory = listOf(),
             listNote = listOf()
         )
@@ -38,7 +36,6 @@ fun buildHomeUiState(
     listCategory: List<CategoryModel>,
     listNote: List<NoteModel>
 ): HomeUiState = HomeUiState(
-    isLoading = false,
     listCategory = listCategory,
     listNote = listNote
 )

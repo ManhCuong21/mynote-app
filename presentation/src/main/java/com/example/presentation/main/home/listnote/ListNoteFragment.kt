@@ -16,14 +16,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
+import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
-import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentListNoteBinding
 import com.example.presentation.dialog.list.showListDialog
-import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.main.home.toListDialogItem
 import com.example.presentation.navigation.MainNavigator
@@ -109,9 +108,11 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
             })
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
         viewModel.dispatch(ListNoteAction.GetListNote(categoryNote))
+        requestPermissionLauncher.launch(PERMISSION_NOTIFICATION)
     }
 
     override fun setupViews() {
@@ -141,9 +142,6 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
                             Timber.e(event.error)
                         }
                     }
-                }
-                viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
-                    renderLoadingUI(state.isLoading)
                 }
             }
         }

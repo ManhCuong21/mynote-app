@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.external.AppCoroutineDispatchers
-import com.example.data.file.FileRepository
 import com.example.core.core.model.ItemImage
+import com.example.data.file.FileRepository
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -61,9 +61,11 @@ class ImageFileRepositoryImpl @Inject constructor(
             fileDirectoryTemp.listFiles()
                 ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
                 ?.map {
-                    val bytes = it.readBytes()
-                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    listImage.add(ItemImage(it.absolutePath, Bitmap.createBitmap(bmp)))
+                    if (it.exists()) {
+                        val bytes = it.readBytes()
+                        val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        listImage.add(ItemImage(it.absolutePath, Bitmap.createBitmap(bmp)))
+                    }
                 }
             listImage
         }

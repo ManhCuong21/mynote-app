@@ -33,6 +33,7 @@ import com.example.presentation.R
 import com.example.presentation.databinding.DialogChooseImageAddNoteBinding
 import com.example.presentation.databinding.FragmentNoteBinding
 import com.example.presentation.dialog.camera.showCameraDialog
+import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.adapter.NoteChooseColorAdapter
@@ -144,6 +145,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
+                        is NoteSingleEvent.SaveFileToTempSuccess -> {
+                            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
+                            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
+                        }
+
                         is NoteSingleEvent.GetListImage -> {
                             binding.rvImageNote.isVisible = event.list.isNotEmpty()
                             listImageAdapter.submitList(event.list)
@@ -154,15 +160,18 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                             listRecordAdapter.submitList(event.list)
                         }
 
-                        is NoteSingleEvent.SaveNote.Success -> {
+                        is NoteSingleEvent.SaveNoteSuccess -> {
                             requireActivity().viewModelStore.clear()
                             mainNavigator.popBackStack()
                         }
 
-                        is NoteSingleEvent.SaveNote.Failed -> {}
+                        is NoteSingleEvent.Failed -> {}
                     }
                 }
                 viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+                    renderLoadingUI(state.isLoading == true)
+                }
+                viewModel.uiStateFlow.collectIn(viewLifecycleOwner) { state ->
                     binding.btnSaveNote.isVisible = !state.titleNote.isNullOrEmpty()
                 }
             }
@@ -183,12 +192,8 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     private fun initItemNote(noteModel: NoteModel) = binding.apply {
-        noteModel.nameMediaNote.let {
-            viewModel.dispatch(NoteAction.DirectoryNameNoteChanged(fileMediaNote = it))
-            viewModel.dispatch(NoteAction.SaveFileMediaToTemp(requireActivity(), it))
-            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
-            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
-        }
+        viewModel.dispatch(NoteAction.DirectoryNameNoteChanged(fileMediaNote = noteModel.nameMediaNote))
+        viewModel.dispatch(NoteAction.SaveFileMediaToTemp(requireActivity(), noteModel))
         noteModel.categoryNote?.let { viewModel.dispatch(NoteAction.CategoryNoteChanged(it)) }
         edtTitleNote.setText(noteModel.titleNote)
         edtContentNote.setText(noteModel.contentNote)
@@ -201,7 +206,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         viewModel.dispatch(NoteAction.ContentNoteChanged(contentNote = noteModel.contentNote))
         viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
         viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
-        viewModel.dispatch(NoteAction.NotificationNoteChanged(notificationModel = noteModel.notificationModel))
     }
 
     private fun setupClickListener() = binding.apply {
@@ -221,13 +225,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         }
         btnSaveNote.setOnClickListener {
             viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))
-            viewModel.dispatch(NoteAction.SaveMediaToDirectory(requireActivity()))
-            if (actionNote == ActionNote.UPDATE_NOTE) {
-                noteModel?.let { viewModel.dispatch(NoteAction.UpdateNote(it)) }
-            } else {
-                viewModel.dispatch(NoteAction.InsertNote(requireActivity()))
-            }
-            viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
+            viewModel.dispatch(NoteAction.SaveNote(requireActivity(), noteModel, actionNote))
         }
     }
 
@@ -246,7 +244,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     private fun initialValue() = binding.apply {
-        val state = viewModel.stateFlow.value
+        val state = viewModel.uiStateFlow.value
         edtTitleNote.setText(state.titleNote)
         edtContentNote.setText(state.contentNote)
         val colorTitle =

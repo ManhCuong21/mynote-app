@@ -1,37 +1,27 @@
 {
   "project_info": {
-    "project_number": "135099186733",
-    "firebase_url": "https://my-note-e888c-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "my-note-e888c",
-    "storage_bucket": "my-note-e888c.appspot.com"
+    "project_number": "932254035131",
+    "firebase_url": "https://my-note-4af61-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "my-note-4af61",
+    "storage_bucket": "my-note-4af61.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:135099186733:android:c668e24fe14be42fac82a4",
+        "mobilesdk_app_id": "1:932254035131:android:38221040177c776f208d9e",
         "android_client_info": {
           "package_name": "com.mynote.data"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "135099186733-2pgcvhfmfpncccd4sjdvi470ebohem52.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA-qeO3WbV5XhA9LrA-Hub-Ng6UNnHtcVg"
+          "current_key": "AIzaSyBKVfG-Z12pyS_Nn0BxW91irTpvFY_YV24"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "135099186733-2pgcvhfmfpncccd4sjdvi470ebohem52.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

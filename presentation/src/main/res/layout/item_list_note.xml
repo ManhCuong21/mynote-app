@@ -11,8 +11,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgCategoryNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dimen_24"
+        android:layout_height="@dimen/dimen_24"
         android:layout_marginHorizontal="@dimen/dimen_8"
         android:src="@drawable/icon_travel" />
 

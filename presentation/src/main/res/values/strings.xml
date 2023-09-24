@@ -6,8 +6,9 @@
     <string name="button_cancel">Cancel</string>
 
     <!-- Home -->
-    <string name="time_note">TimeNote</string>
+    <string name="time_note">My Note</string>
     <string name="title_empty_note">Empty Note</string>
+    <string name="title_empty_category">Empty Category</string>
 
     <!-- Bottom Nav -->
     <string name="title_home">Home</string>
@@ -38,8 +39,8 @@
     <string name="content_use_dark_theme">Use dark theme</string>
     <string name="content_time_format">Time format</string>
     <string name="content_date_format">Date format</string>
-    <string name="content_backup_restore"><![CDATA[Backup & Restore]]></string>
-    <string name="content_backup_on_device">Backup on device</string>
+    <string name="content_account">Account</string>
+    <string name="content_sign_in">Backup on device</string>
     <string name="content_apps">Apps</string>
     <string name="content_rate_app">Rate app</string>
     <string name="content_privacy_policy">Privacy policy</string>
@@ -72,6 +73,8 @@
     <string name="hint_null_error" />
     <string name="title_not_have_an_account">Don\'t have an account?</string>
     <string name="title_sign_up">Sign Up</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_sign_in">Sign In</string>
+    <string name="title_welcome_back">Welcome \nBack</string>
+    <string name="title_hey_good_to_see_you_again">Hey! Good to see you again</string>
+
 </resources>

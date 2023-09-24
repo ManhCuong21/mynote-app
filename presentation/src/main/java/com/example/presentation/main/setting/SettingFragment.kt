@@ -63,6 +63,8 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     }
 
     private fun setupInformationView() = binding.apply {
+        tvAccount.isVisible = sharedPrefersManager.userEmail.isNullOrEmpty()
+        btnSignIn.isVisible = sharedPrefersManager.userEmail.isNullOrEmpty()
         lnInformation.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
         btnLogOut.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
         tvEmail.text = sharedPrefersManager.userEmail
@@ -92,7 +94,7 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         btnTimeFormat.setOnClickListener {
             showDialogTimeFormat()
         }
-        btnBackupDevice.setOnClickListener {
+        btnSignIn.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignInFragment)
         }
         btnLogOut.setOnClickListener {

@@ -2,6 +2,8 @@ package com.example.domain.usecase.file
 
 import androidx.fragment.app.FragmentActivity
 import com.example.data.file.FileRepository
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.runCatching
 import java.io.File
 import javax.inject.Inject
 
@@ -14,10 +16,18 @@ class FileUseCase @Inject constructor(
     fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File =
         fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
 
-    fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String) =
-        fileRepository.saveFileToDirectory(fragmentActivity, directoryName)
+    fun saveFileToDirectory(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ): Result<Unit, Throwable> =
+        runCatching {
+            fileRepository.saveFileToDirectory(fragmentActivity, directoryName)
+        }
 
-    fun saveFileToTemp(fragmentActivity: FragmentActivity, directoryName: String) =
+    fun saveFileToTemp(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ): Result<Unit, Throwable> =
         fileRepository.saveFileToTemp(fragmentActivity, directoryName)
 
     suspend fun deleteDirectory(fragmentActivity: FragmentActivity, directoryName: String) =

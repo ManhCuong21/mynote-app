@@ -3,11 +3,11 @@ package com.example.presentation.note
 import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.fragment.app.FragmentActivity
+import com.example.core.core.external.ActionNote
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.ItemImage
 import com.example.core.core.model.ItemRecord
 import com.example.core.core.model.NoteModel
-import com.example.core.core.model.NotificationModel
 import kotlinx.parcelize.Parcelize
 
 sealed interface NoteAction {
@@ -26,26 +26,27 @@ sealed interface NoteAction {
     data class DeleteRecordNote(val context: FragmentActivity, val pathRecord: String) : NoteAction
     data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
     data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
-    data class NotificationNoteChanged(val notificationModel: NotificationModel?) : NoteAction
-    data class SaveMediaToDirectory(val context: FragmentActivity) : NoteAction
-    data class SaveFileMediaToTemp(val context: FragmentActivity, val directoryName: String) :
-        NoteAction
+    data class SaveNote(
+        val context: FragmentActivity,
+        val noteModel: NoteModel?,
+        val action: ActionNote
+    ) : NoteAction
 
-    data class InsertNote(val context: FragmentActivity) : NoteAction
-    data class UpdateNote(val noteModel: NoteModel) : NoteAction
+    data class SaveFileMediaToTemp(val context: FragmentActivity, val noteModel: NoteModel) :
+        NoteAction
 }
 
 sealed interface NoteSingleEvent {
+    object SaveFileToTempSuccess : NoteSingleEvent
     data class GetListImage(val list: List<ItemImage>) : NoteSingleEvent
     data class GetListRecord(val list: List<ItemRecord>) : NoteSingleEvent
-    sealed interface SaveNote : NoteSingleEvent {
-        object Success : SaveNote
-        data class Failed(val error: Throwable) : SaveNote
-    }
+    object SaveNoteSuccess : NoteSingleEvent
+    data class Failed(val error: Throwable) : NoteSingleEvent
 }
 
 @Parcelize
 data class NoteUiState(
+    val isLoading: Boolean? = null,
     val titleNote: String?,
     val contentNote: String?,
     val categoryNote: CategoryModel,
@@ -53,11 +54,11 @@ data class NoteUiState(
     val hasImage: Boolean?,
     val hasRecord: Boolean?,
     val colorTitleNote: String?,
-    val colorContentNote: String?,
-    val notificationModel: NotificationModel?
+    val colorContentNote: String?
 ) : Parcelable {
     companion object {
         val INITIAL = NoteUiState(
+            isLoading = false,
             titleNote = null,
             contentNote = null,
             categoryNote = CategoryModel(-1, "", 0, 0),
@@ -65,8 +66,7 @@ data class NoteUiState(
             hasImage = null,
             hasRecord = null,
             colorTitleNote = null,
-            colorContentNote = null,
-            notificationModel = null
+            colorContentNote = null
         )
     }
 }
@@ -79,8 +79,7 @@ fun buildNoteUiState(
     hasImage: Boolean,
     hasRecord: Boolean,
     colorTitleNote: String?,
-    colorContentNote: String?,
-    notificationModel: NotificationModel?
+    colorContentNote: String?
 ): NoteUiState = NoteUiState(
     titleNote = titleNote,
     contentNote = contentNote,
@@ -89,6 +88,5 @@ fun buildNoteUiState(
     hasImage = hasImage,
     hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
-    colorContentNote = colorContentNote,
-    notificationModel = notificationModel
+    colorContentNote = colorContentNote
 )

@@ -48,7 +48,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:$firebase_version"))
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
-
+    implementation 'com.google.firebase:firebase-storage-ktx'
     // import Room
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"

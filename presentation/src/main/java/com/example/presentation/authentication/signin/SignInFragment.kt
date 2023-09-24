@@ -89,6 +89,9 @@ class SignInFragment : BaseFragment(R.layout.fragment_sign_in) {
         btnSignUp.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.SignInFragmentToSignUpFragment)
         }
+        btnBack.setOnClickListener {
+            mainNavigator.popBackStack()
+        }
     }
 
     private fun setupInitialValues() {

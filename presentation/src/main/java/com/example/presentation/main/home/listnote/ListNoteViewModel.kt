@@ -3,9 +3,11 @@ package com.example.presentation.main.home.listnote
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
+import com.example.core.core.external.AppConstants.TYPE_REMOTE
 import com.example.core.core.external.ResultContent
 import com.example.domain.usecase.file.FileUseCase
 import com.example.domain.usecase.data.CategoryUseCase
+import com.example.domain.usecase.data.FirebaseStorageUseCase
 import com.example.domain.usecase.data.NoteUseCase
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +33,7 @@ class ListNoteViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val categoryUseCase: CategoryUseCase,
     private val noteUseCase: NoteUseCase,
+    private val firebaseStorageUseCase: FirebaseStorageUseCase,
     private val fileUseCase: FileUseCase
 ) : BaseViewModel() {
     private val _mutableStateFlow =
@@ -97,20 +100,9 @@ class ListNoteViewModel @Inject constructor(
                 }
             }.onEach { result ->
                 val event = when (result) {
-                    is ResultContent.Loading -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = true) }
-                        null
-                    }
-
-                    is ResultContent.Content -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
-                        ListNoteSingleEvent.GetListNoteSuccess(result.content)
-                    }
-
-                    is ResultContent.Error -> {
-                        _mutableStateFlow.update { state -> state.copy(isLoading = false) }
-                        ListNoteSingleEvent.SingleEventFailed(error = result.error)
-                    }
+                    is ResultContent.Loading -> null
+                    is ResultContent.Content -> ListNoteSingleEvent.GetListNoteSuccess(result.content)
+                    is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
@@ -146,7 +138,9 @@ class ListNoteViewModel @Inject constructor(
         action<ListNoteAction.DeleteNote>()
             .flatMapLatest {
                 flow {
-                    fileUseCase.deleteDirectory(it.context, it.noteModel.nameMediaNote)
+                    if (it.noteModel.typeNote == TYPE_REMOTE) {
+                        firebaseStorageUseCase.deleteDirectory(it.noteModel.nameMediaNote)
+                    } else fileUseCase.deleteDirectory(it.context, it.noteModel.nameMediaNote)
                     noteUseCase.deleteNote(it.noteModel).fold(
                         success = {
                             ResultContent.Content(it)

@@ -105,9 +105,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         }
                     }
                 }
-                viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
-                    renderLoadingUI(state.isLoading)
-                }
             }
         }
     }
