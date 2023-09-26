@@ -40,6 +40,7 @@ class MainNavigatorImpl @Inject constructor(
 private fun Direction.toNavDirections(): NavDirections = when (this) {
     is Direction.SignInFragmentToSignUpFragment -> SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
     is Direction.MainFragmentToSignInFragment -> MainFragmentDirections.actionMainFragmentToSignInFragment()
+    is Direction.MainFragmentToUserInformationFragment -> MainFragmentDirections.actionMainFragmentToUserInformationFragment()
     is Direction.MainFragmentToAddNoteFragment -> MainFragmentDirections.actionMainFragmentToNoteFragment(
         actionNote = ActionNote.INSERT_NOTE,
         category = category,

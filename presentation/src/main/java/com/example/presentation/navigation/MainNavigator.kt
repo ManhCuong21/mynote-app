@@ -12,6 +12,7 @@ interface MainNavigator {
     sealed interface Direction {
         object SignInFragmentToSignUpFragment : Direction
         object MainFragmentToSignInFragment : Direction
+        object MainFragmentToUserInformationFragment : Direction
         data class MainFragmentToAddNoteFragment(val category: CategoryModel) : Direction
         data class MainFragmentToUpdateNoteFragment(val noteModel: NoteModel) : Direction
         object MainFragmentToAddCategoryFragment : Direction

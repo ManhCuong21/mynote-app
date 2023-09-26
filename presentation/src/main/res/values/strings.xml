@@ -77,4 +77,7 @@
     <string name="title_welcome_back">Welcome \nBack</string>
     <string name="title_hey_good_to_see_you_again">Hey! Good to see you again</string>
 
+    <!-- Information -->
+    <string name="title_information">Information</string>
+    <string name="title_delete_account">Delete account</string>
 </resources>

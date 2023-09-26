@@ -25,6 +25,10 @@
         <action
             android:id="@+id/action_mainFragment_to_DateTimePickersFragment"
             app:destination="@+id/dateTimePickersFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_UserInformationFragment"
+            app:destination="@+id/userInformationFragment" />
     </fragment>
 
     <fragment
@@ -69,6 +73,21 @@
     </fragment>
 
     <fragment
+        android:id="@+id/dateTimePickersFragment"
+        android:name="com.example.presentation.dialog.datetimepickers.DateTimePickersFragment"
+        tools:layout="@layout/fragment_date_time_pickers">
+        <argument
+            android:name="noteModel"
+            app:argType="com.example.core.core.model.NoteModel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recorderFragment"
+        android:name="com.example.presentation.note.record.RecorderFragment"
+        tools:layout="@layout/fragment_recorder" />
+
+    <!-- Authentication -->
+    <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.presentation.authentication.signin.SignInFragment"
         tools:layout="@layout/fragment_sign_in">
@@ -83,17 +102,7 @@
         tools:layout="@layout/fragment_sign_up" />
 
     <fragment
-        android:id="@+id/dateTimePickersFragment"
-        android:name="com.example.presentation.dialog.datetimepickers.DateTimePickersFragment"
-        tools:layout="@layout/fragment_date_time_pickers">
-        <argument
-            android:name="noteModel"
-            app:argType="com.example.core.core.model.NoteModel" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/recorderFragment"
-        android:name="com.example.presentation.note.record.RecorderFragment"
-        tools:layout="@layout/fragment_recorder" />
-
+        android:id="@+id/userInformationFragment"
+        android:name="com.example.presentation.authentication.information.UserInformationFragment"
+        tools:layout="@layout/fragment_user_information" />
 </navigation>

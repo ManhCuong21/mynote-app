@@ -15,4 +15,7 @@ class UserUseCase @Inject constructor(
 
     suspend fun signOutUser(): Result<Any, Throwable> =
         userRepository.signOutUser()
+
+    suspend fun deleteUser(): Result<Any, Throwable> =
+        userRepository.deleteUser()
 }

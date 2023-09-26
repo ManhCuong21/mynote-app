@@ -24,6 +24,9 @@ class FirebaseStorageUseCase @Inject constructor(
         firebaseStorageRepository.saveListFileToTemp(fragmentActivity, directoryName)
             .map { it.first() }
 
+    suspend fun deleteAllDirectory(): Result<Unit, Throwable> =
+        firebaseStorageRepository.deleteAllDirectory().map { it.first() }
+
     suspend fun deleteDirectory(directoryName: String): Result<Unit, Throwable> =
-        firebaseStorageRepository.deleteDirectory(directoryName)
+        firebaseStorageRepository.deleteDirectory(directoryName).map { it.first() }
 }

@@ -91,6 +91,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     }
 
     private fun setupClickListener() = binding.apply {
+        lnInformation.setOnClickListener {
+            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToUserInformationFragment)
+        }
         btnTimeFormat.setOnClickListener {
             showDialogTimeFormat()
         }

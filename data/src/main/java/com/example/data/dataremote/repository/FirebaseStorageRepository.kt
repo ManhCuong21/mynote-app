@@ -2,6 +2,7 @@ package com.example.data.dataremote.repository
 
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.external.AppCoroutineDispatchers
+import com.example.core.core.external.throwException
 import com.example.data.file.FileRepository
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onSuccess
@@ -34,7 +35,8 @@ interface FirebaseStorageRepository {
     suspend fun saveListFileToTemp(fragmentActivity: FragmentActivity, directoryName: String):
             Result<Flow<Unit>, Throwable>
 
-    suspend fun deleteDirectory(directoryName: String): Result<Unit, Throwable>
+    suspend fun deleteAllDirectory(): Result<Flow<Unit>, Throwable>
+    suspend fun deleteDirectory(directoryName: String): Result<Flow<Unit>, Throwable>
     suspend fun deleteFile(directoryName: String, fileName: String): Result<Unit, Throwable>
 }
 
@@ -85,11 +87,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
                 val uploadTask = imageRef?.putStream(stream)
                 uploadTask?.addOnSuccessListener {
                 }?.addOnFailureListener { exception ->
-                    try {
-                        throw exception
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    throwException(exception)
                 }
                 Unit
             }
@@ -105,12 +103,8 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
                     result.items.forEach { it.getBytes(Long.MAX_VALUE) }
                     val listPath = result.items.map { it.path }
                     trySend(listPath)
-                }?.addOnFailureListener {
-                    try {
-                        throw it
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                }?.addOnFailureListener { exception ->
+                    throwException(exception)
                 }?.await()
             awaitClose { }
         }
@@ -141,12 +135,8 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
                                         }
                                     }
                                 }
-                                .addOnFailureListener {
-                                    try {
-                                        throw it
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
+                                .addOnFailureListener { exception ->
+                                    throwException(exception)
                                 }
                         }
                     }
@@ -155,29 +145,65 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun deleteDirectory(directoryName: String): Result<Unit, Throwable> =
+    override suspend fun deleteAllDirectory(): Result<Flow<Unit>, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             runCatching {
-                storageRef?.child(directoryName)?.listAll()
-                    ?.addOnSuccessListener { result ->
-                        result.items.forEach {
-                            firebaseStorage.reference.child(it.path).delete()
-                                .addOnFailureListener { exception ->
-                                    try {
-                                        throw exception
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
+                callbackFlow {
+                    storageRef?.listAll()?.addOnSuccessListener { directoryRoot ->
+                        if (directoryRoot.prefixes.isNotEmpty()) {
+                            directoryRoot.prefixes.forEachIndexed { _, directory ->
+                                val directoryName = directory.path.substringAfterLast("/")
+                                storageRef.child(directoryName).listAll()
+                                    .addOnSuccessListener { result ->
+                                        if (result.items.isNotEmpty()) {
+                                            result.items.forEachIndexed { index, item ->
+                                                firebaseStorage.reference.child(item.path)
+                                                    .delete()
+                                                    .addOnCompleteListener {
+                                                        if (index == result.items.size - 1) {
+                                                            trySend(Unit)
+                                                        }
+                                                    }
+                                                    .addOnFailureListener { exception ->
+                                                        throwException(exception)
+                                                    }
+                                            }
+                                        } else trySend(Unit)
+                                    }.addOnFailureListener { exception ->
+                                        throwException(exception)
                                     }
+                            }
+                        } else trySend(Unit)
+                    }
+                    awaitClose {}
+                }
+            }
+        }
+
+    override suspend fun deleteDirectory(directoryName: String): Result<Flow<Unit>, Throwable> =
+        withContext(appCoroutineDispatchers.io) {
+            runCatching {
+                callbackFlow {
+                    storageRef?.child(directoryName)?.listAll()
+                        ?.addOnSuccessListener { result ->
+                            if (result.items.isNotEmpty()) {
+                                result.items.forEachIndexed { index, item ->
+                                    firebaseStorage.reference.child(item.path).delete()
+                                        .addOnCompleteListener {
+                                            if (index == result.items.size - 1) {
+                                                trySend(Unit)
+                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            throwException(exception)
+                                        }
                                 }
-                        }
-                    }?.addOnFailureListener {
-                        try {
-                            throw it
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }?.await()
-                Unit
+                            } else trySend(Unit)
+                        }?.addOnFailureListener { exception ->
+                            throwException(exception)
+                        }?.await()
+                    awaitClose { }
+                }
             }
         }
 
@@ -191,11 +217,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
                 imageRef?.delete()
                     ?.addOnSuccessListener {}
                     ?.addOnFailureListener { exception ->
-                        try {
-                            throw exception
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        throwException(exception)
                     }?.await()
                 Unit
             }

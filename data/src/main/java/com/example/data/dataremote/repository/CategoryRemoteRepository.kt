@@ -1,6 +1,7 @@
 package com.example.data.dataremote.repository
 
 import com.example.core.core.external.AppCoroutineDispatchers
+import com.example.core.core.external.throwException
 import com.example.data.dataremote.model.CategoryRemote
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
@@ -29,7 +30,7 @@ internal class CategoryRemoteRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : CategoryRemoteRepository {
     private val dataRef = firebaseAuth.currentUser?.uid?.let {
-        FirebaseDatabase.getInstance().getReference(LIST_CATEGORY).child(it)
+        FirebaseDatabase.getInstance().getReference(it).child(LIST_CATEGORY)
     }
 
     override suspend fun insertCategory(category: CategoryRemote): Result<Unit, Throwable> =
@@ -41,11 +42,7 @@ internal class CategoryRemoteRepositoryImpl @Inject constructor(
                         if (it.isSuccessful) {
                             it.result
                         } else {
-                            try {
-                                throw it.exception!!
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            throwException(it.exception)
                         }
                     }?.await()
                 Unit
@@ -97,11 +94,7 @@ internal class CategoryRemoteRepositoryImpl @Inject constructor(
                         if (it.isSuccessful) {
                             it.result
                         } else {
-                            try {
-                                throw it.exception!!
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            throwException(it.exception)
                         }
                     }?.await()
                 Unit

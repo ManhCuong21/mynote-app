@@ -12,6 +12,7 @@ import com.example.core.core.viewbinding.viewBinding
 import com.example.core.core.lifecycle.collectIn
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentSignUpBinding
+import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
 import com.google.android.material.textfield.TextInputLayout
@@ -42,7 +43,7 @@ class SignUpFragment : BaseFragment(R.layout.fragment_sign_up) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
                         is SignUpSingleEvent.SignUpUser.Success -> {
-
+                            mainNavigator.popBackStack()
                         }
 
                         is SignUpSingleEvent.SignUpUser.Failed -> {
@@ -84,6 +85,7 @@ class SignUpFragment : BaseFragment(R.layout.fragment_sign_up) {
                     }
                 }
                 viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+                    renderLoadingUI(state.isLoading)
                     binding.btnSignUp.isEnabled =
                         state.validationErrors.isEmpty() && state.isActiveButton
                 }

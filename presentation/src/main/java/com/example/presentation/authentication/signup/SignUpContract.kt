@@ -47,6 +47,7 @@ sealed interface SignUpSingleEvent {
 
 @Parcelize
 data class SignUpUiState(
+    val isLoading: Boolean,
     val email: String?,
     val password: String?,
     val passwordConfirm: String?,
@@ -55,6 +56,7 @@ data class SignUpUiState(
 ) : Parcelable {
     companion object {
         val INITIAL = SignUpUiState(
+            isLoading = false,
             email = null,
             password = null,
             passwordConfirm = null,
@@ -79,9 +81,11 @@ internal fun buildSignUpUiState(
     email: EmailValidationResult,
     password: PasswordValidationResult,
     passwordConfirm: PasswordValidationResult,
-    isActiveButton: Boolean
+    isActiveButton: Boolean,
+    isLoading: Boolean
 ): SignUpUiState =
     SignUpUiState(
+        isLoading = isLoading,
         isActiveButton = isActiveButton,
         email = email.value,
         password = password.value,

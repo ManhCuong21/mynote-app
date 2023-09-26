@@ -1,6 +1,7 @@
 package com.example.data.dataremote.repository
 
 import com.example.core.core.external.AppCoroutineDispatchers
+import com.example.core.core.external.throwException
 import com.example.data.dataremote.model.NoteRemote
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
@@ -29,8 +30,8 @@ class NoteRemoteRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : NoteRemoteRepository {
     private val dataRef = firebaseAuth.currentUser?.uid?.let {
-        FirebaseDatabase.getInstance().getReference(LIST_NOTE)
-            .child(it)
+        FirebaseDatabase.getInstance().getReference(it)
+            .child(LIST_NOTE)
     }
 
     override suspend fun insertNote(note: NoteRemote): Result<Unit, Throwable> =
@@ -38,15 +39,11 @@ class NoteRemoteRepositoryImpl @Inject constructor(
             runCatching {
                 dataRef?.child("Note${note.idNote}")
                     ?.updateChildren(note.toMap())
-                    ?.addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            it.result
+                    ?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            task.result
                         } else {
-                            try {
-                                throw it.exception!!
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            throwException(task.exception)
                         }
                     }?.await()
                 Unit
@@ -124,15 +121,11 @@ class NoteRemoteRepositoryImpl @Inject constructor(
             runCatching {
                 dataRef?.child("Note${note.idNote}")
                     ?.updateChildren(note.toMap())
-                    ?.addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            it.result
+                    ?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            task.result
                         } else {
-                            try {
-                                throw it.exception!!
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
+                            throwException(task.exception)
                         }
                     }?.await()
                 Unit

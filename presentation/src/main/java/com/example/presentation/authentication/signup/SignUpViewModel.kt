@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +39,7 @@ class SignUpViewModel @Inject constructor(
 ) : BaseViewModel() {
     private val _mutableStateFlow: MutableStateFlow<SignUpUiState>
     val stateFlow: StateFlow<SignUpUiState>
+    private val loadingStateFlow = MutableStateFlow(false)
 
     private val _actionSharedFlow = MutableSharedFlow<SignUpAction>(extraBufferCapacity = 64)
     private inline fun <reified T : SignUpAction> action() =
@@ -50,8 +52,9 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch { _actionSharedFlow.emit(action) }
 
     init {
-        val initialUiState = savedStateHandle.get<SignUpUiState?>(STATE_KEY)?.copy()
-            ?: SignUpUiState.INITIAL
+        val initialUiState =
+            savedStateHandle.get<SignUpUiState?>(STATE_KEY)?.copy(isLoading = false)
+                ?: SignUpUiState.INITIAL
         _mutableStateFlow = MutableStateFlow(initialUiState).apply {
             onEach { savedStateHandle[STATE_KEY] = it }.launchIn(viewModelScope)
         }
@@ -99,6 +102,7 @@ class SignUpViewModel @Inject constructor(
             password,
             passwordConfirm,
             activeButtonFlow,
+            loadingStateFlow,
             ::buildSignUpUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
@@ -144,13 +148,17 @@ class SignUpViewModel @Inject constructor(
                         }
                     ).let { emit(it) }
                 }
-            }.onEach { lce ->
-                val event = when (lce) {
+            }.onEach { result ->
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
+                }
+                val event = when (result) {
                     is ResultContent.Loading -> null
                     is ResultContent.Content -> SignUpSingleEvent.SignUpUser.Success
-                    is ResultContent.Error -> SignUpSingleEvent.SignUpUser.Failed(error = lce.error)
+                    is ResultContent.Error -> SignUpSingleEvent.SignUpUser.Failed(error = result.error)
                 }
                 event?.let { _singleEventChannel.send(it) }
+                loadingStateFlow.value = result === ResultContent.Loading
             }.launchIn(viewModelScope)
     }
 

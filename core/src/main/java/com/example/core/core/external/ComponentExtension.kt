@@ -30,3 +30,11 @@ fun EditText.onDidEndEditing(action: () -> Unit) {
         }
     }
 }
+
+fun throwException(exception: Exception?) {
+    try {
+        throw exception!!
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
