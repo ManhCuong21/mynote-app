@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.core.external.loadImage
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
@@ -59,7 +59,7 @@ class HomeListCategoryAdapter(
         @SuppressLint("NotifyDataSetChanged")
         fun bind(item: CategoryModel) = binding.apply {
             tvTitleCategory.text = item.titleCategory
-            item.imageCategory.let { imgItemCategory.loadImage(it) }
+            item.imageCategory.let { imgItemCategory.loadImageDrawable(it) }
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {

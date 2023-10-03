@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,6 +12,7 @@ import com.example.core.core.external.ActionNote
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_12_HOUR
 import com.example.core.core.external.AppConstants.DATE_FORMAT_TIME_24_HOUR
 import com.example.core.core.external.formatDate
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
@@ -42,9 +42,7 @@ class ListNoteAdapter(
         RecyclerView.ViewHolder(binding.root) {
         private val context = binding.root.context
         fun bind(item: NoteModel, format24Hour: Boolean) = binding.apply {
-            imgCategoryNote.setImageDrawable(
-                item.categoryNote?.let { ContextCompat.getDrawable(context, it.imageCategory) }
-            )
+            imgCategoryNote.loadImageDrawable(item.categoryNote?.imageCategory.orEmpty())
             vColorNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
             tvTitleNote.text = item.titleNote
             tvContentNote.text = item.contentNote

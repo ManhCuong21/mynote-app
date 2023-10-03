@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingVertical="@dimen/dimen_8"
+            android:paddingVertical="@dimen/dimen_16"
             android:text="@string/title_setting" />
 
         <androidx.appcompat.widget.LinearLayoutCompat

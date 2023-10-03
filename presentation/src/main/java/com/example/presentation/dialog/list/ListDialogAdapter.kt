@@ -5,13 +5,13 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.core.external.loadImage
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.ListDialogItem
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.databinding.ItemListDialogBinding
 
 class ListDialogAdapter(
-    private val position: Int,
+    position: Int,
     private val onItemClicked: (Int) -> Unit
 ) : ListAdapter<ListDialogItem, ListDialogAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ListDialogItem>() {
@@ -37,7 +37,7 @@ class ListDialogAdapter(
         val binding: ItemListDialogBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ListDialogItem) = binding.apply {
-            imgItem.loadImage(item.image)
+            imgItem.loadImageDrawable(item.image)
             tvTitleItem.text = item.title
             cbItem.isVisible = item.isVisibleCheckBox
             cbItem.isChecked = selectedPosition == bindingAdapterPosition

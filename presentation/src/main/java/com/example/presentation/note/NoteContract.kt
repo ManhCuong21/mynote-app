@@ -61,7 +61,7 @@ data class NoteUiState(
             isLoading = false,
             titleNote = null,
             contentNote = null,
-            categoryNote = CategoryModel(-1, "", 0, 0),
+            categoryNote = CategoryModel(-1, "", "R.drawable.icon_ex", 0),
             directoryName = null,
             hasImage = null,
             hasRecord = null,

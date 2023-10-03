@@ -34,125 +34,130 @@
         android:text="@string/title_hey_good_to_see_you_again"
         app:fontFamily="@font/asap" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        style="@style/BackgroundBorderTop"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dimen_100"
-        android:orientation="vertical"
-        android:padding="@dimen/dimen_16">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            style="@style/TextContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/dimen_16"
-            android:text="@string/title_sign_up"
-            android:textSize="@dimen/text_size_24sp"
-            app:fontFamily="@font/alegreya_bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edtEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:hint="@string/title_email"
-            android:minWidth="@dimen/dimen_488"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null"
-            app:helperText="example@gmail.com"
-            app:helperTextEnabled="true"
-            app:startIconDrawable="@drawable/baseline_email_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/TextContent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName"
-                android:maxEms="1"
-                android:maxLines="1"
-                android:paddingHorizontal="@dimen/dimen_8"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edtPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/dimen_8"
-            android:clipToPadding="false"
-            android:hint="@string/title_password"
-            android:minWidth="@dimen/dimen_488"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
-
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/TextContent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:imeOptions="actionNext"
-                android:inputType="text|textPassword"
-                android:maxEms="1"
-                android:maxLength="20"
-                android:maxLines="1"
-                android:paddingHorizontal="@dimen/dimen_8"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/edtPasswordConfirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:hint="@string/title_password"
-            android:minWidth="@dimen/dimen_488"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
-
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/TextContent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:imeOptions="actionDone"
-                android:inputType="text|textPassword"
-                android:maxEms="1"
-                android:maxLength="20"
-                android:maxLines="1"
-                android:paddingHorizontal="@dimen/dimen_8"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignUp"
-            style="@style/TextContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_8"
-            android:layout_marginBottom="@dimen/dimen_16"
-            android:gravity="center_horizontal"
-            android:paddingVertical="@dimen/dimen_12"
-            android:text="@string/title_sign_up" />
+        android:layout_marginTop="@dimen/dimen_100">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            style="@style/BackgroundBorderTop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/dimen_16">
 
             <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_not_have_an_account" />
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/dimen_16"
+                android:text="@string/title_sign_up"
+                android:textSize="@dimen/text_size_24sp"
+                app:fontFamily="@font/alegreya_bold" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/btnSignIn"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:hint="@string/title_email"
+                android:minWidth="@dimen/dimen_488"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:helperText="example@gmail.com"
+                app:helperTextEnabled="true"
+                app:startIconDrawable="@drawable/baseline_email_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/TextContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName"
+                    android:maxEms="1"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dimen_8"
+                android:clipToPadding="false"
+                android:hint="@string/title_password"
+                android:minWidth="@dimen/dimen_488"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/TextContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionNext"
+                    android:inputType="text|textPassword"
+                    android:maxEms="1"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edtPasswordConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:hint="@string/title_password"
+                android:minWidth="@dimen/dimen_488"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/TextContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    android:inputType="text|textPassword"
+                    android:maxEms="1"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/dimen_8"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSignUp"
+                style="@style/TextContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:layout_marginBottom="@dimen/dimen_16"
+                android:gravity="center_horizontal"
+                android:paddingVertical="@dimen/dimen_12"
+                android:text="@string/title_sign_up" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dimen_8"
-                android:text="@string/title_sign_in"
-                android:textColor="@color/primary"
-                android:textStyle="bold" />
+                android:layout_gravity="center_horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_not_have_an_account" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btnSignIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dimen_8"
+                    android:text="@string/title_sign_in"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
 </androidx.appcompat.widget.LinearLayoutCompat>

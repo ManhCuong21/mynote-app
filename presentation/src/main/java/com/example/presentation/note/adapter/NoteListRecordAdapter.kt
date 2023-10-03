@@ -2,10 +2,10 @@ package com.example.presentation.note.adapter
 
 import android.media.MediaPlayer
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.ItemRecord
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.inflateViewBinding
@@ -39,7 +39,6 @@ class NoteListRecordAdapter(
         RecyclerView.ViewHolder(binding.root) {
         private var player: MediaPlayer? = null
         private var statusRecord = StatusRecord.CREATE
-        private val context = binding.root.context
         fun bind(item: ItemRecord) = binding.apply {
             btnPlayRecord.setOnClickListener {
                 statusRecord = when (statusRecord) {
@@ -71,28 +70,9 @@ class NoteListRecordAdapter(
 
         private fun setUiPlaying(status: StatusRecord) = binding.apply {
             if (status == StatusRecord.PAUSE) {
-                btnPlayRecord.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.icon_play_record
-                    )
-                )
+                btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record.toString())
             } else {
-                btnPlayRecord.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.icon_pause_play_record
-                    )
-                )
-            }
-            player?.setOnCompletionListener {
-                binding.btnPlayRecord.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.icon_play_record
-                    )
-                )
-                player?.stop()
+                btnPlayRecord.loadImageDrawable(R.drawable.icon_pause_play_record.toString())
             }
         }
 
@@ -105,6 +85,10 @@ class NoteListRecordAdapter(
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+            }
+            player?.setOnCompletionListener {
+                stopPlaying()
+                binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record.toString())
             }
             if (player?.audioSessionId != -1) {
                 binding.audioWave.addAmplitude(player?.audioSessionId!!.toFloat())

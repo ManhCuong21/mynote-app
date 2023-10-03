@@ -60,7 +60,8 @@
     <string name="format_date_time_picker_today">Today - %s</string>
     <string name="format_date_time_picker_tomorrow">Tomorrow - %s</string>
     <string name="title_log_out">Log out</string>
-
+    <string name="content_rate_app_2">We would greatly appreciate it if you can could rate us</string>
+    <string name="content_rate_app_1">We are working hard for a better user experience</string>
     <!-- Authentication -->
     <string name="title_email">Email</string>
     <string name="title_password">Password</string>

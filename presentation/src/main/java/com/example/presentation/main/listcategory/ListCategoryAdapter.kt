@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.core.external.ActionCategory
-import com.example.core.core.external.loadImage
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.ItemListCategoryBinding
 import java.util.Random
 import kotlin.math.roundToInt
-
 
 class ListCategoryAdapter(
     private val onItemClicked: (ActionCategory, CategoryModel) -> Unit
@@ -46,7 +45,7 @@ class ListCategoryAdapter(
 
         @SuppressLint("DiscouragedPrivateApi")
         fun bind(item: CategoryModel) = binding.apply {
-            imgCategory.loadImage(item.imageCategory)
+            imgCategory.loadImageDrawable(item.imageCategory)
             tvTitleCategory.text = item.titleCategory
             val rnd = Random()
             val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))

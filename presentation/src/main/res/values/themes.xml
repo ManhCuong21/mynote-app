@@ -116,8 +116,14 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <!--Checkbox-->
+    <!-- Checkbox -->
     <style name="Widget.App.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="buttonTint">@color/checkbox_state_checked</item>
+    </style>
+
+    <!-- Rating Bar -->
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorControlNormal">#A4A4A4</item>
+        <item name="colorControlActivated">#FFD92D</item>
     </style>
 </resources>

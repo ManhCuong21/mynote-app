@@ -6,11 +6,14 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
-fun ImageView.loadImage(
-    pathImage: Any
-) {
+fun ImageView.loadImageDrawable(imageValue: String?) {
+    val image = try {
+        imageValue?.toInt()
+    } catch (e: Exception) {
+        androidx.appcompat.R.drawable.abc_btn_default_mtrl_shape
+    }
     Glide.with(context)
-        .load(pathImage)
+        .load(image)
         .fitCenter()
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(this)

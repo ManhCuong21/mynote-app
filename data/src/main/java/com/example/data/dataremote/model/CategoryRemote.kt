@@ -8,7 +8,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class CategoryRemote(
     val idCategory: Long = System.currentTimeMillis(),
     val titleCategory: String? = null,
-    val imageCategory: Int? = null,
+    val imageCategory: String? = null,
     val typeCategory: Int = TYPE_REMOTE
 ) {
     @Exclude

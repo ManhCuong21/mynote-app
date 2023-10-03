@@ -46,10 +46,11 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.6.0"
+    def nav_version = "2.7.3"
     def hilt_version = "2.44"
     def camerax_version = "1.2.3"
     def work_version = "2.8.1"
+    def rate_version = "2.0.1"
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -82,6 +83,10 @@ dependencies {
     //import Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    // Rate app
+    implementation "com.google.android.play:review:$rate_version"
+    implementation "com.google.android.play:review-ktx:$rate_version"
 
     // Worker
     implementation "androidx.work:work-runtime-ktx:$work_version"

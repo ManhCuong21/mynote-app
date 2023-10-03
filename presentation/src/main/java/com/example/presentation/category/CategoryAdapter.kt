@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.core.core.external.loadImage
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.ItemCategory
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
@@ -48,7 +48,7 @@ class CategoryAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         val context: Context = binding.root.context
         fun bind(item: ItemCategory) = binding.apply {
-            imgItemCategory.loadImage(item.image)
+            imgItemCategory.loadImageDrawable(item.image.toString())
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {

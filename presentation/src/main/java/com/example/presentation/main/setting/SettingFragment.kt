@@ -15,6 +15,7 @@ import com.example.presentation.R
 import com.example.presentation.databinding.DialogTimeFormatBinding
 import com.example.presentation.databinding.FragmentSettingBinding
 import com.example.presentation.dialog.text.showTextDialog
+import com.example.presentation.main.setting.rateapp.showRateAppDialog
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -102,6 +103,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         }
         btnLogOut.setOnClickListener {
             viewModel.dispatch(SettingAction.SignOut)
+        }
+        btnRateApp.setOnClickListener {
+            showRateAppDialog()
         }
     }
 

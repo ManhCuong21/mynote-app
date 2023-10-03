@@ -13,7 +13,7 @@ data class CategoryEntity(
     @ColumnInfo(name = "titleCategory")
     val titleCategory: String,
     @ColumnInfo(name = "imageCategory")
-    val imageCategory: Int,
+    val imageCategory: String,
     @ColumnInfo(name = "typeCategory")
     val typeCategory: Int = TYPE_LOCAL
 )

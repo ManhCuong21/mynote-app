@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
 import com.example.core.core.external.formatDate
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
@@ -132,20 +133,10 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     private fun setUiRecording(status: StatusRecord) = binding.apply {
         if (status == StatusRecord.PAUSE) {
-            imgRecording.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireActivity(),
-                    R.drawable.icon_micro
-                )
-            )
+            imgRecording.loadImageDrawable(R.drawable.icon_micro.toString())
             tvStatusRecord.text = getString(R.string.text_pause_recording)
         } else {
-            imgRecording.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireActivity(),
-                    R.drawable.icon_micro_recording
-                )
-            )
+            imgRecording.loadImageDrawable(R.drawable.icon_micro_recording.toString())
             tvStatusRecord.text = getString(R.string.text_recording)
         }
     }

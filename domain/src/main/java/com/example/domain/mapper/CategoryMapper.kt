@@ -4,7 +4,7 @@ import com.example.core.core.model.CategoryModel
 import com.example.data.datalocal.model.CategoryEntity
 import com.example.data.dataremote.model.CategoryRemote
 
-data class CategoryParams(val title: String, val image: Int)
+data class CategoryParams(val title: String, val image: String)
 
 fun CategoryParams.toCategoryEntity() = CategoryEntity(
     titleCategory = title,
@@ -44,6 +44,6 @@ fun CategoryEntity.toCategory() = CategoryModel(
 fun CategoryRemote.toCategoryModel() = CategoryModel(
     idCategory = idCategory,
     titleCategory = titleCategory.orEmpty(),
-    imageCategory = imageCategory ?: 0,
+    imageCategory = imageCategory.orEmpty(),
     typeCategory = typeCategory
 )

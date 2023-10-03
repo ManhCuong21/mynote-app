@@ -9,7 +9,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionCategory
-import com.example.core.core.external.loadImage
+import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.ItemCategory
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
@@ -80,9 +80,9 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
             defaultPosition = getDefaultPosition(),
             onItemClicked = { item ->
                 binding.edtCategoryName.editText?.setText(item.title)
-                binding.imgItemCategory.loadImage(item.image)
+                binding.imgItemCategory.loadImageDrawable(item.image.toString())
                 viewModel.dispatch(CategoryAction.TitleCategoryChanged(item.title))
-                viewModel.dispatch(CategoryAction.ImageCategoryChanged(item.image))
+                viewModel.dispatch(CategoryAction.ImageCategoryChanged(item.image.toString()))
             })
     }
 
@@ -126,7 +126,7 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     private fun setupInitialValues() = binding.apply {
         val state = viewModel.stateFlow.value
         edtCategoryName.editText?.setText(state.title)
-        imgItemCategory.setImageResource(state.image)
+        imgItemCategory.loadImageDrawable(state.image)
         viewModel.dispatch(CategoryAction.TitleCategoryChanged(state.title))
         viewModel.dispatch(CategoryAction.ImageCategoryChanged(state.image))
     }
@@ -134,7 +134,7 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     private fun setupInitCategory() = binding.apply {
         categoryModel?.let {
             edtCategoryName.editText?.setText(it.titleCategory)
-            imgItemCategory.setImageResource(it.imageCategory)
+            imgItemCategory.loadImageDrawable(it.imageCategory)
             viewModel.dispatch(CategoryAction.ImageCategoryChanged(it.imageCategory))
             viewModel.dispatch(CategoryAction.TitleCategoryChanged(it.titleCategory))
         }
@@ -177,7 +177,7 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
         if (categoryModel != null) {
             listCategory.forEachIndexed { index, category ->
                 run {
-                    if (category.image == categoryModel?.imageCategory) {
+                    if (category.image.toString() == categoryModel?.imageCategory) {
                         position = index
                     }
                 }
