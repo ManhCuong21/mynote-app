@@ -51,7 +51,7 @@ class ListCategoryAdapter(
             val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
             flCategory.setBackgroundColor(color)
             flImgCategory.setBackgroundColor(adjustAlpha(color, 0.6f))
-            btnOptions.setOnClickListener {
+            root.setOnClickListener {
                 val popupMenu = PopupMenu(context, it)
                 popupMenu.inflate(R.menu.popup_menu_category)
                 popupMenu.setOnMenuItemClickListener { menu ->

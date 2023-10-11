@@ -26,7 +26,7 @@ data class CategoryUiState(
     companion object {
         val INITIAL = CategoryUiState(
             title = "Ex",
-            image = "R.drawable.icon_ex"
+            image = "2131230947"
         )
     }
 }

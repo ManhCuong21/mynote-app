@@ -65,14 +65,6 @@
                         tools:text="All" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </FrameLayout>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnOptions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|right"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:src="@drawable/icon_dots" />
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>
