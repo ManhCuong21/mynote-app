@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:932254035131:android:38221040177c776f208d9e",
+        "mobilesdk_app_id": "1:932254035131:android:56882be52e10ce5f208d9e",
         "android_client_info": {
-          "package_name": "com.mynote.data"
+          "package_name": "com.notepad.mynote.privatenote"
         }
       },
       "oauth_client": [],

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "932254035131",
+    "firebase_url": "https://my-note-4af61-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "my-note-4af61",
+    "storage_bucket": "my-note-4af61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932254035131:android:56882be52e10ce5f208d9e",
+        "android_client_info": {
+          "package_name": "com.notepad.mynote.privatenote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKVfG-Z12pyS_Nn0BxW91irTpvFY_YV24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

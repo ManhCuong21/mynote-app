@@ -3,8 +3,8 @@ package com.example.mynote.activity
 import android.os.Bundle
 import androidx.fragment.app.FragmentContainerView
 import com.example.core.core.viewbinding.viewBinding
-import com.example.mynote.R
-import com.example.mynote.databinding.ActivityMainBinding
+import com.notepad.mynote.privatenote.R
+import com.notepad.mynote.privatenote.databinding.ActivityMainBinding
 
 
 class MainActivity : BaseMainActivity() {

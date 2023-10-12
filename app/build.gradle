@@ -6,15 +6,16 @@ plugins {
     id 'androidx.navigation.safeargs'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
 android {
-    namespace 'com.example.mynote'
+    namespace 'com.notepad.mynote.privatenote'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.mynote"
+        applicationId "com.notepad.mynote.privatenote"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -25,11 +26,19 @@ android {
             useSupportLibrary true
         }
     }
-
+    signingConfigs {
+        release {
+            storeFile file('mynote.keystore')
+            storePassword 'cuong21022002'
+            keyAlias 'mynote'
+            keyPassword 'cuong21022002'
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -51,7 +60,7 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.7.2"
+    def nav_version = "2.7.4"
     def hilt_version = "2.44"
     def firebase_version = "32.3.1"
 
@@ -61,7 +70,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
     implementation 'androidx.recyclerview:recyclerview:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

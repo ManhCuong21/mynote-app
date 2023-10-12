@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.mynote.R
+import com.notepad.mynote.privatenote.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
