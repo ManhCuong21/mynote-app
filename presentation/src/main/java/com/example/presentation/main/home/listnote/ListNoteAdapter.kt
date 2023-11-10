@@ -42,7 +42,7 @@ class ListNoteAdapter(
         RecyclerView.ViewHolder(binding.root) {
         private val context = binding.root.context
         fun bind(item: NoteModel, format24Hour: Boolean) = binding.apply {
-            imgCategoryNote.loadImageDrawable(item.categoryNote?.imageCategory.orEmpty())
+            imgCategoryNote.loadImageDrawable(item.categoryNote?.imageCategory)
             vColorNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
             tvTitleNote.text = item.titleNote
             tvContentNote.text = item.contentNote

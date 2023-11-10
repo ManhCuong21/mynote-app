@@ -48,7 +48,7 @@ class CategoryAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         val context: Context = binding.root.context
         fun bind(item: ItemCategory) = binding.apply {
-            imgItemCategory.loadImageDrawable(item.image.toString())
+            imgItemCategory.loadImageDrawable(item.image)
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {

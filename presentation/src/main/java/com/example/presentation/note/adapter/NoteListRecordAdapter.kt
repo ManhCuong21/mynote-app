@@ -70,9 +70,9 @@ class NoteListRecordAdapter(
 
         private fun setUiPlaying(status: StatusRecord) = binding.apply {
             if (status == StatusRecord.PAUSE) {
-                btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record.toString())
+                btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record)
             } else {
-                btnPlayRecord.loadImageDrawable(R.drawable.icon_pause_play_record.toString())
+                btnPlayRecord.loadImageDrawable(R.drawable.icon_pause_play_record)
             }
         }
 
@@ -88,7 +88,7 @@ class NoteListRecordAdapter(
             }
             player?.setOnCompletionListener {
                 stopPlaying()
-                binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record.toString())
+                binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record)
             }
             if (player?.audioSessionId != -1) {
                 binding.audioWave.addAmplitude(player?.audioSessionId!!.toFloat())

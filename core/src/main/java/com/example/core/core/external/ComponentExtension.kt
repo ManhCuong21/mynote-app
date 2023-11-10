@@ -1,19 +1,30 @@
 package com.example.core.core.external
 
+import android.annotation.SuppressLint
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
+@SuppressLint("DiscouragedApi")
 fun ImageView.loadImageDrawable(imageValue: String?) {
     val image = try {
-        imageValue?.toInt()
+        context.resources.getIdentifier(imageValue, "drawable", context.packageName)
     } catch (e: Exception) {
         androidx.appcompat.R.drawable.abc_btn_default_mtrl_shape
     }
     Glide.with(context)
-        .load(image)
+        .load(ContextCompat.getDrawable(context, image))
+        .fitCenter()
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(this)
+}
+
+fun ImageView.loadImageDrawable(imageValue: Int?) {
+    Glide.with(context)
+        .load(imageValue)
         .fitCenter()
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(this)

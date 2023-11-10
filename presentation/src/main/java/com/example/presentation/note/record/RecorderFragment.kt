@@ -133,10 +133,10 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     private fun setUiRecording(status: StatusRecord) = binding.apply {
         if (status == StatusRecord.PAUSE) {
-            imgRecording.loadImageDrawable(R.drawable.icon_micro.toString())
+            imgRecording.loadImageDrawable(R.drawable.icon_micro)
             tvStatusRecord.text = getString(R.string.text_pause_recording)
         } else {
-            imgRecording.loadImageDrawable(R.drawable.icon_micro_recording.toString())
+            imgRecording.loadImageDrawable(R.drawable.icon_micro_recording)
             tvStatusRecord.text = getString(R.string.text_recording)
         }
     }
