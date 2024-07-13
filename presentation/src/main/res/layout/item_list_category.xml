@@ -9,62 +9,58 @@
     android:layout_marginBottom="@dimen/dimen_1">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/dimen_24"
         android:layout_marginVertical="@dimen/dimen_8"
         app:cardCornerRadius="@dimen/dimen_16">
 
         <FrameLayout
+            android:id="@+id/flCategory"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/dimen_16"
+            android:paddingVertical="@dimen/dimen_8">
 
-            <FrameLayout
-                android:id="@+id/flCategory"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="@dimen/dimen_16"
-                android:paddingVertical="@dimen/dimen_8">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/dimen_50">
+
+                    <FrameLayout
+                        android:id="@+id/flImgCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/imgCategory"
+                            android:layout_width="@dimen/dimen_24"
+                            android:layout_height="@dimen/dimen_24"
+                            android:layout_margin="@dimen/dimen_16"
+                            android:src="@drawable/icon_default" />
+                    </FrameLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvTitleCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="@dimen/dimen_50">
-
-                        <FrameLayout
-                            android:id="@+id/flImgCategory"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/imgCategory"
-                                android:layout_width="@dimen/dimen_24"
-                                android:layout_height="@dimen/dimen_24"
-                                android:layout_margin="@dimen/dimen_16"
-                                android:src="@drawable/icon_default" />
-                        </FrameLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tvTitleCategory"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ellipsize="end"
-                        android:maxEms="5"
-                        android:maxLines="1"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/text_size_18sp"
-                        tools:text="All" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </FrameLayout>
+                    android:ellipsize="end"
+                    android:maxEms="5"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_18sp"
+                    tools:text="All" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>
