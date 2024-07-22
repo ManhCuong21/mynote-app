@@ -52,6 +52,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     private val noteViewModel: NoteViewModel by activityViewModels()
 
     private var recorder: MediaRecorder? = null
+    private val amplitudes: ArrayList<Float> = arrayListOf()
 
     private val listPermission =
         arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -74,6 +75,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
                     binding.tvTimerRecord.text = time
+                    recorder?.maxAmplitude?.let { amplitudes.add(it.toFloat()) }
                 }
             }
         }

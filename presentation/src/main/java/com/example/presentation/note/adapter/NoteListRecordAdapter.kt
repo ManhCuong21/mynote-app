@@ -1,7 +1,10 @@
 package com.example.presentation.note.adapter
 
-import android.media.MediaPlayer
+import android.annotation.SuppressLint
 import android.view.ViewGroup
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,8 +13,9 @@ import com.example.core.core.model.ItemRecord
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
+import com.example.presentation.canvas.Timer
 import com.example.presentation.databinding.ItemListRecordEditNoteBinding
-import java.io.IOException
+
 
 class NoteListRecordAdapter(
     private val onItemDelete: (String) -> Unit
@@ -37,9 +41,15 @@ class NoteListRecordAdapter(
 
     inner class ViewHolder(val binding: ItemListRecordEditNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private var player: MediaPlayer? = null
+        private lateinit var timer: Timer
+
+        //        private var player: MediaPlayer? = null
+        private var player: ExoPlayer? = null
         private var statusRecord = StatusRecord.CREATE
         fun bind(item: ItemRecord) = binding.apply {
+            timer = Timer { time ->
+                tvTimerRecord.text = time
+            }
             btnPlayRecord.setOnClickListener {
                 statusRecord = when (statusRecord) {
                     StatusRecord.CREATE -> StatusRecord.START
@@ -63,7 +73,7 @@ class NoteListRecordAdapter(
             when (status) {
                 StatusRecord.START -> startPlaying(fileName)
                 StatusRecord.PAUSE -> pausePlaying()
-                StatusRecord.RESUME -> player?.start()
+                StatusRecord.RESUME -> player?.play()
                 else -> stopPlaying()
             }
         }
@@ -76,32 +86,41 @@ class NoteListRecordAdapter(
             }
         }
 
-        private fun startPlaying(fileName: String) {
-            player = MediaPlayer().apply {
-                try {
-                    setDataSource(fileName)
-                    prepare()
-                    start()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+        private fun playerListener() = object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                if (state == Player.STATE_ENDED) {
+                    stopPlaying()
+                    binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record)
                 }
             }
-            player?.setOnCompletionListener {
-                stopPlaying()
-                binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record)
+
+            override fun onVolumeChanged(volume: Float) {
+                binding.audioWave.addAmplitude(volume)
             }
-            if (player?.audioSessionId != -1) {
-                binding.audioWave.addAmplitude(player?.audioSessionId!!.toFloat())
+        }
+
+        private fun startPlaying(fileName: String) = binding.apply {
+            player = ExoPlayer.Builder(root.context).build().also { exoPlayer ->
+                val mediaItem = MediaItem.fromUri(fileName)
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.prepare()
+                exoPlayer.addListener(playerListener())
+                exoPlayer.play()
             }
+            timer.start()
         }
 
         private fun pausePlaying() {
             player?.pause()
+            timer.pause()
         }
 
         private fun stopPlaying() {
+            statusRecord = StatusRecord.CREATE
+            player?.removeListener(playerListener())
             player?.release()
             player = null
+            timer.stop()
         }
     }
 }
