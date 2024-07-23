@@ -19,12 +19,12 @@ class RecordFileRepositoryImpl @Inject constructor(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ) {
-        val fileDirectoryTemp = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+        val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
         fileDirectoryTemp.listFiles()
             ?.filter { it.canRead() && it.isFile && it.name.endsWith(".mp4") }?.map {
                 try {
                     val pathRecord = "${
-                        fileRepository.getOutputMediaDirectory(fragmentActivity, directoryName)
+                        fileRepository.createDirectory(fragmentActivity, directoryName)
                     }/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -41,7 +41,7 @@ class RecordFileRepositoryImpl @Inject constructor(
     override suspend fun readRecord(fragmentActivity: FragmentActivity): List<ItemRecord> {
         return withContext(appCoroutineDispatchers.io) {
             val listRecord = arrayListOf<ItemRecord>()
-            val fileDirectoryTemp = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+            val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
             fileDirectoryTemp.listFiles()
                 ?.filter { it.canRead() && it.isFile && it.name.endsWith(".mp4") }?.map {
                     listRecord.add(ItemRecord(pathRecord = it.path))

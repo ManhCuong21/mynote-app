@@ -57,7 +57,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
         withContext(appCoroutineDispatchers.io) {
             runCatching {
                 callbackFlow {
-                    val directory = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+                    val directory = fileRepository.createDirectoryTemp(fragmentActivity)
                     val listFile = directory.listFiles()
                     if (directory.isDirectory && !listFile.isNullOrEmpty()) {
                         listFile.forEachIndexed { index, itemImage ->
@@ -117,7 +117,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
         withContext(appCoroutineDispatchers.io) {
             runCatching {
                 callbackFlow {
-                    val directoryTemp = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+                    val directoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
                     val listFile =
                         storageRef?.child(directoryName)?.listAll()?.await()?.items ?: listOf()
                     if (listFile.isEmpty()) {

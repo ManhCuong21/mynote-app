@@ -11,10 +11,10 @@ class FileUseCase @Inject constructor(
     private val fileRepository: FileRepository
 ) {
     fun getOutputMediaDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File =
-        fileRepository.getOutputMediaDirectory(fragmentActivity, pathDirectory)
+        fileRepository.createDirectory(fragmentActivity, pathDirectory)
 
     fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File =
-        fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+        fileRepository.createDirectoryTemp(fragmentActivity)
 
     fun saveFileToDirectory(
         fragmentActivity: FragmentActivity,
