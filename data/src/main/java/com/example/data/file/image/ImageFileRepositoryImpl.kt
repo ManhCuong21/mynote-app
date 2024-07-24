@@ -20,13 +20,13 @@ class ImageFileRepositoryImpl @Inject constructor(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ) {
-        val fileDirectoryTemp = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+        val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
         fileDirectoryTemp.listFiles()
             ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
             ?.map {
                 try {
                     val pathImage = "${
-                        fileRepository.getOutputMediaDirectory(fragmentActivity, directoryName)
+                        fileRepository.createDirectory(fragmentActivity, directoryName)
                     }/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -42,7 +42,7 @@ class ImageFileRepositoryImpl @Inject constructor(
 
     override fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) {
         val fileName = "${
-            fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+            fileRepository.createDirectoryTemp(fragmentActivity)
         }/${System.currentTimeMillis()}.jpg"
         try {
             val outputStream = FileOutputStream(fileName)
@@ -57,7 +57,7 @@ class ImageFileRepositoryImpl @Inject constructor(
     override suspend fun readImage(fragmentActivity: FragmentActivity): List<ItemImage> {
         return withContext(appCoroutineDispatchers.io) {
             val listImage = arrayListOf<ItemImage>()
-            val fileDirectoryTemp = fileRepository.getOutputMediaDirectoryTemp(fragmentActivity)
+            val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
             fileDirectoryTemp.listFiles()
                 ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
                 ?.map {

@@ -12,8 +12,8 @@ import javax.inject.Inject
 import com.github.michaelbull.result.runCatching
 
 interface FileRepository {
-    fun getOutputMediaDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File
-    fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File
+    fun createDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File
+    fun createDirectoryTemp(fragmentActivity: FragmentActivity): File
     fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String)
     fun saveFileToTemp(
         fragmentActivity: FragmentActivity,
@@ -27,7 +27,7 @@ interface FileRepository {
 class FileRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : FileRepository {
-    override fun getOutputMediaDirectory(
+    override fun createDirectory(
         fragmentActivity: FragmentActivity,
         pathDirectory: String
     ): File {
@@ -39,23 +39,18 @@ class FileRepositoryImpl @Inject constructor(
         return if (mediaDir != null && mediaDir.exists()) mediaDir else fragmentActivity.filesDir
     }
 
-    override fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File {
-        val mediaDir = fragmentActivity.externalMediaDirs.firstOrNull()?.let { file ->
-            File(file, "Temp").apply {
-                mkdir()
-            }
-        }
-        return if (mediaDir != null && mediaDir.exists()) mediaDir else fragmentActivity.filesDir
+    override fun createDirectoryTemp(fragmentActivity: FragmentActivity): File {
+        return createDirectory(fragmentActivity, "Temp")
     }
 
     override fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String) {
-        val fileDirectoryTemp = getOutputMediaDirectoryTemp(fragmentActivity)
+        val fileDirectoryTemp = createDirectoryTemp(fragmentActivity)
         fileDirectoryTemp.listFiles()
             ?.filter { it.canRead() && it.isFile }
             ?.map {
                 try {
                     val pathFile = "${
-                        getOutputMediaDirectory(fragmentActivity, directoryName)
+                        createDirectory(fragmentActivity, directoryName)
                     }/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -73,12 +68,12 @@ class FileRepositoryImpl @Inject constructor(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ): Result<Unit, Throwable> = runCatching {
-        val fileDirectory = getOutputMediaDirectory(fragmentActivity, directoryName)
+        val fileDirectory = createDirectory(fragmentActivity, directoryName)
         fileDirectory.listFiles()
             ?.filter { it.canRead() && it.isFile }
             ?.map {
                 try {
-                    val pathFile = "${getOutputMediaDirectoryTemp(fragmentActivity)}/${it.name}"
+                    val pathFile = "${createDirectoryTemp(fragmentActivity)}/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                     val outputStream = FileOutputStream(pathFile)
@@ -96,7 +91,7 @@ class FileRepositoryImpl @Inject constructor(
         directoryName: String
     ) {
         withContext(appCoroutineDispatchers.io) {
-            val file = getOutputMediaDirectory(fragmentActivity, directoryName)
+            val file = createDirectory(fragmentActivity, directoryName)
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {
@@ -109,7 +104,7 @@ class FileRepositoryImpl @Inject constructor(
 
     override suspend fun deleteDirectoryTemp(fragmentActivity: FragmentActivity) {
         withContext(appCoroutineDispatchers.io) {
-            val file = getOutputMediaDirectoryTemp(fragmentActivity)
+            val file = createDirectoryTemp(fragmentActivity)
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {
