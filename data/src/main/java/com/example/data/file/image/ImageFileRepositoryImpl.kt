@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.core.core.model.ItemImage
-import com.example.data.file.FileRepository
+import com.example.data.file.file.FileRepository
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -20,7 +20,7 @@ class ImageFileRepositoryImpl @Inject constructor(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ) {
-        val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
+        val fileDirectoryTemp = fileRepository.createDirectory(fragmentActivity, "Temp")
         fileDirectoryTemp.listFiles()
             ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
             ?.map {
@@ -42,7 +42,7 @@ class ImageFileRepositoryImpl @Inject constructor(
 
     override fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) {
         val fileName = "${
-            fileRepository.createDirectoryTemp(fragmentActivity)
+            fileRepository.createDirectory(fragmentActivity, "Temp")
         }/${System.currentTimeMillis()}.jpg"
         try {
             val outputStream = FileOutputStream(fileName)
@@ -57,7 +57,7 @@ class ImageFileRepositoryImpl @Inject constructor(
     override suspend fun readImage(fragmentActivity: FragmentActivity): List<ItemImage> {
         return withContext(appCoroutineDispatchers.io) {
             val listImage = arrayListOf<ItemImage>()
-            val fileDirectoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
+            val fileDirectoryTemp = fileRepository.createDirectory(fragmentActivity, "Temp")
             fileDirectoryTemp.listFiles()
                 ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
                 ?.map {

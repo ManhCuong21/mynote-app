@@ -3,7 +3,7 @@ package com.example.data.dataremote.repository
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.core.core.external.throwException
-import com.example.data.file.FileRepository
+import com.example.data.file.file.FileRepository
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onSuccess
 import com.github.michaelbull.result.runCatching
@@ -57,7 +57,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
         withContext(appCoroutineDispatchers.io) {
             runCatching {
                 callbackFlow {
-                    val directory = fileRepository.createDirectoryTemp(fragmentActivity)
+                    val directory = fileRepository.createDirectory(fragmentActivity,"Temp")
                     val listFile = directory.listFiles()
                     if (directory.isDirectory && !listFile.isNullOrEmpty()) {
                         listFile.forEachIndexed { index, itemImage ->
@@ -117,7 +117,7 @@ internal class FirebaseStorageRepositoryImpl @Inject constructor(
         withContext(appCoroutineDispatchers.io) {
             runCatching {
                 callbackFlow {
-                    val directoryTemp = fileRepository.createDirectoryTemp(fragmentActivity)
+                    val directoryTemp = fileRepository.createDirectory(fragmentActivity,"Temp")
                     val listFile =
                         storageRef?.child(directoryName)?.listAll()?.await()?.items ?: listOf()
                     if (listFile.isEmpty()) {

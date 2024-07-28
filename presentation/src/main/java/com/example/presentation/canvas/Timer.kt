@@ -3,7 +3,7 @@ package com.example.presentation.canvas
 import android.os.Handler
 import android.os.Looper
 
-class Timer(listener: (String) -> Unit) {
+class Timer(time: (String) -> Unit) {
     private var handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 
@@ -14,7 +14,7 @@ class Timer(listener: (String) -> Unit) {
         runnable = Runnable {
             duration += delay
             handler.postDelayed(runnable, delay)
-            listener(format())
+            time(format())
         }
     }
 

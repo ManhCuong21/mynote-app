@@ -3,11 +3,15 @@ package com.example.domain.usecase.file
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.model.ItemRecord
 import com.example.data.file.record.RecordFileRepository
+import java.io.File
 import javax.inject.Inject
 
 class RecordFileUseCase @Inject constructor(
     private val recordFileRepository: RecordFileRepository
 ) {
+    fun saveAmplitude(file: File, amplitudes: List<Float>) =
+        recordFileRepository.saveAmplitude(file, amplitudes)
+
     fun saveRecordToDirectory(fragmentActivity: FragmentActivity, directoryName: String) =
         recordFileRepository.saveRecordToDirectory(fragmentActivity, directoryName)
 

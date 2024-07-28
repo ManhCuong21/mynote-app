@@ -1,7 +1,7 @@
 package com.example.data.di
 
-import com.example.data.file.FileRepository
-import com.example.data.file.FileRepositoryImpl
+import com.example.data.file.file.FileRepository
+import com.example.data.file.file.FileRepositoryImpl
 import com.example.data.file.image.ImageFileRepository
 import com.example.data.file.image.ImageFileRepositoryImpl
 import com.example.data.file.record.RecordFileRepository

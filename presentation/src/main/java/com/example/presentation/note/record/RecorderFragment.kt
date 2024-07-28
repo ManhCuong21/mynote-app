@@ -12,26 +12,20 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
-import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
-import com.example.core.core.external.formatDate
 import com.example.core.core.external.loadImageDrawable
-import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
 import com.example.domain.usecase.file.FileUseCase
+import com.example.domain.usecase.file.RecordFileUseCase
 import com.example.presentation.R
+import com.example.presentation.canvas.Timer
 import com.example.presentation.databinding.FragmentRecorderBinding
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.NoteAction
 import com.example.presentation.note.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -47,12 +41,16 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     @Inject
     lateinit var fileUseCase: FileUseCase
 
+    @Inject
+    lateinit var recordFileUseCase: RecordFileUseCase
+
     override val binding: FragmentRecorderBinding by viewBinding()
-    override val viewModel: RecorderViewModel by viewModels()
-    private val noteViewModel: NoteViewModel by activityViewModels()
+    override val viewModel: NoteViewModel by activityViewModels()
 
     private var recorder: MediaRecorder? = null
-    private val amplitudes: ArrayList<Float> = arrayListOf()
+    private var amplitudes: List<Float> = listOf()
+    private lateinit var timer: Timer
+    private lateinit var file: File
 
     private val listPermission =
         arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -68,16 +66,17 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
 
     override fun setupViews() {
         setupClickListener()
+        setupTimer()
     }
 
     override fun bindViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { time ->
-                    binding.tvTimerRecord.text = time
-                    recorder?.maxAmplitude?.let { amplitudes.add(it.toFloat()) }
-                }
-            }
+        // No TODO here
+    }
+
+    private fun setupTimer() = binding.apply {
+        timer = Timer { time ->
+            tvTimerRecord.text = time
+            recorder?.maxAmplitude?.let { audioWave.addAmplitude(it.toFloat()) }
         }
     }
 
@@ -100,8 +99,9 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         }
         btnSaveRecord.setOnClickListener {
             stopRecording()
-            noteViewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
-            noteViewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
+            recordFileUseCase.saveAmplitude(file, amplitudes)
+            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
+            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
             mainNavigator.popBackStack()
         }
         btnCancel.setOnClickListener {
@@ -144,7 +144,8 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     }
 
     private fun startRecording() {
-        viewModel.runTime()
+        timer.start()
+        file = fileUseCase.createDirectoryRecordTemp(requireActivity())
         createRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -152,8 +153,8 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
             setOutputFile(
                 FileOutputStream(
                     File(
-                        fileUseCase.getOutputMediaDirectoryTemp(requireActivity()),
-                        "${formatDate(FILE_NAME_FORMAT)}.mp4"
+                        file,
+                        "record.mp4"
                     )
                 ).fd
             )
@@ -168,13 +169,13 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     }
 
     private fun resumeRecording() {
-        viewModel.runTime()
+        timer.start()
         recorder?.resume()
     }
 
     private fun pauseRecording() {
         recorder?.pause()
-        viewModel.stopTime()
+        timer.pause()
     }
 
     private fun stopRecording() {
@@ -184,7 +185,8 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
                 release()
             }
             recorder = null
-            viewModel.stopTime()
+            timer.stop()
+            amplitudes = binding.audioWave.clear()
         }
     }
 

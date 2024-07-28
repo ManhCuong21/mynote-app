@@ -1,7 +1,9 @@
 package com.example.domain.usecase.file
 
 import androidx.fragment.app.FragmentActivity
-import com.example.data.file.FileRepository
+import com.example.core.core.external.AppConstants.FILE_NAME_FORMAT
+import com.example.core.core.external.formatDate
+import com.example.data.file.file.FileRepository
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.runCatching
 import java.io.File
@@ -10,11 +12,17 @@ import javax.inject.Inject
 class FileUseCase @Inject constructor(
     private val fileRepository: FileRepository
 ) {
-    fun getOutputMediaDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File =
+    private fun createDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File =
         fileRepository.createDirectory(fragmentActivity, pathDirectory)
 
-    fun getOutputMediaDirectoryTemp(fragmentActivity: FragmentActivity): File =
-        fileRepository.createDirectoryTemp(fragmentActivity)
+    fun createDirectoryTemp(fragmentActivity: FragmentActivity): File =
+        createDirectory(fragmentActivity,"Temp")
+
+    fun createDirectoryRecordTemp(fragmentActivity: FragmentActivity): File =
+        createDirectory(
+            fragmentActivity,
+            pathDirectory = "Temp/Record-${formatDate(FILE_NAME_FORMAT)}"
+        )
 
     fun saveFileToDirectory(
         fragmentActivity: FragmentActivity,

@@ -137,7 +137,7 @@ class CameraDialogFragment : DialogFragment() {
         // Create time stamped name and MediaStore entry.
         val fileName = formatDate(FILE_NAME_FORMAT)
         val file = File(
-            fileUseCase.getOutputMediaDirectoryTemp(fragmentActivity = requireActivity()),
+            fileUseCase.createDirectoryTemp(fragmentActivity = requireActivity()),
             "$fileName.jpg"
         )
 

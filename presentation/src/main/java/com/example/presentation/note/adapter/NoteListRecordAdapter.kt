@@ -1,6 +1,5 @@
 package com.example.presentation.note.adapter
 
-import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -49,6 +48,9 @@ class NoteListRecordAdapter(
         fun bind(item: ItemRecord) = binding.apply {
             timer = Timer { time ->
                 tvTimerRecord.text = time
+                item.amplitudes.forEach {
+                    audioWave.addAmplitude(it)
+                }
             }
             btnPlayRecord.setOnClickListener {
                 statusRecord = when (statusRecord) {
@@ -57,7 +59,7 @@ class NoteListRecordAdapter(
                     StatusRecord.PAUSE -> StatusRecord.RESUME
                     StatusRecord.RESUME -> StatusRecord.PAUSE
                 }
-                onPlayRecord(statusRecord, item.pathRecord)
+                onPlayRecord(statusRecord, item)
             }
             btnDeleteRecord.setOnClickListener {
                 bindingAdapterPosition.let {
@@ -68,10 +70,10 @@ class NoteListRecordAdapter(
             }
         }
 
-        private fun onPlayRecord(status: StatusRecord, fileName: String) {
+        private fun onPlayRecord(status: StatusRecord, item: ItemRecord) {
             setUiPlaying(status)
             when (status) {
-                StatusRecord.START -> startPlaying(fileName)
+                StatusRecord.START -> startPlaying(item)
                 StatusRecord.PAUSE -> pausePlaying()
                 StatusRecord.RESUME -> player?.play()
                 else -> stopPlaying()
@@ -93,15 +95,11 @@ class NoteListRecordAdapter(
                     binding.btnPlayRecord.loadImageDrawable(R.drawable.icon_play_record)
                 }
             }
-
-            override fun onVolumeChanged(volume: Float) {
-                binding.audioWave.addAmplitude(volume)
-            }
         }
 
-        private fun startPlaying(fileName: String) = binding.apply {
+        private fun startPlaying(item: ItemRecord) = binding.apply {
             player = ExoPlayer.Builder(root.context).build().also { exoPlayer ->
-                val mediaItem = MediaItem.fromUri(fileName)
+                val mediaItem = MediaItem.fromUri(item.pathRecord)
                 exoPlayer.setMediaItem(mediaItem)
                 exoPlayer.prepare()
                 exoPlayer.addListener(playerListener())

@@ -10,15 +10,15 @@ interface MainNavigator {
     val navController: NavController
 
     sealed interface Direction {
-        object SignInFragmentToSignUpFragment : Direction
-        object MainFragmentToSignInFragment : Direction
-        object MainFragmentToUserInformationFragment : Direction
+        data object SignInFragmentToSignUpFragment : Direction
+        data object MainFragmentToSignInFragment : Direction
+        data object MainFragmentToUserInformationFragment : Direction
         data class MainFragmentToAddNoteFragment(val category: CategoryModel) : Direction
         data class MainFragmentToUpdateNoteFragment(val noteModel: NoteModel) : Direction
-        object MainFragmentToAddCategoryFragment : Direction
+        data object MainFragmentToAddCategoryFragment : Direction
         data class MainFragmentToUpdateCategoryFragment(val category: CategoryModel) : Direction
         data class MainFragmentToDateTimePickersFragment(val noteModel: NoteModel) : Direction
-        object NoteFragmentToRecorderFragment : Direction
+        data object NoteFragmentToRecorderFragment : Direction
     }
 
     @MainThread
