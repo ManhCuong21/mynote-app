@@ -37,10 +37,10 @@ sealed interface NoteAction {
 }
 
 sealed interface NoteSingleEvent {
-    object SaveFileToTempSuccess : NoteSingleEvent
+    data object SaveFileToTempSuccess : NoteSingleEvent
     data class GetListImage(val list: List<ItemImage>) : NoteSingleEvent
     data class GetListRecord(val list: List<ItemRecord>) : NoteSingleEvent
-    object SaveNoteSuccess : NoteSingleEvent
+    data object SaveNoteSuccess : NoteSingleEvent
     data class Failed(val error: Throwable) : NoteSingleEvent
 }
 

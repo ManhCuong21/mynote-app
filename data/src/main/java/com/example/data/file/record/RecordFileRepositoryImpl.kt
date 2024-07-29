@@ -7,11 +7,11 @@ import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.core.core.model.ItemRecord
 import com.example.data.file.file.FileRepository
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.FileReader
 import java.io.IOException
+import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import javax.inject.Inject
 
@@ -25,11 +25,11 @@ class RecordFileRepositoryImpl @Inject constructor(
         amplitudes: List<Float>
     ) {
         try {
-            val fos = FileOutputStream(File(file, "amplitudes.txt"))
-            val out = ObjectOutputStream(fos)
-            out.writeObject(amplitudes)
-            fos.close()
-            out.close()
+            val fileOutputStream = FileOutputStream(File(file, "amplitudes.txt"))
+            val objectOutputStream = ObjectOutputStream(fileOutputStream)
+            objectOutputStream.writeObject(amplitudes)
+            objectOutputStream.close()
+            fileOutputStream.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -77,6 +77,7 @@ class RecordFileRepositoryImpl @Inject constructor(
                         ?.filter { it.canRead() && it.isFile && it.name.endsWith(".mp4") }?.map {
                             listRecord.add(
                                 ItemRecord(
+                                    pathDirectory = file.path,
                                     pathRecord = it.path,
                                     amplitudes = convertFileToFloatArray(partAmplitude)
                                 )
@@ -87,34 +88,40 @@ class RecordFileRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun convertFileToFloatArray(pathFile: String): List<Float> {
-        val array: ArrayList<Float> = arrayListOf()
-        val reader: BufferedReader?
-        try {
-            reader = BufferedReader(FileReader(pathFile))
-            var input: String?
-            while ((reader.readLine().also { input = it }) != null) {
-                val number = input!!.trim { it <= ' ' }.split("\\s+".toRegex())
-                    .dropLastWhile { it.isEmpty() }
-                    .toTypedArray().map { it.toFloat() }
-
-                array.addAll(number)
-                break
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun convertFileToFloatArray(filePath: String): List<Float> {
+        return withContext(appCoroutineDispatchers.io) {
+            val amplitudes = ArrayList<Float>()
+            try {
+                try {
+                    val fileInputStream = FileInputStream(filePath)
+                    val objectInputStream = ObjectInputStream(fileInputStream)
+                    amplitudes.addAll(objectInputStream.readObject() as ArrayList<Float>)
+                    objectInputStream.close()
+                    fileInputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                } catch (e: ClassNotFoundException) {
+                    e.printStackTrace()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+            amplitudes
         }
-        return array
     }
 
     override suspend fun deleteRecord(pathRecord: String) {
         withContext(appCoroutineDispatchers.io) {
             val file = File(pathRecord)
-            if (file.exists()) {
-                file.delete()
+            if (file.isDirectory) {
+                file.listFiles()?.forEach {
+                    if (it.exists()) {
+                        it.delete()
+                    }
+                }
             }
+            file.delete()
         }
     }
 }

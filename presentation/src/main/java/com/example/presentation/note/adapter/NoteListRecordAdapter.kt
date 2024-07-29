@@ -64,7 +64,7 @@ class NoteListRecordAdapter(
             btnDeleteRecord.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        onItemDelete(item.pathRecord)
+                        onItemDelete(item.pathDirectory)
                     }
                 }
             }
@@ -114,11 +114,11 @@ class NoteListRecordAdapter(
         }
 
         private fun stopPlaying() {
-            statusRecord = StatusRecord.CREATE
             player?.removeListener(playerListener())
             player?.release()
             player = null
             timer.stop()
+            statusRecord = StatusRecord.CREATE
         }
     }
 }

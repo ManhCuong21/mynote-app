@@ -46,12 +46,11 @@ class AudioWave(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     fun clear(): ArrayList<Float> {
-        val amps = amplitudes
-        amplitudes.clear()
-        spikes.clear()
-        invalidate()
-
-        return amps
+//        val amps = amplitudes
+//        amplitudes.clear()
+//        spikes.clear()
+//        invalidate()
+        return amplitudes
     }
 
     override fun draw(canvas: Canvas) {
