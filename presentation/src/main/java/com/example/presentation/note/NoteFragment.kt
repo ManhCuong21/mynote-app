@@ -1,19 +1,9 @@
 package com.example.presentation.note
 
 import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
@@ -30,14 +20,10 @@ import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.databinding.DialogChooseImageAddNoteBinding
 import com.example.presentation.databinding.FragmentNoteBinding
-import com.example.presentation.dialog.camera.showCameraDialog
 import com.example.presentation.dialog.progress.renderLoadingUI
-import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.adapter.NoteChooseColorAdapter
-import com.example.presentation.note.adapter.NoteListImageAdapter
 import com.example.presentation.note.adapter.NoteListRecordAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -89,42 +75,16 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             })
     }
 
-    private val listImageAdapter by lazy {
-        NoteListImageAdapter(onItemDelete = {
-            viewModel.dispatch(NoteAction.DeleteImageNote(requireActivity(), it))
-        })
-    }
-
     private val listRecordAdapter by lazy {
         NoteListRecordAdapter(onItemDelete = {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.dispatch(
-                    NoteAction.DeleteRecordNote(requireActivity(), it)
-                )
+                viewModel.dispatch(NoteAction.DeleteRecordNote(requireActivity(), it))
             }
         })
     }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val intent: Intent? = result.data
-                val selectedPhotoUri = intent?.data
-                if (intent?.clipData != null) {
-                    for (i in 0 until intent.clipData!!.itemCount) {
-                        saveImage(intent.clipData!!.getItemAt(i).uri)
-                    }
-                } else if (intent?.data != null) {
-                    selectedPhotoUri?.let { saveImage(it) }
-                }
-            }
-        }
-
-    private val appPermissionSettingLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,8 +93,12 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     override fun setupViews() {
-        initialValue()
-        setupViewModel()
+        if (!viewModel.uiStateFlow.value.isFirstTime) {
+            initialValue()
+            setupViewModel()
+        } else {
+            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
+        }
         setupRecyclerView()
         setupClickListener()
         setupTextInput()
@@ -146,13 +110,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                 viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
                     when (event) {
                         is NoteSingleEvent.SaveFileToTempSuccess -> {
-                            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
                             viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
-                        }
-
-                        is NoteSingleEvent.GetListImage -> {
-                            binding.rvImageNote.isVisible = event.list.isNotEmpty()
-                            listImageAdapter.submitList(event.list)
                         }
 
                         is NoteSingleEvent.GetListRecord -> {
@@ -218,7 +176,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             rvChooseColor.isVisible = !rvChooseColor.isVisible
         }
         btnChooseImage.setOnClickListener {
-            showDialogChooseImage()
+            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToImageNoteFragment)
         }
         btnChooseRecord.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
@@ -235,15 +193,13 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             adapter = chooseColorAdapter
             chooseColorAdapter.submitList(listColor)
         }
-        rvImageNote.apply {
-            adapter = listImageAdapter
-        }
         rvRecordNote.apply {
             adapter = listRecordAdapter
         }
     }
 
     private fun initialValue() = binding.apply {
+        viewModel.dispatch(NoteAction.IsFirstTime)
         val state = viewModel.uiStateFlow.value
         edtTitleNote.setText(state.titleNote)
         edtContentNote.setText(state.contentNote)
@@ -277,93 +233,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                 viewModel.dispatch(NoteAction.ContentNoteChanged(text?.toString().orEmpty()))
             }
         }
-    }
-
-    private fun showDialogChooseImage() = binding.apply {
-        val binding = DialogChooseImageAddNoteBinding.inflate(layoutInflater)
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setView(binding.root)
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
-        binding.btnMyPhoto.setOnClickListener {
-            if (checkPermission()) {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                intent.action = Intent.ACTION_GET_CONTENT
-                resultLauncher.launch(intent)
-                dialog.dismiss()
-            }
-        }
-        binding.btnCamera.setOnClickListener {
-            if (checkPermission()) {
-                showCameraDialog {
-                    takePictureAction {
-                        viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
-                    }
-                }
-            }
-            dialog.dismiss()
-        }
-    }
-
-    private fun saveImage(imageUri: Uri) {
-        val bitmap = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-            @Suppress("DEPRECATION")
-            MediaStore.Images.Media.getBitmap(
-                requireActivity().contentResolver,
-                imageUri
-            )
-        } else {
-            val source = ImageDecoder.createSource(
-                requireActivity().contentResolver,
-                imageUri
-            )
-            ImageDecoder.decodeBitmap(source)
-        }
-        viewModel.dispatch(NoteAction.SaveImageNote(requireActivity(), bitmap))
-    }
-
-    private fun checkPermission(): Boolean {
-        when {
-            listPermission.any {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            } -> return true
-
-            shouldShowRequestPermissionRationale(listPermission[0]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[1]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[2]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[3]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            else -> {
-                showTextDialog {
-                    textTitle("Permission Denied")
-                    textContent("Please grant access in setting")
-                    positiveButtonAction("Open") {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.data = Uri.parse("package:${requireActivity().packageName}")
-                        appPermissionSettingLauncher.launch(intent)
-                    }
-                    negativeButtonAction("Cancel") {}
-                }
-            }
-        }
-        return false
     }
 
     private fun getDefaultPosition(): Int {

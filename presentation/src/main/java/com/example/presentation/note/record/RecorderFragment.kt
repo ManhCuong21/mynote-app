@@ -100,7 +100,6 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         btnSaveRecord.setOnClickListener {
             stopRecording()
             recordFileUseCase.saveAmplitude(file, amplitudes)
-            viewModel.dispatch(NoteAction.GetListImageNote(requireActivity()))
             viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
             mainNavigator.popBackStack()
         }

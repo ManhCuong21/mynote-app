@@ -6,7 +6,7 @@ import java.io.File
 
 interface RecordFileRepository {
     fun saveAmplitude(file: File, amplitudes: List<Float>)
-    fun saveRecordToDirectory(fragmentActivity: FragmentActivity, directoryName: String)
+    fun saveRecordToDirectory(fragmentActivity: FragmentActivity, pathDirectory: String)
     suspend fun readRecord(fragmentActivity: FragmentActivity): List<ItemRecord>
     suspend fun deleteRecord(pathRecord: String)
 }

@@ -53,6 +53,10 @@
             app:nullable="true" />
 
         <action
+            android:id="@+id/action_noteFragment_to_imageNoteFragment"
+            app:destination="@id/imageNoteFragment" />
+
+        <action
             android:id="@+id/action_noteFragment_to_recorderFragment"
             app:destination="@id/recorderFragment" />
     </fragment>
@@ -80,6 +84,11 @@
             android:name="noteModel"
             app:argType="com.example.core.core.model.NoteModel" />
     </fragment>
+
+    <fragment
+        android:id="@+id/imageNoteFragment"
+        android:name="com.example.presentation.note.image.ImageNoteFragment"
+        tools:layout="@layout/fragment_image_note" />
 
     <fragment
         android:id="@+id/recorderFragment"

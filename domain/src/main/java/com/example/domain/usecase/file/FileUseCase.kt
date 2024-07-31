@@ -13,7 +13,7 @@ class FileUseCase @Inject constructor(
     private val fileRepository: FileRepository
 ) {
     private fun createDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File =
-        fileRepository.createDirectory(fragmentActivity, pathDirectory)
+        fileRepository.createOrGetDirectory(fragmentActivity, pathDirectory)
 
     fun createDirectoryTemp(fragmentActivity: FragmentActivity): File =
         createDirectory(fragmentActivity,"Temp")

@@ -75,6 +75,11 @@ class NoteViewModel @Inject constructor(
         }
         stateFlow = _mutableStateFlow.asStateFlow()
 
+        val isFirstFlow = action<NoteAction.IsFirstTime>()
+            .map { true }
+            .onStart { emit(initialUiState.isFirstTime) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
         val titleNoteFlow = action<NoteAction.TitleNoteChanged>()
             .map { it.titleNote }
             .onStart { emit(initialUiState.titleNote.orEmpty()) }
@@ -115,6 +120,7 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.colorContentNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
+        val isFirstTime = isFirstFlow.distinctUntilChanged()
         val titleNote = titleNoteFlow.distinctUntilChanged()
         val contentNote = contentNoteFlow.distinctUntilChanged()
         val categoryNote = categoryNoteFlow.distinctUntilChanged()
@@ -125,6 +131,7 @@ class NoteViewModel @Inject constructor(
         val colorContentNote = colorContentNoteFlow.distinctUntilChanged()
 
         uiStateFlow = combine(
+            isFirstTime,
             titleNote,
             contentNote,
             categoryNote,
@@ -142,9 +149,6 @@ class NoteViewModel @Inject constructor(
         deleteDirectoryTemp()
         saveFileMediaToTemp()
         saveNote()
-        saveImageNote()
-        getListImage()
-        deleteImage()
         getListRecord()
         deleteRecord()
     }
@@ -218,7 +222,11 @@ class NoteViewModel @Inject constructor(
                     uiStateFlow.value.directoryName.orEmpty()
                 )
             } else {
-                fileUseCase.saveFileToDirectory(
+                imageFileUseCase.saveImageToDirectory(
+                    context,
+                    uiStateFlow.value.directoryName.orEmpty()
+                )
+                recordFileUseCase.saveRecordToDirectory(
                     context,
                     uiStateFlow.value.directoryName.orEmpty()
                 )
@@ -301,32 +309,6 @@ class NoteViewModel @Inject constructor(
             .onEach {
                 fileUseCase.deleteDirectory(it.context, uiStateFlow.value.directoryName.orEmpty())
             }.launchIn(viewModelScope)
-    }
-
-    private fun saveImageNote() {
-        action<NoteAction.SaveImageNote>()
-            .onEach {
-                imageFileUseCase.saveImageToTemp(it.context, it.bitmap)
-                dispatch(NoteAction.GetListImageNote(it.context))
-            }.launchIn(viewModelScope)
-    }
-
-    private fun getListImage() {
-        action<NoteAction.GetListImageNote>()
-            .onEach {
-                val listImage = imageFileUseCase.readImage(it.context)
-                dispatch(NoteAction.HasImageNoteChanged(listImage.isNotEmpty()))
-                _singleEventChannel.send(NoteSingleEvent.GetListImage(listImage))
-            }.launchIn(viewModelScope)
-    }
-
-    private fun deleteImage() {
-        action<NoteAction.DeleteImageNote>()
-            .onEach {
-                imageFileUseCase.deleteImage(it.pathImage)
-                dispatch(NoteAction.GetListImageNote(it.context))
-            }
-            .launchIn(viewModelScope)
     }
 
     private fun getListRecord() {

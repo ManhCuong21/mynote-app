@@ -33,7 +33,7 @@
             android:id="@+id/btnSaveNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="end|center_vertical"
             android:padding="@dimen/dimen_16"
             android:text="@string/button_save" />
     </FrameLayout>
@@ -68,18 +68,6 @@
         app:color_line="#FF7A00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTitleNote" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvImageNote"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/rvRecordNote"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/item_list_image_note" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecordNote"

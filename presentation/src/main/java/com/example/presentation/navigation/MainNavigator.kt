@@ -18,6 +18,7 @@ interface MainNavigator {
         data object MainFragmentToAddCategoryFragment : Direction
         data class MainFragmentToUpdateCategoryFragment(val category: CategoryModel) : Direction
         data class MainFragmentToDateTimePickersFragment(val noteModel: NoteModel) : Direction
+        data object NoteFragmentToImageNoteFragment : Direction
         data object NoteFragmentToRecorderFragment : Direction
     }
 

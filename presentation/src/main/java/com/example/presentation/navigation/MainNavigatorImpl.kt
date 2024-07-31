@@ -67,5 +67,6 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
         noteModel = noteModel
     )
 
+    is Direction.NoteFragmentToImageNoteFragment -> NoteFragmentDirections.actionNoteFragmentToImageNoteFragment()
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment()
 }

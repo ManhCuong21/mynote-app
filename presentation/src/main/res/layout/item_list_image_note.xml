@@ -13,8 +13,7 @@
         android:layout_gravity="bottom"
         android:layout_marginTop="@dimen/dimen_10"
         android:layout_marginEnd="@dimen/dimen_10"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/icon_basketball" />
+        android:scaleType="centerCrop" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgDelete"

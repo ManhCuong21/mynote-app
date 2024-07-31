@@ -14,7 +14,7 @@ import javax.inject.Inject
 class FileRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : FileRepository {
-    override fun createDirectory(
+    override fun createOrGetDirectory(
         fragmentActivity: FragmentActivity,
         pathDirectory: String
     ): File {
@@ -27,13 +27,13 @@ class FileRepositoryImpl @Inject constructor(
     }
 
     override fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String) {
-        val fileDirectoryTemp = createDirectory(fragmentActivity, "Temp")
+        val fileDirectoryTemp = createOrGetDirectory(fragmentActivity, "Temp")
         fileDirectoryTemp.listFiles()
             ?.filter { it.canRead() && it.isFile }
             ?.map {
                 try {
                     val pathFile = "${
-                        createDirectory(fragmentActivity, directoryName)
+                        createOrGetDirectory(fragmentActivity, directoryName)
                     }/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -51,12 +51,12 @@ class FileRepositoryImpl @Inject constructor(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ): Result<Unit, Throwable> = runCatching {
-        val fileDirectory = createDirectory(fragmentActivity, directoryName)
+        val fileDirectory = createOrGetDirectory(fragmentActivity, directoryName)
         fileDirectory.listFiles()
             ?.filter { it.canRead() && it.isFile }
             ?.map {
                 try {
-                    val pathFile = "${createDirectory(fragmentActivity, "Temp")}/${it.name}"
+                    val pathFile = "${createOrGetDirectory(fragmentActivity, "Temp")}/${it.name}"
                     val bytes = it.readBytes()
                     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                     val outputStream = FileOutputStream(pathFile)
@@ -74,7 +74,7 @@ class FileRepositoryImpl @Inject constructor(
         directoryName: String
     ) {
         withContext(appCoroutineDispatchers.io) {
-            val file = createDirectory(fragmentActivity, directoryName)
+            val file = createOrGetDirectory(fragmentActivity, directoryName)
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {
@@ -88,7 +88,7 @@ class FileRepositoryImpl @Inject constructor(
 
     override suspend fun deleteDirectoryTemp(fragmentActivity: FragmentActivity) {
         withContext(appCoroutineDispatchers.io) {
-            val file = createDirectory(fragmentActivity, "Temp")
+            val file = createOrGetDirectory(fragmentActivity, "Temp")
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {

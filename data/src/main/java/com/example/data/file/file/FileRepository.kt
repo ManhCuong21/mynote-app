@@ -5,7 +5,7 @@ import com.github.michaelbull.result.Result
 import java.io.File
 
 interface FileRepository {
-    fun createDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File
+    fun createOrGetDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File
     fun saveFileToDirectory(fragmentActivity: FragmentActivity, directoryName: String)
     fun saveFileToTemp(
         fragmentActivity: FragmentActivity,

@@ -16,33 +16,35 @@ class ImageFileRepositoryImpl @Inject constructor(
     private val fileRepository: FileRepository
 ) : ImageFileRepository {
 
-    override fun saveImageToDirectory(
+    override suspend fun saveImageToDirectory(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ) {
-        val fileDirectoryTemp = fileRepository.createDirectory(fragmentActivity, "Temp")
-        fileDirectoryTemp.listFiles()
-            ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
-            ?.map {
-                try {
-                    val pathImage = "${
-                        fileRepository.createDirectory(fragmentActivity, directoryName)
-                    }/${it.name}"
-                    val bytes = it.readBytes()
-                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    val outputStream = FileOutputStream(pathImage)
-                    outputStream.flush()
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                    outputStream.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        withContext(appCoroutineDispatchers.io) {
+            val fileDirectoryTemp = fileRepository.createOrGetDirectory(fragmentActivity, "Temp")
+            fileDirectoryTemp.listFiles()
+                ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
+                ?.map {
+                    try {
+                        val pathImage = "${
+                            fileRepository.createOrGetDirectory(fragmentActivity, directoryName)
+                        }/${it.name}"
+                        val bytes = it.readBytes()
+                        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        val outputStream = FileOutputStream(pathImage)
+                        outputStream.flush()
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                        outputStream.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
-            }
+        }
     }
 
     override fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) {
         val fileName = "${
-            fileRepository.createDirectory(fragmentActivity, "Temp")
+            fileRepository.createOrGetDirectory(fragmentActivity, "Temp")
         }/${System.currentTimeMillis()}.jpg"
         try {
             val outputStream = FileOutputStream(fileName)
@@ -57,7 +59,7 @@ class ImageFileRepositoryImpl @Inject constructor(
     override suspend fun readImage(fragmentActivity: FragmentActivity): List<ItemImage> {
         return withContext(appCoroutineDispatchers.io) {
             val listImage = arrayListOf<ItemImage>()
-            val fileDirectoryTemp = fileRepository.createDirectory(fragmentActivity, "Temp")
+            val fileDirectoryTemp = fileRepository.createOrGetDirectory(fragmentActivity, "Temp")
             fileDirectoryTemp.listFiles()
                 ?.filter { it.canRead() && it.isFile && it.name.endsWith(".jpg") }
                 ?.map {

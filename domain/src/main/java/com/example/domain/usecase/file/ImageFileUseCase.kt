@@ -4,13 +4,20 @@ import android.graphics.Bitmap
 import androidx.fragment.app.FragmentActivity
 import com.example.core.core.model.ItemImage
 import com.example.data.file.image.ImageFileRepository
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.runCatching
 import javax.inject.Inject
 
 class ImageFileUseCase @Inject constructor(
     private val imageFileRepository: ImageFileRepository
 ) {
-    fun saveImageToDirectory(fragmentActivity: FragmentActivity, folderName: String) =
-        imageFileRepository.saveImageToDirectory(fragmentActivity, folderName)
+    suspend fun saveImageToDirectory(
+        fragmentActivity: FragmentActivity,
+        folderName: String
+    ): Result<Unit, Throwable> =
+        runCatching {
+            imageFileRepository.saveImageToDirectory(fragmentActivity, folderName)
+        }
 
     fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) =
         imageFileRepository.saveImageToTemp(fragmentActivity, bitmap)

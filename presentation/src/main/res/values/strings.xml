@@ -81,4 +81,8 @@
     <!-- Information -->
     <string name="title_information">Information</string>
     <string name="title_delete_account">Delete account</string>
+
+    <!-- List Image -->
+    <string name="title_image">Image</string>
+
 </resources>
