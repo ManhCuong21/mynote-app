@@ -19,7 +19,7 @@ sealed interface NoteAction {
     data class HasImageNoteChanged(val hasImage: Boolean) : NoteAction
     data class HasRecordNoteChanged(val hasRecord: Boolean) : NoteAction
     data class GetListRecordNote(val context: FragmentActivity) : NoteAction
-    data class DeleteRecordNote(val context: FragmentActivity, val pathRecord: String) : NoteAction
+    data class DeleteRecordNote(val context: FragmentActivity, val recordPath: String) : NoteAction
     data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
     data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
     data class SaveNote(

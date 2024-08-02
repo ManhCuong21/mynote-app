@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.StatusRecord
@@ -26,10 +27,12 @@ import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.NoteAction
 import com.example.presentation.note.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -99,7 +102,9 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         }
         btnSaveRecord.setOnClickListener {
             stopRecording()
-            recordFileUseCase.saveAmplitude(file, amplitudes)
+            lifecycleScope.launch {
+                recordFileUseCase.saveAmplitude(file, amplitudes)
+            }
             viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
             mainNavigator.popBackStack()
         }

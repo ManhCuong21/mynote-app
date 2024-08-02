@@ -6,7 +6,7 @@ import com.example.core.core.model.ItemImage
 
 sealed interface ImageNoteAction {
     data class GetListImageNote(val context: FragmentActivity) : ImageNoteAction
-    data class DeleteImageNote(val context: FragmentActivity, val pathImage: String) : ImageNoteAction
+    data class DeleteImageNote(val context: FragmentActivity, val imagePath: String) : ImageNoteAction
     data class SaveImageNote(val context: FragmentActivity, val bitmap: Bitmap) : ImageNoteAction
 }
 

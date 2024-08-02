@@ -11,18 +11,25 @@ import javax.inject.Inject
 class RecordFileUseCase @Inject constructor(
     private val recordFileRepository: RecordFileRepository
 ) {
-    fun saveAmplitude(file: File, amplitudes: List<Float>) =
+    suspend fun saveAmplitude(file: File, amplitudes: List<Float>) =
         recordFileRepository.saveAmplitude(file, amplitudes)
 
-    fun saveRecordToDirectory(
+    suspend fun saveRecordToDirectory(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ): Result<Unit, Throwable> = runCatching {
         recordFileRepository.saveRecordToDirectory(fragmentActivity, directoryName)
     }
 
+    suspend fun saveRecordFromDirectoryToTemp(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ): Result<Unit, Throwable> = runCatching {
+        recordFileRepository.saveRecordFromDirectoryToTemp(fragmentActivity, directoryName)
+    }
+
     suspend fun readRecord(fragmentActivity: FragmentActivity): List<ItemRecord> =
         recordFileRepository.readRecord(fragmentActivity)
 
-    suspend fun deleteRecord(pathRecord: String) = recordFileRepository.deleteRecord(pathRecord)
+    suspend fun deleteRecord(recordPath: String) = recordFileRepository.deleteRecord(recordPath)
 }

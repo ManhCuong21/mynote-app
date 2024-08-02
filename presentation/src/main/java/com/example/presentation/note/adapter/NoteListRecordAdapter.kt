@@ -21,7 +21,7 @@ class NoteListRecordAdapter(
 ) : ListAdapter<ItemRecord, NoteListRecordAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ItemRecord>() {
         override fun areItemsTheSame(oldItem: ItemRecord, newItem: ItemRecord): Boolean =
-            oldItem.pathRecord == newItem.pathRecord
+            oldItem.recordPath == newItem.recordPath
 
         override fun areContentsTheSame(oldItem: ItemRecord, newItem: ItemRecord): Boolean =
             oldItem == newItem
@@ -64,7 +64,7 @@ class NoteListRecordAdapter(
             btnDeleteRecord.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        onItemDelete(item.pathDirectory)
+                        onItemDelete(item.directoryPath)
                     }
                 }
             }
@@ -99,7 +99,7 @@ class NoteListRecordAdapter(
 
         private fun startPlaying(item: ItemRecord) = binding.apply {
             player = ExoPlayer.Builder(root.context).build().also { exoPlayer ->
-                val mediaItem = MediaItem.fromUri(item.pathRecord)
+                val mediaItem = MediaItem.fromUri(item.recordPath)
                 exoPlayer.setMediaItem(mediaItem)
                 exoPlayer.prepare()
                 exoPlayer.addListener(playerListener())

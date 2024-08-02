@@ -17,7 +17,7 @@ class NoteListImageAdapter(
 ) : ListAdapter<ItemImage, NoteListImageAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ItemImage>() {
         override fun areItemsTheSame(oldItem: ItemImage, newItem: ItemImage): Boolean =
-            oldItem.pathImage == newItem.pathImage
+            oldItem.imagePath == newItem.imagePath
 
         override fun areContentsTheSame(oldItem: ItemImage, newItem: ItemImage): Boolean =
             oldItem == newItem
@@ -26,20 +26,20 @@ class NoteListImageAdapter(
     inner class ViewHolder(val binding: ItemListImageNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ItemImage) = binding.apply {
-            imgItem.setImageBitmap(rotateImage(item.pathImage, item.image))
+            imgItem.setImageBitmap(rotateImage(item.imagePath, item.image))
             imgDelete.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        onItemDelete(item.pathImage)
+                        onItemDelete(item.imagePath)
                     }
                 }
             }
         }
 
-        private fun rotateImage(pathImage: String, bitmap: Bitmap): Bitmap {
+        private fun rotateImage(imagePath: String, bitmap: Bitmap): Bitmap {
             var exifInterface: ExifInterface? = null
             try {
-                exifInterface = ExifInterface(pathImage)
+                exifInterface = ExifInterface(imagePath)
             } catch (e: IOException) {
                 e.printStackTrace()
             }

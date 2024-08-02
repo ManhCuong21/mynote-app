@@ -12,8 +12,8 @@ import javax.inject.Inject
 class FileUseCase @Inject constructor(
     private val fileRepository: FileRepository
 ) {
-    private fun createDirectory(fragmentActivity: FragmentActivity, pathDirectory: String): File =
-        fileRepository.createOrGetDirectory(fragmentActivity, pathDirectory)
+    private fun createDirectory(fragmentActivity: FragmentActivity, directoryPath: String): File =
+        fileRepository.createOrGetDirectory(fragmentActivity, directoryPath)
 
     fun createDirectoryTemp(fragmentActivity: FragmentActivity): File =
         createDirectory(fragmentActivity,"Temp")
@@ -21,7 +21,7 @@ class FileUseCase @Inject constructor(
     fun createDirectoryRecordTemp(fragmentActivity: FragmentActivity): File =
         createDirectory(
             fragmentActivity,
-            pathDirectory = "Temp/Record-${formatDate(FILE_NAME_FORMAT)}"
+            directoryPath = "Temp/Record-${formatDate(FILE_NAME_FORMAT)}"
         )
 
     fun saveFileToDirectory(

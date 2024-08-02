@@ -17,57 +17,102 @@ class RecordFileRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
     private val fileRepository: FileRepository
 ) : RecordFileRepository {
-    override fun saveAmplitude(
+    override suspend fun saveAmplitude(
         file: File,
         amplitudes: List<Float>
     ) {
-        try {
-            val fileOutputStream = FileOutputStream(File(file, "amplitudes.txt"))
-            val objectOutputStream = ObjectOutputStream(fileOutputStream)
-            objectOutputStream.writeObject(amplitudes)
-            objectOutputStream.close()
-            fileOutputStream.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        withContext(appCoroutineDispatchers.io) {
+            try {
+                val fileOutputStream = FileOutputStream(File(file, "amplitudes.txt"))
+                val objectOutputStream = ObjectOutputStream(fileOutputStream)
+                objectOutputStream.writeObject(amplitudes)
+                objectOutputStream.close()
+                fileOutputStream.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
-    override fun saveRecordToDirectory(
+    override suspend fun saveRecordToDirectory(
         fragmentActivity: FragmentActivity,
-        pathDirectory: String
+        directoryPath: String
     ) {
-        val fileDirectoryTempRecord = fileRepository.createOrGetDirectory(fragmentActivity, "Temp")
-        fileDirectoryTempRecord.listFiles()
-            ?.filter { it.canRead() && it.isDirectory && it.name.startsWith("Record") }
-            ?.map { recordDirectory ->
-                recordDirectory.listFiles()?.map {
-                    try {
-                        val externalPath = "${
-                            fileRepository.createOrGetDirectory(
-                                fragmentActivity,
-                                "$pathDirectory/${recordDirectory.name}"
-                            )
-                        }/${it.name}"
-                        val externalFile = File(externalPath)
-                        val fileInputStream = FileInputStream(it)
-                        val fileOutputStream = FileOutputStream(externalFile)
+        withContext(appCoroutineDispatchers.io) {
+            val fileDirectoryTempRecord =
+                fileRepository.createOrGetDirectory(fragmentActivity, "Temp")
+            fileDirectoryTempRecord.listFiles()
+                ?.filter { it.canRead() && it.isDirectory && it.name.startsWith("Record") }
+                ?.map { recordDirectory ->
+                    recordDirectory.listFiles()?.map {
+                        try {
+                            val externalPath = "${
+                                fileRepository.createOrGetDirectory(
+                                    fragmentActivity,
+                                    "$directoryPath/${recordDirectory.name}"
+                                )
+                            }/${it.name}"
+                            val externalFile = File(externalPath)
+                            val fileInputStream = FileInputStream(it)
+                            val fileOutputStream = FileOutputStream(externalFile)
 
-                        val buffer = ByteArray(1024)
-                        var length: Int
-                        while ((fileInputStream.read(buffer)
-                                .also { lengthBuffer -> length = lengthBuffer }) > 0
-                        ) {
-                            fileOutputStream.write(buffer, 0, length)
+                            val buffer = ByteArray(1024)
+                            var length: Int
+                            while ((fileInputStream.read(buffer)
+                                    .also { lengthBuffer -> length = lengthBuffer }) > 0
+                            ) {
+                                fileOutputStream.write(buffer, 0, length)
+                            }
+
+                            fileInputStream.close()
+                            fileOutputStream.flush()
+                            fileOutputStream.close()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-
-                        fileInputStream.close()
-                        fileOutputStream.flush()
-                        fileOutputStream.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
                 }
-            }
+        }
+    }
+
+    override suspend fun saveRecordFromDirectoryToTemp(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ) {
+        withContext(appCoroutineDispatchers.io) {
+            val fileDirectory = fileRepository.createOrGetDirectory(fragmentActivity, directoryName)
+            fileDirectory.listFiles()
+                ?.filter { it.canRead() && it.isDirectory && it.name.startsWith("Record") }
+                ?.map { recordDirectory ->
+                    recordDirectory.listFiles()?.map {
+                        try {
+                            val externalPath = "${
+                                fileRepository.createOrGetDirectory(
+                                    fragmentActivity,
+                                    "Temp/${recordDirectory.name}"
+                                )
+                            }/${it.name}"
+                            val externalFile = File(externalPath)
+                            val fileInputStream = FileInputStream(it)
+                            val fileOutputStream = FileOutputStream(externalFile)
+
+                            val buffer = ByteArray(1024)
+                            var length: Int
+                            while ((fileInputStream.read(buffer)
+                                    .also { lengthBuffer -> length = lengthBuffer }) > 0
+                            ) {
+                                fileOutputStream.write(buffer, 0, length)
+                            }
+
+                            fileInputStream.close()
+                            fileOutputStream.flush()
+                            fileOutputStream.close()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+        }
     }
 
     override suspend fun readRecord(fragmentActivity: FragmentActivity): List<ItemRecord> {
@@ -89,8 +134,8 @@ class RecordFileRepositoryImpl @Inject constructor(
                         ?.filter { it.canRead() && it.isFile && it.name.endsWith(".mp4") }?.map {
                             listRecord.add(
                                 ItemRecord(
-                                    pathDirectory = file.path,
-                                    pathRecord = it.path,
+                                    directoryPath = file.path,
+                                    recordPath = it.path,
                                     amplitudes = convertFileToFloatArray(partAmplitude)
                                 )
                             )
@@ -123,9 +168,9 @@ class RecordFileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteRecord(pathRecord: String) {
+    override suspend fun deleteRecord(recordPath: String) {
         withContext(appCoroutineDispatchers.io) {
-            val file = File(pathRecord)
+            val file = File(recordPath)
             if (file.isDirectory) {
                 file.listFiles()?.forEach {
                     if (it.exists()) {

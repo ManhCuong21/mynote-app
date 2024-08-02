@@ -274,7 +274,14 @@ class NoteViewModel @Inject constructor(
                             it.noteModel.nameMediaNote
                         )
                     } else {
-                        fileUseCase.saveFileToTemp(it.context, it.noteModel.nameMediaNote)
+                        imageFileUseCase.saveImageFromDirectoryToTemp(
+                            fragmentActivity = it.context,
+                            directoryName = it.noteModel.nameMediaNote
+                        )
+                        recordFileUseCase.saveRecordFromDirectoryToTemp(
+                            fragmentActivity = it.context,
+                            directoryName = it.noteModel.nameMediaNote
+                        )
                     }
                     saveFile.fold(
                         success = {
@@ -323,7 +330,7 @@ class NoteViewModel @Inject constructor(
     private fun deleteRecord() {
         action<NoteAction.DeleteRecordNote>()
             .onEach {
-                recordFileUseCase.deleteRecord(it.pathRecord)
+                recordFileUseCase.deleteRecord(it.recordPath)
                 dispatch(NoteAction.GetListRecordNote(it.context))
             }
             .launchIn(viewModelScope)

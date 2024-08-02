@@ -6,7 +6,8 @@ import com.example.core.core.model.ItemImage
 
 interface ImageFileRepository {
     suspend fun saveImageToDirectory(fragmentActivity: FragmentActivity, directoryName: String)
-    fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap)
+    suspend fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap)
+    suspend fun saveImageFromDirectoryToTemp(fragmentActivity: FragmentActivity, directoryName: String)
     suspend fun readImage(fragmentActivity: FragmentActivity): List<ItemImage>
-    suspend fun deleteImage(pathImage: String)
+    suspend fun deleteImage(imagePath: String)
 }

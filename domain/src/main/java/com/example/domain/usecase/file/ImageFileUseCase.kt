@@ -19,11 +19,16 @@ class ImageFileUseCase @Inject constructor(
             imageFileRepository.saveImageToDirectory(fragmentActivity, folderName)
         }
 
-    fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) =
+    suspend fun saveImageToTemp(fragmentActivity: FragmentActivity, bitmap: Bitmap) =
         imageFileRepository.saveImageToTemp(fragmentActivity, bitmap)
+
+    suspend fun saveImageFromDirectoryToTemp(
+        fragmentActivity: FragmentActivity,
+        directoryName: String
+    ) = imageFileRepository.saveImageFromDirectoryToTemp(fragmentActivity, directoryName)
 
     suspend fun readImage(fragmentActivity: FragmentActivity): List<ItemImage> =
         imageFileRepository.readImage(fragmentActivity)
 
-    suspend fun deleteImage(pathImage: String) = imageFileRepository.deleteImage(pathImage)
+    suspend fun deleteImage(imagePath: String) = imageFileRepository.deleteImage(imagePath)
 }

@@ -16,10 +16,10 @@ class FileRepositoryImpl @Inject constructor(
 ) : FileRepository {
     override fun createOrGetDirectory(
         fragmentActivity: FragmentActivity,
-        pathDirectory: String
+        directoryPath: String
     ): File {
         val mediaDir = fragmentActivity.externalMediaDirs.firstOrNull()?.let { file ->
-            File(file, pathDirectory).apply {
+            File(file, directoryPath).apply {
                 mkdir()
             }
         }

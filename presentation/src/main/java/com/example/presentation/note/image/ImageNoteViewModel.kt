@@ -45,7 +45,7 @@ class ImageNoteViewModel @Inject constructor(
     private fun deleteImage() {
         action<ImageNoteAction.DeleteImageNote>()
             .onEach {
-                imageFileUseCase.deleteImage(it.pathImage)
+                imageFileUseCase.deleteImage(it.imagePath)
                 dispatch(ImageNoteAction.GetListImageNote(it.context))
             }
             .launchIn(viewModelScope)

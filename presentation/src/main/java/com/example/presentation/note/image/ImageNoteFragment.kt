@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +28,8 @@ import com.example.presentation.databinding.FragmentImageNoteBinding
 import com.example.presentation.dialog.camera.showCameraDialog
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.navigation.MainNavigator
+import com.example.presentation.note.NoteAction
+import com.example.presentation.note.NoteViewModel
 import com.example.presentation.note.adapter.NoteListImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,6 +39,7 @@ import javax.inject.Inject
 class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
     override val binding: FragmentImageNoteBinding by viewBinding()
     override val viewModel: ImageNoteViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by activityViewModels()
 
     @Inject
     lateinit var mainNavigator: MainNavigator
@@ -101,6 +105,7 @@ class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
                         is ImageNoteSingleEvent.GetListImage -> {
                             binding.rvImageNote.isVisible = event.list.isNotEmpty()
                             listImageAdapter.submitList(event.list)
+                            noteViewModel.dispatch(NoteAction.HasImageNoteChanged(event.list.isNotEmpty()))
                         }
                     }
                 }
