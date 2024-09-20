@@ -23,6 +23,7 @@ import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentListNoteBinding
 import com.example.presentation.dialog.list.showListDialog
+import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.dialog.text.showTextDialog
 import com.example.presentation.main.home.toListDialogItem
 import com.example.presentation.navigation.MainNavigator
@@ -142,6 +143,9 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
                             Timber.e(event.error)
                         }
                     }
+                }
+                viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+                    renderLoadingUI(state.isLoading == true)
                 }
             }
         }

@@ -4,7 +4,7 @@ import androidx.fragment.app.FragmentActivity
 import com.example.data.dataremote.repository.FirebaseStorageRepository
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.map
-import kotlinx.coroutines.flow.first
+import com.github.michaelbull.result.runCatching
 import javax.inject.Inject
 
 class FirebaseStorageUseCase @Inject constructor(
@@ -13,20 +13,20 @@ class FirebaseStorageUseCase @Inject constructor(
     suspend fun saveFile(
         fragmentActivity: FragmentActivity,
         directoryName: String
-    ): Result<Unit, Throwable> =
+    ): Result<Unit, Throwable> = runCatching {
         firebaseStorageRepository.uploadDirectory(fragmentActivity, directoryName)
-            .map { it.first() }
+    }
 
     suspend fun saveListFileToTemp(
         fragmentActivity: FragmentActivity,
         directoryName: String
     ): Result<Unit, Throwable> =
         firebaseStorageRepository.saveListFileToTemp(fragmentActivity, directoryName)
-            .map { it.first() }
+            .map { it.toString() }
 
     suspend fun deleteAllDirectory(): Result<Unit, Throwable> =
-        firebaseStorageRepository.deleteAllDirectory().map { it.first() }
+        firebaseStorageRepository.deleteAllDirectory().map { it.toString() }
 
     suspend fun deleteDirectory(directoryName: String): Result<Unit, Throwable> =
-        firebaseStorageRepository.deleteDirectory(directoryName).map { it.first() }
+        firebaseStorageRepository.deleteDirectory(directoryName).map { it.toString() }
 }

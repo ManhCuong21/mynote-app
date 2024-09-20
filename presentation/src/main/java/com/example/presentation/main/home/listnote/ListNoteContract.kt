@@ -23,12 +23,14 @@ sealed interface ListNoteSingleEvent {
 
 @Parcelize
 data class ListNoteUiState(
+    val isLoading: Boolean? = null,
     val listCategory: List<CategoryModel>,
     val category: CategoryModel?,
     val listNote: List<NoteModel>
 ) : Parcelable {
     companion object {
         val INITIAL = ListNoteUiState(
+            isLoading = false,
             listCategory = listOf(),
             category = null,
             listNote = listOf()

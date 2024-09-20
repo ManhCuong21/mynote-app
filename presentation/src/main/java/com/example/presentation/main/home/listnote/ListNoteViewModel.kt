@@ -104,6 +104,9 @@ class ListNoteViewModel @Inject constructor(
                     is ResultContent.Content -> ListNoteSingleEvent.GetListNoteSuccess(result.content)
                     is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
                 }
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
+                }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
     }
@@ -128,6 +131,9 @@ class ListNoteViewModel @Inject constructor(
                     is ResultContent.Loading -> null
                     is ResultContent.Content -> ListNoteSingleEvent.UpdateNote
                     is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
+                }
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)
@@ -155,6 +161,9 @@ class ListNoteViewModel @Inject constructor(
                     is ResultContent.Loading -> null
                     is ResultContent.Content -> ListNoteSingleEvent.DeleteNoteSuccess
                     is ResultContent.Error -> ListNoteSingleEvent.SingleEventFailed(error = result.error)
+                }
+                _mutableStateFlow.update { state ->
+                    state.copy(isLoading = result is ResultContent.Loading)
                 }
                 event?.let { _singleEventChannel.send(it) }
             }.launchIn(viewModelScope)

@@ -30,8 +30,7 @@ class NoteRemoteRepositoryImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers
 ) : NoteRemoteRepository {
     private val dataRef = firebaseAuth.currentUser?.uid?.let {
-        FirebaseDatabase.getInstance().getReference(it)
-            .child(LIST_NOTE)
+        FirebaseDatabase.getInstance().getReference(it).child(LIST_NOTE)
     }
 
     override suspend fun insertNote(note: NoteRemote): Result<Unit, Throwable> =
@@ -41,12 +40,12 @@ class NoteRemoteRepositoryImpl @Inject constructor(
                     ?.updateChildren(note.toMap())
                     ?.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            task.result
+                            println("Data inserted successfully")
                         } else {
                             throwException(task.exception)
                         }
                     }?.await()
-                Unit
+                println("Data inserted successfully")
             }
         }
 
@@ -128,7 +127,7 @@ class NoteRemoteRepositoryImpl @Inject constructor(
                             throwException(task.exception)
                         }
                     }?.await()
-                Unit
+                println("Data updated successfully")
             }
         }
 
