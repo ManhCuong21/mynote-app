@@ -200,7 +200,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dimen_16"
-                android:src="@drawable/icon_clock" />
+                android:src="@drawable/icon_calendar" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDateFormat"
@@ -215,6 +215,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="MM-dd-yyyy" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dimen_16"
+                android:src="@drawable/baseline_arrow_forward_ios_24" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/lSecurity"
+            style="@style/BackgroundContentRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/dimen_24"
+                android:layout_height="@dimen/dimen_24"
+                android:layout_margin="@dimen/dimen_16"
+                android:src="@drawable/icon_security" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/TextContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/content_security" />
+
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"

@@ -107,6 +107,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         btnRateApp.setOnClickListener {
             showRateAppDialog()
         }
+        lSecurity.setOnClickListener {
+            
+        }
     }
 
     private fun showDialogTimeFormat() = binding.apply {

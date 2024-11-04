@@ -84,6 +84,7 @@ dependencies {
     implementation libs.androidx.media3.ui
 
     // Rate app
+    implementation libs.feature.delivery
     implementation libs.review
     implementation libs.review.ktx
 
@@ -101,6 +102,9 @@ dependencies {
 
     //Bottom Nav Bar
     implementation libs.smoothbottombar
+
+    //Biometric
+    implementation libs.androidx.biometric
 
     implementation project(path: ':core')
     implementation project(path: ':domain')
