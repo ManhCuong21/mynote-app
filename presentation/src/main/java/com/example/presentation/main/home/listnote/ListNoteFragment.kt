@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
 
@@ -154,6 +155,7 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     private fun setupRecyclerView() = binding.rvNote.apply {
         smoothScrollToPosition(0)
         adapter = listNoteAdapter
+        addItemDecoration(GridSpacingItemDecoration(2, 24))
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
