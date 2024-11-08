@@ -181,6 +181,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         btnChooseRecord.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
         }
+        btnSecurity.setOnClickListener {
+            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
+        }
         btnSaveNote.setOnClickListener {
             viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))
             viewModel.dispatch(NoteAction.SaveNote(requireActivity(), noteModel, actionNote))

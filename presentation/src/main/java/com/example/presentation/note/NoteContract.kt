@@ -22,6 +22,7 @@ sealed interface NoteAction {
     data class DeleteRecordNote(val context: FragmentActivity, val recordPath: String) : NoteAction
     data class ColorTitleNoteChanged(val colorTitleNote: String) : NoteAction
     data class ColorContentNoteChanged(val colorContentNote: String) : NoteAction
+    data class SecurityNoteChanged(val security: Boolean) : NoteAction
     data class SaveNote(
         val context: FragmentActivity,
         val noteModel: NoteModel?,
@@ -50,7 +51,8 @@ data class NoteUiState(
     val hasImage: Boolean?,
     val hasRecord: Boolean?,
     val colorTitleNote: String?,
-    val colorContentNote: String?
+    val colorContentNote: String?,
+    val security: Boolean?
 ) : Parcelable {
     companion object {
         val INITIAL = NoteUiState(
@@ -63,7 +65,8 @@ data class NoteUiState(
             hasImage = null,
             hasRecord = null,
             colorTitleNote = null,
-            colorContentNote = null
+            colorContentNote = null,
+            security = null
         )
     }
 }
@@ -77,7 +80,8 @@ fun buildNoteUiState(
     hasImage: Boolean,
     hasRecord: Boolean,
     colorTitleNote: String?,
-    colorContentNote: String?
+    colorContentNote: String?,
+    security: Boolean
 ): NoteUiState = NoteUiState(
     isFirstTime = isFirstTime,
     titleNote = titleNote,
@@ -87,5 +91,6 @@ fun buildNoteUiState(
     hasImage = hasImage,
     hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
-    colorContentNote = colorContentNote
+    colorContentNote = colorContentNote,
+    security = security
 )

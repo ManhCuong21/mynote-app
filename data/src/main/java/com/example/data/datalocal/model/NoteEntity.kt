@@ -32,5 +32,7 @@ data class NoteEntity(
     @ColumnInfo(name = "typeNote")
     val typeNote: Int = TYPE_LOCAL,
     @Embedded
-    val notificationEntity: NotificationEntity? = null
+    val notificationEntity: NotificationEntity? = null,
+    @ColumnInfo(name = "security")
+    val security: Boolean
 )

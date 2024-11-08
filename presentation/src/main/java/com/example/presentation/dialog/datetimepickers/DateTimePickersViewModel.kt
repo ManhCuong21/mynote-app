@@ -186,7 +186,8 @@ class DateTimePickersViewModel @Inject constructor(
                                 dayOfWeek = stateFlow.value.dayOfWeek,
                                 hour = it.hour,
                                 minute = it.minute
-                            )
+                            ),
+                            security = it.noteModel.security
                         )
                     ).fold(
                         success = {
@@ -228,7 +229,8 @@ class DateTimePickersViewModel @Inject constructor(
                             colorContentNote = it.noteModel.colorContentNote,
                             timeNote = it.noteModel.timeNote,
                             typeNote = it.noteModel.typeNote,
-                            notificationModel = null
+                            notificationModel = null,
+                            security = it.noteModel.security
                         )
                     ).fold(
                         success = {

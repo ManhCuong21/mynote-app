@@ -24,7 +24,8 @@ data class NoteModel(
     val colorContentNote: String,
     val timeNote: Long,
     val typeNote: Int,
-    val notificationModel: NotificationModel? = null
+    val notificationModel: NotificationModel? = null,
+    val security: Boolean
 ) : Parcelable
 
 @Parcelize

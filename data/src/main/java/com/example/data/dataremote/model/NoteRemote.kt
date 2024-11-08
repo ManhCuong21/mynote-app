@@ -18,8 +18,8 @@ data class NoteRemote(
     val colorContentNote: String? = null,
     val timeNote: Long? = null,
     val typeNote: Int = TYPE_REMOTE,
-    // Notification
-    val notificationRemote: NotificationRemote? = null
+    val notificationRemote: NotificationRemote? = null,
+    val security: Boolean
 ) {
     @Exclude
     fun toMap(): Map<String, Any?> {
@@ -35,7 +35,8 @@ data class NoteRemote(
             "colorContentNote" to colorContentNote,
             "timeNote" to timeNote,
             "typeNote" to typeNote,
-            "notificationRemote" to notificationRemote
+            "notificationRemote" to notificationRemote,
+            "security" to security
         )
     }
 }
