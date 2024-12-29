@@ -120,6 +120,11 @@ class NoteViewModel @Inject constructor(
             .onStart { emit(initialUiState.colorContentNote.orEmpty()) }
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
+        val securityNoteFlow = action<NoteAction.SecurityNoteChanged>()
+            .map { it.security }
+            .onStart { emit(initialUiState.security ?: false) }
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
         val isFirstTime = isFirstFlow.distinctUntilChanged()
         val titleNote = titleNoteFlow.distinctUntilChanged()
         val contentNote = contentNoteFlow.distinctUntilChanged()
@@ -129,6 +134,7 @@ class NoteViewModel @Inject constructor(
         val hasRecordNote = hasRecordNoteFlow.distinctUntilChanged()
         val colorTitleNote = colorTitleNoteFlow.distinctUntilChanged()
         val colorContentNote = colorContentNoteFlow.distinctUntilChanged()
+        val securityNote = securityNoteFlow.distinctUntilChanged()
 
         uiStateFlow = combine(
             isFirstTime,
@@ -140,6 +146,7 @@ class NoteViewModel @Inject constructor(
             hasRecordNote,
             colorTitleNote,
             colorContentNote,
+            securityNote,
             ::buildNoteUiState
         ).onEach {
             savedStateHandle[STATE_KEY] = it
@@ -167,7 +174,8 @@ class NoteViewModel @Inject constructor(
                     hasRecord = uiState.hasRecord ?: false,
                     colorTitleNote = uiState.colorTitleNote.orEmpty(),
                     colorContentNote = uiState.colorContentNote.orEmpty(),
-                    timeNote = System.currentTimeMillis()
+                    timeNote = System.currentTimeMillis(),
+                    security = uiState.security ?: false
                 )
             ).fold(
                 success = {
@@ -197,7 +205,8 @@ class NoteViewModel @Inject constructor(
                         colorContentNote = uiState.colorContentNote.orEmpty(),
                         timeNote = System.currentTimeMillis(),
                         typeNote = noteModel.typeNote,
-                        notificationModel = noteModel.notificationModel
+                        notificationModel = noteModel.notificationModel,
+                        security = noteModel.security
                     )
                 ).fold(
                     success = {

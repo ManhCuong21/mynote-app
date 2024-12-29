@@ -17,7 +17,8 @@ data class NoteParams(
     val hasRecord: Boolean,
     var colorTitleNote: String,
     var colorContentNote: String,
-    var timeNote: Long
+    var timeNote: Long,
+    val security: Boolean
 )
 
 fun NoteParams.toNoteEntity() = NoteEntity(
@@ -29,7 +30,8 @@ fun NoteParams.toNoteEntity() = NoteEntity(
     hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
-    timeNote = timeNote
+    timeNote = timeNote,
+    security = security
 )
 
 fun NoteParams.toNoteRemote() = NoteRemote(
@@ -43,7 +45,8 @@ fun NoteParams.toNoteRemote() = NoteRemote(
     hasRecord = hasRecord,
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
-    timeNote = timeNote
+    timeNote = timeNote,
+    security = security
 )
 
 fun NoteModel.toNoteEntity() = NoteEntity(
@@ -57,7 +60,8 @@ fun NoteModel.toNoteEntity() = NoteEntity(
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
     notificationEntity = notificationModel?.toNotificationEntity(),
-    timeNote = timeNote
+    timeNote = timeNote,
+    security = security
 )
 
 fun NoteModel.toNoteRemote() = NoteRemote(
@@ -80,7 +84,8 @@ fun NoteModel.toNoteRemote() = NoteRemote(
         dayOfWeek = notificationModel?.dayOfWeek,
         hour = notificationModel?.hour,
         minute = notificationModel?.minute
-    )
+    ),
+    security = security
 )
 
 fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
@@ -94,7 +99,8 @@ fun NoteModel.toNoteEntityWithNotification() = NoteEntity(
     colorTitleNote = colorTitleNote,
     colorContentNote = colorContentNote,
     timeNote = timeNote,
-    notificationEntity = notificationModel?.toNotificationEntity()
+    notificationEntity = notificationModel?.toNotificationEntity(),
+    security = security
 )
 
 fun NoteEntity.toNoteModel() = NoteModel(
@@ -109,7 +115,8 @@ fun NoteEntity.toNoteModel() = NoteModel(
     colorContentNote = colorContentNote,
     timeNote = timeNote ?: System.currentTimeMillis(),
     typeNote = typeNote,
-    notificationModel = notificationEntity?.toNotification()
+    notificationModel = notificationEntity?.toNotification(),
+    security = security
 )
 
 fun NoteRemote.toNoteModel() = NoteModel(
@@ -124,7 +131,8 @@ fun NoteRemote.toNoteModel() = NoteModel(
     colorContentNote = colorContentNote.orEmpty(),
     timeNote = timeNote ?: System.currentTimeMillis(),
     typeNote = typeNote,
-    notificationModel = notificationRemote?.toNotificationModel()
+    notificationModel = notificationRemote?.toNotificationModel(),
+    security = security
 )
 
 private fun NotificationModel.toNotificationEntity() = NotificationEntity(

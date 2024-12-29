@@ -39,6 +39,7 @@
     <string name="content_use_dark_theme">Use dark theme</string>
     <string name="content_time_format">Time format</string>
     <string name="content_date_format">Date format</string>
+    <string name="content_security">Security</string>
     <string name="content_account">Account</string>
     <string name="content_sign_in">Backup on device</string>
     <string name="content_apps">Apps</string>

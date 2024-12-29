@@ -43,7 +43,8 @@ class ListNoteAdapter(
         private val context = binding.root.context
         fun bind(item: NoteModel, format24Hour: Boolean) = binding.apply {
             imgCategoryNote.loadImageDrawable(item.categoryNote?.imageCategory)
-            vColorNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
+            lContentNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
+            lTitleNote.setBackgroundColor(Color.parseColor(item.colorContentNote))
             tvTitleNote.text = item.titleNote
             tvContentNote.text = item.contentNote
             val dateFormat =

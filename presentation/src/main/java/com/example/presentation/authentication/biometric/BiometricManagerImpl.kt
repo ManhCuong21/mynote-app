@@ -14,20 +14,19 @@ import androidx.fragment.app.FragmentActivity
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
-class BiometricAuthenticationManagerImpl @Inject constructor(
-    private val activity: Activity
-) : BiometricAuthenticationManager {
+class BiometricAuthenticationManagerImpl @Inject constructor() : BiometricAuthenticationManager {
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
-    override fun verifyBiometricAvailable(requestCode: Int) {
+    override fun verifyBiometric(
+        activity: FragmentActivity,
+        onSucceeded: () -> Unit,
+        onFailed: () -> Unit
+    ) {
         val biometricManager = BiometricManager.from(activity)
         when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-            BiometricManager.BIOMETRIC_SUCCESS ->
-                Toast.makeText(
-                    activity, "App can authenticate using biometrics", Toast.LENGTH_SHORT
-                ).show()
+            BiometricManager.BIOMETRIC_SUCCESS -> showBiometric(activity, onSucceeded, onFailed)
 
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
                 Toast.makeText(
@@ -74,6 +73,7 @@ class BiometricAuthenticationManagerImpl @Inject constructor(
                     errString: CharSequence
                 ) {
                     super.onAuthenticationError(errorCode, errString)
+                    onFailed()
                     Toast.makeText(
                         activity, "Authentication error: $errString", Toast.LENGTH_SHORT
                     ).show()
