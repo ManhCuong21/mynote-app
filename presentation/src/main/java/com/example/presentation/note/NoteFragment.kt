@@ -93,8 +93,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     override fun setupViews() {
+        initialValue()
         if (!viewModel.uiStateFlow.value.isFirstTime) {
-            initialValue()
+            viewModel.dispatch(NoteAction.IsFirstTime)
             setupViewModel()
         } else {
             viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
@@ -199,7 +200,6 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     private fun initialValue() = binding.apply {
-        viewModel.dispatch(NoteAction.IsFirstTime)
         val state = viewModel.uiStateFlow.value
         edtTitleNote.setText(state.titleNote)
         edtContentNote.setText(state.contentNote)

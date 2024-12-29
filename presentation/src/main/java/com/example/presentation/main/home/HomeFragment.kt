@@ -80,12 +80,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     .show()
             }
         }
-        fabTest.setOnClickListener {
-            biometricAuthenticationManager.showBiometric(
-                requireActivity(),
-                onSucceeded = {},
-                onFailed = {})
-        }
     }
 
     override fun bindViewModel() {

@@ -127,5 +127,13 @@
             android:layout_weight="1"
             android:paddingVertical="@dimen/dimen_8"
             app:srcCompat="@drawable/icon_choose_record" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnLock"
+            android:layout_width="@dimen/dimen_24"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingVertical="@dimen/dimen_8"
+            app:srcCompat="@drawable/icon_lock" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
