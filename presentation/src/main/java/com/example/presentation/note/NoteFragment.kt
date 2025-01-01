@@ -20,6 +20,7 @@ import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.showBiometricDialog
 import com.example.presentation.databinding.FragmentNoteBinding
 import com.example.presentation.dialog.progress.renderLoadingUI
 import com.example.presentation.navigation.MainNavigator
@@ -183,7 +184,9 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
         }
         btnSecurity.setOnClickListener {
-            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
+            showBiometricDialog {
+                textTitle("Notes are locked")
+            }
         }
         btnSaveNote.setOnClickListener {
             viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))

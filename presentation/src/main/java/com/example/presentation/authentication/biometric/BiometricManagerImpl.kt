@@ -49,7 +49,7 @@ class BiometricAuthenticationManagerImpl @Inject constructor() : BiometricAuthen
                 } else {
                     TODO("VERSION.SDK_INT < R")
                 }
-                activity.startActivityForResult(enrollIntent, requestCode)
+                activity.startActivityForResult(enrollIntent, 1)
             }
 
             BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {}

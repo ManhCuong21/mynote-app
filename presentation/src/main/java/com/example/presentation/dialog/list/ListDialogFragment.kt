@@ -62,30 +62,32 @@ class ListDialogFragment : DialogFragment() {
 
         builder?.let { builder ->
             builder.run {
-                binding.tvTitleDialog.let {
-                    it.text = textTitle
-                    it.isVisible = textTitle?.isNotEmpty() == true
-                }
-                binding.btnPositive.let {
-                    it.text = positiveButtonText
-                    it.setOnClickListener {
-                        positiveButtonClickListener(positionSelected ?: 0)
-                        dismiss()
+                binding.apply {
+                    tvTitleDialog.let {
+                        it.text = textTitle
+                        it.isVisible = textTitle?.isNotEmpty() == true
                     }
-                }
-                binding.btnNegative.let {
-                    it.text = negativeButtonText
-                    it.isVisible = !negativeButtonText.isNullOrEmpty()
-                    it.setOnClickListener {
-                        negativeButtonClickListener()
-                        dismiss()
+                    btnPositive.let {
+                        it.text = positiveButtonText
+                        it.setOnClickListener {
+                            positiveButtonClickListener(positionSelected ?: 0)
+                            dismiss()
+                        }
                     }
+                    btnNegative.let {
+                        it.text = negativeButtonText
+                        it.isVisible = !negativeButtonText.isNullOrEmpty()
+                        it.setOnClickListener {
+                            negativeButtonClickListener()
+                            dismiss()
+                        }
+                    }
+                    rvDialog.let {
+                        it.adapter = dialogAdapter
+                        dialogAdapter.submitList(list)
+                    }
+                    isCancelable = cancelable
                 }
-                binding.rvDialog.let {
-                    it.adapter = dialogAdapter
-                    dialogAdapter.submitList(list)
-                }
-                isCancelable = cancelable
             }
         }
     }

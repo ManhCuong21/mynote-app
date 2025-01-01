@@ -236,7 +236,7 @@
                 android:layout_width="@dimen/dimen_24"
                 android:layout_height="@dimen/dimen_24"
                 android:layout_margin="@dimen/dimen_16"
-                android:src="@drawable/icon_security" />
+                android:src="@drawable/icon_biometric" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextContent"

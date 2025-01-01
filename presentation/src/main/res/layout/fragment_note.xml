@@ -134,6 +134,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingVertical="@dimen/dimen_8"
-            app:srcCompat="@drawable/icon_security" />
+            app:srcCompat="@drawable/icon_biometric" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
