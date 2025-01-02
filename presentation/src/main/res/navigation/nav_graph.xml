@@ -29,6 +29,10 @@
         <action
             android:id="@+id/action_mainFragment_to_UserInformationFragment"
             app:destination="@+id/userInformationFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_SecurityFragment"
+            app:destination="@+id/securityFragment" />
     </fragment>
 
     <fragment
@@ -114,4 +118,18 @@
         android:id="@+id/userInformationFragment"
         android:name="com.example.presentation.authentication.information.UserInformationFragment"
         tools:layout="@layout/fragment_user_information" />
+
+    <fragment
+        android:id="@+id/securityFragment"
+        android:name="com.example.presentation.main.setting.security.SecurityFragment"
+        tools:layout="@layout/fragment_security">
+        <action
+            android:id="@+id/action_changeUnlockCodeFragment_to_ChangeUnlockCodeFragment"
+            app:destination="@+id/changeUnlockCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeUnlockCodeFragment"
+        android:name="com.example.presentation.main.setting.security.changeunlockcode.ChangeUnlockCodeFragment"
+        tools:layout="@layout/fragment_change_unlock_code" />
 </navigation>

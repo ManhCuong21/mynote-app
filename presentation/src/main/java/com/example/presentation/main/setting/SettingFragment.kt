@@ -64,10 +64,11 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     }
 
     private fun setupInformationView() = binding.apply {
-        tvAccount.isVisible = sharedPrefersManager.userEmail.isNullOrEmpty()
-        btnSignIn.isVisible = sharedPrefersManager.userEmail.isNullOrEmpty()
-        lnInformation.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
-        btnLogOut.isVisible = !sharedPrefersManager.userEmail.isNullOrEmpty()
+        val isHaveUserEmail = sharedPrefersManager.userEmail.isNullOrEmpty()
+        tvAccount.isVisible = isHaveUserEmail
+        btnSignIn.isVisible = isHaveUserEmail
+        lnInformation.isVisible = !isHaveUserEmail
+        btnLogOut.isVisible = !isHaveUserEmail
         tvEmail.text = sharedPrefersManager.userEmail
     }
 
@@ -108,7 +109,7 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
             showRateAppDialog()
         }
         lSecurity.setOnClickListener {
-            
+            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSecurityFragment)
         }
     }
 

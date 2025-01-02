@@ -63,6 +63,10 @@
     <string name="title_log_out">Log out</string>
     <string name="content_rate_app_2">We would greatly appreciate it if you can could rate us</string>
     <string name="content_rate_app_1">We are working hard for a better user experience</string>
+    <string name="title_change_password">Change password</string>
+    <string name="title_change_unlock_code">Change unlock code</string>
+    <string name="title_fingerprint_authentication">Fingerprint authentication</string>
+
     <!-- Authentication -->
     <string name="title_email">Email</string>
     <string name="title_password">Password</string>
@@ -78,6 +82,7 @@
     <string name="title_sign_in">Sign In</string>
     <string name="title_welcome_back">Welcome \nBack</string>
     <string name="title_hey_good_to_see_you_again">Hey! Good to see you again</string>
+    <string name="title_enter_password">Enter password</string>
 
     <!-- Information -->
     <string name="title_information">Information</string>
@@ -87,6 +92,4 @@
     <string name="title_image">Image</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_enter_password">Enter password</string>
-
 </resources>

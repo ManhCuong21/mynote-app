@@ -20,6 +20,8 @@ interface MainNavigator {
         data class MainFragmentToDateTimePickersFragment(val noteModel: NoteModel) : Direction
         data object NoteFragmentToImageNoteFragment : Direction
         data object NoteFragmentToRecorderFragment : Direction
+        data object MainFragmentToSecurityFragment : Direction
+        data object SecurityFragmentToChangeUnlockCodeFragment : Direction
     }
 
     @MainThread

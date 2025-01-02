@@ -40,7 +40,7 @@
                 android:hint="@string/title_enter_password"
                 app:endIconMode="password_toggle"
                 app:errorIconDrawable="@null"
-                app:startIconDrawable="@drawable/icon_password">
+                app:startIconDrawable="@drawable/baseline_password_24">
 
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/TextContent"
