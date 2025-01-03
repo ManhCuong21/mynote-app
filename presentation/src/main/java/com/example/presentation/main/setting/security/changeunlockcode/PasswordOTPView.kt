@@ -24,17 +24,21 @@ class PasswordOTPView @JvmOverloads constructor(
     private fun setupFields() {
         for (i in 0 until numOfFields) {
             val editText = EditText(context).apply {
-                layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f)
-                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply {
+                    setMargins(24, 0, 24, 0)
+                }
+                inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
                 gravity = Gravity.CENTER
-                textSize = 18f
+                textSize = 50f
                 maxLines = 1
                 isFocusable = true
                 isFocusableInTouchMode = true
-                isCursorVisible = true
+                isCursorVisible = false
                 setTextColor(Color.BLACK)
                 setHintTextColor(Color.GRAY)
                 filters = arrayOf(android.text.InputFilter.LengthFilter(1)) // Chỉ cho phép 1 ký tự
+                setPadding(16, 8, 16, 0)
             }
 
             // Lắng nghe sự thay đổi văn bản và tự động chuyển ô khi người dùng nhập
