@@ -124,12 +124,27 @@
         android:name="com.example.presentation.main.setting.security.SecurityFragment"
         tools:layout="@layout/fragment_security">
         <action
-            android:id="@+id/action_changeUnlockCodeFragment_to_ChangeUnlockCodeFragment"
+            android:id="@+id/action_securityFragment_to_ChangeUnlockCodeFragment"
             app:destination="@+id/changeUnlockCodeFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/changeUnlockCodeFragment"
         android:name="com.example.presentation.main.setting.security.changeunlockcode.ChangeUnlockCodeFragment"
-        tools:layout="@layout/fragment_change_unlock_code" />
+        tools:layout="@layout/fragment_change_unlock_code">
+        <argument
+            android:name="isSecondAttempt"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="firstOtp"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_changeUnlockCodeFragment_to_SecondChangeUnlockCodeFragment"
+            app:destination="@+id/changeUnlockCodeFragment" />
+    </fragment>
 </navigation>

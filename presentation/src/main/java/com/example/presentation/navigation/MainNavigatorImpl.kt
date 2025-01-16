@@ -14,6 +14,7 @@ import com.example.presentation.authentication.signin.SignInFragmentDirections
 import com.example.presentation.note.NoteFragmentDirections
 import com.example.presentation.main.MainFragmentDirections
 import com.example.presentation.main.setting.security.SecurityFragmentDirections
+import com.example.presentation.main.setting.security.changeunlockcode.ChangeUnlockCodeFragmentDirections
 import com.example.presentation.navigation.MainNavigator.Direction
 
 class MainNavigatorImpl @Inject constructor(
@@ -71,5 +72,10 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
     is Direction.NoteFragmentToImageNoteFragment -> NoteFragmentDirections.actionNoteFragmentToImageNoteFragment()
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment()
     is Direction.MainFragmentToSecurityFragment -> MainFragmentDirections.actionMainFragmentToSecurityFragment()
-    is Direction.SecurityFragmentToChangeUnlockCodeFragment -> SecurityFragmentDirections.actionChangeUnlockCodeFragmentToChangeUnlockCodeFragment()
+    is Direction.SecurityFragmentToChangeUnlockCodeFragment -> SecurityFragmentDirections.actionSecurityFragmentToChangeUnlockCodeFragment()
+    is Direction.ChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment ->
+        ChangeUnlockCodeFragmentDirections.actionChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment(
+            isSecondAttempt = isSecondAttempt,
+            firstOtp = firstOtp
+        )
 }

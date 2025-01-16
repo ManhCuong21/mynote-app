@@ -22,6 +22,10 @@ interface MainNavigator {
         data object NoteFragmentToRecorderFragment : Direction
         data object MainFragmentToSecurityFragment : Direction
         data object SecurityFragmentToChangeUnlockCodeFragment : Direction
+        data class ChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment(
+            val isSecondAttempt: Boolean,
+            val firstOtp: String
+        ) : Direction
     }
 
     @MainThread

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <layer-list >
+            <item
+                android:bottom="1dp"
+                android:left="-5dp"
+                android:right="-5dp"
+                android:top="-5dp">
+                <shape android:shape="rectangle" >
+                    <stroke
+                        android:width="3dp"
+                        android:color="@color/primary" />
+
+                    <solid android:color="@color/white" />
+
+                    <padding android:left="@dimen/dimen_0"
+                        android:right="@dimen/dimen_0"
+                        android:top="@dimen/dimen_10"
+                        android:bottom="@dimen/dimen_10" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+    <item>
+        <layer-list >
+            <item
+                android:bottom="1dp"
+                android:left="-5dp"
+                android:right="-5dp"
+                android:top="-5dp">
+                <shape android:shape="rectangle" >
+                    <stroke
+                        android:width="3dp"
+                        android:color="@color/black" />
+
+                    <solid android:color="#00FFFFFF" />
+
+                    <padding android:left="@dimen/dimen_0"
+                        android:right="@dimen/dimen_0"
+                        android:top="@dimen/dimen_10"
+                        android:bottom="@dimen/dimen_10" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
