@@ -1,7 +1,6 @@
 package com.example.presentation.main.setting.security.changeunlockcode
 
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.navArgs
@@ -57,13 +56,14 @@ class ChangeUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_co
     override fun onOtpComplete(otp: String) {
         if (isSecondAttempt) {
             if (otp == firstOtp) {
-                val encryptedOtp = OTPUtils().encryptOTP(otp,"123456789")
+                val encryptedOtp = OTPUtils().encryptOTP(otp, "123456789")
                 sharedPrefersManager.otpKey = encryptedOtp
                 Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT).show()
+                mainNavigator.popBackStack()
+                mainNavigator.popBackStack()
             } else {
                 Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
                     .show()
-                Log.e("TAG", "onOtpComplete: ${OTPUtils().decryptOTP(sharedPrefersManager.otpKey.toString(),"123456789")}" )
             }
         } else {
             mainNavigator.navigate(
