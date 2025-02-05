@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:hint="@string/title_enter_password"
+                android:visibility="gone"
                 app:endIconMode="password_toggle"
                 app:errorIconDrawable="@null"
                 app:startIconDrawable="@drawable/baseline_password_24">
@@ -54,12 +55,19 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.example.presentation.main.setting.security.changeunlockcode.PasswordOTPView
+                android:id="@+id/edtOtp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dimen_16" />
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayoutCompat4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_8"
-                android:gravity="end">
+                android:gravity="end"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/btnNegative"

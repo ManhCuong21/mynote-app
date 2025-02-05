@@ -2,14 +2,12 @@ package com.example.presentation.main.setting.security.changeunlockcode
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.presentation.R
@@ -17,7 +15,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.Q)
 class PasswordOTPView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -36,7 +33,6 @@ class PasswordOTPView @JvmOverloads constructor(
         otpCompleteListener = listener
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setupFields() {
         for (i in 0 until numOfFields) {
             val editText = EditText(context).apply {

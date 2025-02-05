@@ -1,6 +1,5 @@
 package com.example.presentation.main.home
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.ViewGroup
@@ -47,24 +46,25 @@ class HomeListCategoryAdapter(
         holder.bind(getItem(position))
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setCurrentTab(position: Int) {
+        val oldPosition = selectedPosition
         selectedPosition = position
-        notifyDataSetChanged()
+        if (oldPosition != selectedPosition) {
+            notifyItemChanged(oldPosition)
+            notifyItemChanged(selectedPosition)
+        }
     }
 
     inner class ViewHolder(val binding: ItemListCategoryHomeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val context: Context = binding.root.context
-        @SuppressLint("NotifyDataSetChanged")
         fun bind(item: CategoryModel) = binding.apply {
             tvTitleCategory.text = item.titleCategory
             item.imageCategory.let { imgItemCategory.loadImageDrawable(it) }
             root.setOnClickListener {
                 bindingAdapterPosition.let {
                     if (it != RecyclerView.NO_POSITION) {
-                        selectedPosition = it
-                        notifyDataSetChanged()
+                        setCurrentTab(it)
                         onItemClicked(it)
                     }
                 }

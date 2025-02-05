@@ -24,6 +24,9 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
     }
 
     private fun setupClickListener() = binding.apply {
+        btnBack.setOnClickListener {
+            mainNavigator.popBackStack()
+        }
         btnChangeUnlockCode.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.SecurityFragmentToChangeUnlockCodeFragment)
         }

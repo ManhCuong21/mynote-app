@@ -49,8 +49,8 @@ class ListCategoryAdapter(
             tvTitleCategory.text = item.titleCategory
             val rnd = Random()
             val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            flCategory.setBackgroundColor(color)
-            flImgCategory.setBackgroundColor(adjustAlpha(color, 0.6f))
+            flCategory.setBackgroundColor(adjustAlpha(color, 0.6f))
+            flImgCategory.setBackgroundColor(adjustAlpha(color, 0.3f))
             root.setOnClickListener {
                 val popupMenu = PopupMenu(context, it)
                 popupMenu.inflate(R.menu.popup_menu_category)

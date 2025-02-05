@@ -2,6 +2,7 @@ package com.example.presentation.main.home.listnote
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -46,6 +47,13 @@ class ListNoteAdapter(
             lContentNote.setBackgroundColor(Color.parseColor(item.colorTitleNote))
             lTitleNote.setBackgroundColor(Color.parseColor(item.colorContentNote))
             tvTitleNote.text = item.titleNote
+            if (item.security) {
+                lnContentNote.visibility = View.GONE
+                imgSecurityNote.visibility = View.VISIBLE
+            } else {
+                lnContentNote.visibility = View.VISIBLE
+                imgSecurityNote.visibility = View.GONE
+            }
             tvContentNote.text = item.contentNote
             val dateFormat =
                 if (!format24Hour) DATE_FORMAT_TIME_12_HOUR else DATE_FORMAT_TIME_24_HOUR
