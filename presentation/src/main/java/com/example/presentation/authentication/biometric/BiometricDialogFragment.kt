@@ -4,13 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.authentication.biometric.BiometricDialogFragment.Companion.BIOMETRIC_DIALOG_FRAGMENT_TAG
 import com.example.presentation.databinding.FragmentBiometricDialogBinding
+import com.example.presentation.main.setting.security.changeunlockcode.PasswordOTPView
+import com.example.presentation.main.setting.security.manager.AuthMethod
+import com.example.presentation.main.setting.security.manager.OTPUtils
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 fun Fragment.showBiometricDialog(
     tag: String = this::class.java.simpleName,
@@ -21,7 +28,12 @@ fun Fragment.showBiometricDialog(
         .show(requireActivity().supportFragmentManager, "$BIOMETRIC_DIALOG_FRAGMENT_TAG.$tag")
 }
 
-class BiometricDialogFragment : DialogFragment() {
+@AndroidEntryPoint
+class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteListener {
+
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
+
     private lateinit var binding: FragmentBiometricDialogBinding
     private var builder: Builder? = null
 
@@ -45,25 +57,54 @@ class BiometricDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupDialog()
+        setupActionNegative()
+    }
+
+    private fun setupDialog() = binding.apply {
+        when (sharedPrefersManager.authMethod) {
+            AuthMethod.PASSWORD.name -> {
+                setupPasswordOTP()
+            }
+
+            AuthMethod.PIN.name -> {
+                setupPinOTP()
+            }
+
+            AuthMethod.FINGERPRINT.name -> {
+
+            }
+        }
+    }
+
+    private fun setupPinOTP() = binding.apply {
+        edtOtp.setOtpCompleteListener(this@BiometricDialogFragment)
+        edtOtp.visibility = View.VISIBLE
+        edtPassword.visibility = View.GONE
+        btnPositive.visibility = View.GONE
+    }
+
+    private fun setupPasswordOTP() = binding.apply {
         builder?.let { builder ->
             builder.run {
-                binding.apply {
-                    tvTitleDialog.let {
-                        it.text = textTitle
-                        it.isVisible = textTitle?.isNotEmpty() == true
-                    }
-                    btnPositive.let {
-                        it.isEnabled = !edtPassword.editText?.text.isNullOrEmpty()
-                        it.setOnClickListener {
-                            dismiss()
-                        }
-                    }
-                    btnNegative.let {
-                        it.setOnClickListener {
-                            dismiss()
-                        }
+                tvTitleDialog.let {
+                    it.text = textTitle
+                    it.isVisible = textTitle?.isNotEmpty() == true
+                }
+                btnPositive.let {
+                    it.isEnabled = !edtPassword.editText?.text.isNullOrEmpty()
+                    it.setOnClickListener {
+                        dismiss()
                     }
                 }
+            }
+        }
+    }
+
+    private fun setupActionNegative() = binding.apply {
+        btnNegative.let {
+            it.setOnClickListener {
+                dismiss()
             }
         }
     }
@@ -76,9 +117,17 @@ class BiometricDialogFragment : DialogFragment() {
     class Builder {
         internal var textTitle: String? = null
             private set
+        internal var setBiometricActionListener: () -> Unit = { }
+            private set
 
         fun textTitle(title: String) {
             textTitle = title
+        }
+
+        fun setBiometricAction(
+            listener: () -> Unit,
+        ) {
+            setBiometricActionListener = listener
         }
     }
 
@@ -88,5 +137,17 @@ class BiometricDialogFragment : DialogFragment() {
         }
 
         const val BIOMETRIC_DIALOG_FRAGMENT_TAG = "BiometricDialogFragment"
+    }
+
+    override fun onOtpComplete(otp: String) {
+        val decryptOTP = sharedPrefersManager.otpKey?.let { OTPUtils().decryptOTP(it, "123456789") }
+        if (otp == decryptOTP) {
+            Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT).show()
+            builder?.setBiometricActionListener?.let { it() }
+            dismiss()
+        } else {
+            Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 }

@@ -44,8 +44,10 @@
             android:id="@+id/imgSecurityNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/icon_biometric"
-            android:visibility="gone"/>
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/icon_biometric" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/lnContentNote"

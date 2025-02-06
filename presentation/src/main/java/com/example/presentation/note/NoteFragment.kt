@@ -3,6 +3,7 @@ package com.example.presentation.note
 import android.Manifest
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -166,6 +167,7 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         viewModel.dispatch(NoteAction.ContentNoteChanged(contentNote = noteModel.contentNote))
         viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
         viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
+        viewModel.dispatch(NoteAction.SecurityNoteChanged(security = noteModel.security))
     }
 
     private fun setupClickListener() = binding.apply {
@@ -186,6 +188,12 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
         btnSecurity.setOnClickListener {
             showBiometricDialog {
                 textTitle("Notes are locked")
+                setBiometricAction {
+                    viewModel.uiStateFlow.value.security?.let {
+                        viewModel.dispatch(NoteAction.SecurityNoteChanged(!it))
+                        Log.e("TAG", "setupClickListener: ${!it}", )
+                    }
+                }
             }
         }
         btnSaveNote.setOnClickListener {

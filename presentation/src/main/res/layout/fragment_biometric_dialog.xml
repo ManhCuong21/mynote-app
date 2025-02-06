@@ -62,12 +62,10 @@
                 android:layout_marginHorizontal="@dimen/dimen_16" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/linearLayoutCompat4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_8"
-                android:gravity="end"
-                android:visibility="gone">
+                android:gravity="end">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/btnNegative"

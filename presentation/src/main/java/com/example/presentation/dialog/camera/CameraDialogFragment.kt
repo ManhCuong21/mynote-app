@@ -157,9 +157,7 @@ class CameraDialogFragment : DialogFragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    builder?.let {
-                        it.takePictureClickListener()
-                    }
+                    builder?.takePictureClickListener?.let { it() }
                     dismiss()
                 }
             }

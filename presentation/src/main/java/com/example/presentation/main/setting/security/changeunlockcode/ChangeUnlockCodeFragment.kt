@@ -10,6 +10,7 @@ import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentChangeUnlockCodeBinding
+import com.example.presentation.main.setting.security.manager.AuthMethod
 import com.example.presentation.main.setting.security.manager.OTPUtils
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,13 +36,11 @@ class ChangeUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_co
     private val firstOtp by lazy(LazyThreadSafetyMode.NONE)
     { navArgs<ChangeUnlockCodeFragmentArgs>().value.firstOtp }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun setupViews() {
         setupOTPView()
         setUpClickListeners()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setupOTPView() = binding.apply {
         edtOtp.setOtpCompleteListener(this@ChangeUnlockCodeFragment)
         tvTitle.text = if (isSecondAttempt) "Re-enter unlock code" else "Create new unlock code"
@@ -58,6 +57,7 @@ class ChangeUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_co
             if (otp == firstOtp) {
                 val encryptedOtp = OTPUtils().encryptOTP(otp, "123456789")
                 sharedPrefersManager.otpKey = encryptedOtp
+                sharedPrefersManager.authMethod = AuthMethod.PIN.name
                 Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT).show()
                 mainNavigator.popBackStack()
                 mainNavigator.popBackStack()

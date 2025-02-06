@@ -206,7 +206,7 @@ class NoteViewModel @Inject constructor(
                         timeNote = System.currentTimeMillis(),
                         typeNote = noteModel.typeNote,
                         notificationModel = noteModel.notificationModel,
-                        security = noteModel.security
+                        security = uiState.security ?: false
                     )
                 ).fold(
                     success = {
