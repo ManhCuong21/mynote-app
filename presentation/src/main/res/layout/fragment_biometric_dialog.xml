@@ -74,6 +74,7 @@
                     android:layout_marginEnd="@dimen/dimen_8"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/dimen_16"
+                    android:paddingVertical="@dimen/dimen_8"
                     android:text="@string/button_cancel"
                     android:textColor="@color/primary" />
 

@@ -54,6 +54,7 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     private lateinit var categoryNote: CategoryModel
     private val listNoteAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ListNoteAdapter(
+            fragment = this,
             format24Hour = sharedPrefersManager.format24Hour,
             onItemClicked = { action, noteModel ->
                 when (action) {

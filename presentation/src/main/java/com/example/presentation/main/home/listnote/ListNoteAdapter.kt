@@ -1,9 +1,7 @@
 package com.example.presentation.main.home.listnote
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -18,10 +16,12 @@ import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.showBiometricDialog
 import com.example.presentation.databinding.DialogSettingNoteBinding
 import com.example.presentation.databinding.ItemListNoteBinding
 
 class ListNoteAdapter(
+    private val fragment: ListNoteFragment,
     private val format24Hour: Boolean,
     private val onItemClicked: (ActionNote, NoteModel) -> Unit
 ) : ListAdapter<NoteModel, ListNoteAdapter.ViewHolder>(
@@ -59,32 +59,46 @@ class ListNoteAdapter(
             vHaveRecord.isVisible = item.hasRecord
             vHaveNotification.isVisible = item.notificationModel?.idNotification != null
             root.setOnClickListener {
-                val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
-                val builder = AlertDialog.Builder(context)
-                builder.setView(binding.root)
-                val dialog = builder.create()
-                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-                dialog.show()
-                binding.apply {
-                    btnShowOnMap.setOnClickListener {
-                        onItemClicked(ActionNote.NOTIFICATION, item)
-                        dialog.dismiss()
+                if (item.security) {
+                    fragment.showBiometricDialog {
+                        textTitle("Enter otp code")
+                        setBiometricSuccessAction {
+                            openActionNote(item)
+                        }
                     }
-                    btnEditNote.setOnClickListener {
-                        onItemClicked(ActionNote.UPDATE_NOTE, item)
-                        dialog.dismiss()
-                    }
-                    btnChangeCategory.setOnClickListener {
-                        onItemClicked(ActionNote.CHANGE_CATEGORY, item)
-                        dialog.dismiss()
-                    }
-                    btnDeleteNote.setOnClickListener {
-                        onItemClicked(ActionNote.DELETE_NOTE, item)
-                        dialog.dismiss()
-                    }
-                    btnCancel.setOnClickListener {
-                        dialog.dismiss()
-                    }
+                } else {
+                    openActionNote(item)
+                }
+
+            }
+        }
+
+        private fun openActionNote(item: NoteModel) {
+            val binding = DialogSettingNoteBinding.inflate(LayoutInflater.from(context))
+            val builder = AlertDialog.Builder(context)
+            builder.setView(binding.root)
+            val dialog = builder.create()
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+            binding.apply {
+                btnShowOnMap.setOnClickListener {
+                    onItemClicked(ActionNote.NOTIFICATION, item)
+                    dialog.dismiss()
+                }
+                btnEditNote.setOnClickListener {
+                    onItemClicked(ActionNote.UPDATE_NOTE, item)
+                    dialog.dismiss()
+                }
+                btnChangeCategory.setOnClickListener {
+                    onItemClicked(ActionNote.CHANGE_CATEGORY, item)
+                    dialog.dismiss()
+                }
+                btnDeleteNote.setOnClickListener {
+                    onItemClicked(ActionNote.DELETE_NOTE, item)
+                    dialog.dismiss()
+                }
+                btnCancel.setOnClickListener {
+                    dialog.dismiss()
                 }
             }
         }

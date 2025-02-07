@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="160dp"
     android:orientation="vertical"
     app:cardCornerRadius="@dimen/dimen_12">
 
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dimen_8"
                 android:ellipsize="end"
-                android:maxLines="5"
+                android:maxLines="4"
                 android:minHeight="@dimen/dimen_50"
                 android:overScrollMode="always"
                 android:textColor="@color/black"
