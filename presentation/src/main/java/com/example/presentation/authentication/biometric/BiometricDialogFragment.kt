@@ -13,7 +13,7 @@ import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.authentication.biometric.BiometricDialogFragment.Companion.BIOMETRIC_DIALOG_FRAGMENT_TAG
 import com.example.presentation.databinding.FragmentBiometricDialogBinding
-import com.example.presentation.main.setting.security.changeunlockcode.PasswordOTPView
+import com.example.presentation.main.setting.security.setupunlockcode.PasswordOTPView
 import com.example.presentation.main.setting.security.manager.AuthMethod
 import com.example.presentation.main.setting.security.manager.OTPUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,7 +58,8 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupDialog()
-        setupActionNegative()
+        handleVisibleItem()
+        setupInit()
     }
 
     private fun setupDialog() = binding.apply {
@@ -79,9 +80,6 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
 
     private fun setupPinOTP() = binding.apply {
         edtOtp.setOtpCompleteListener(this@BiometricDialogFragment)
-        edtOtp.visibility = View.VISIBLE
-        edtPassword.visibility = View.GONE
-        btnPositive.visibility = View.GONE
         builder?.let { builder ->
             builder.run {
                 tvTitleDialog.let {
@@ -95,13 +93,10 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     private fun setupPasswordOTP() = binding.apply {
         builder?.let { builder ->
             builder.run {
-                tvTitleDialog.let {
-                    it.text = textTitle
-                    it.isVisible = textTitle?.isNotEmpty() == true
-                }
                 btnPositive.let {
                     it.isEnabled = !edtPassword.editText?.text.isNullOrEmpty()
                     it.setOnClickListener {
+                        handleInputComplete(edtPassword.editText?.text.toString())
                         dismiss()
                     }
                 }
@@ -109,7 +104,16 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
         }
     }
 
-    private fun setupActionNegative() = binding.apply {
+    private fun setupInit() = binding.apply {
+        builder?.let { builder ->
+            builder.run {
+                tvTitleDialog.let {
+                    it.text = textTitle
+                    it.isVisible = textTitle?.isNotEmpty() == true
+                }
+            }
+        }
+
         btnNegative.let {
             it.setOnClickListener {
                 dismiss()
@@ -120,6 +124,26 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     override fun onStart() {
         super.onStart()
         dialog?.setCancelable(false)
+    }
+
+    private fun handleVisibleItem() = binding.apply {
+        val visiblePasswordOtp = sharedPrefersManager.authMethod == AuthMethod.PASSWORD.name
+        val visiblePinOtp = sharedPrefersManager.authMethod == AuthMethod.PIN.name
+//        val visibleFingerprint = sharedPrefersManager.authMethod == AuthMethod.FINGERPRINT.name
+        edtOtp.isVisible = visiblePinOtp
+        edtPassword.isVisible = visiblePasswordOtp
+        btnPositive.isVisible = visiblePasswordOtp
+    }
+
+    private fun handleInputComplete(otp: String) {
+        val decryptOTP = sharedPrefersManager.otpKey?.let { OTPUtils().decryptOTP(it, "123456789") }
+        if (otp == decryptOTP) {
+            builder?.setBiometricSuccessListener?.let { it() }
+            dismiss()
+        } else {
+            Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     class Builder {
@@ -148,13 +172,6 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     }
 
     override fun onOtpComplete(otp: String) {
-        val decryptOTP = sharedPrefersManager.otpKey?.let { OTPUtils().decryptOTP(it, "123456789") }
-        if (otp == decryptOTP) {
-            builder?.setBiometricSuccessListener?.let { it() }
-            dismiss()
-        } else {
-            Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
-                .show()
-        }
+        handleInputComplete(otp)
     }
 }

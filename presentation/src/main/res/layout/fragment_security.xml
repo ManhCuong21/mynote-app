@@ -30,6 +30,7 @@
     </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/btnSetupPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
@@ -44,11 +45,11 @@
             style="@style/TextContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_change_password" />
+            android:text="@string/title_setup_password" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/btnChangeUnlockCode"
+        android:id="@+id/btn_setup_pin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
@@ -63,7 +64,7 @@
             style="@style/TextContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_change_unlock_code" />
+            android:text="@string/title_setup_unlock_code" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

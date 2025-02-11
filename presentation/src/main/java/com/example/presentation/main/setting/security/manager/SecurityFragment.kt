@@ -1,4 +1,4 @@
-package com.example.presentation.main.setting.security
+package com.example.presentation.main.setting.security.manager
 
 import com.example.core.base.BaseFragment
 import com.example.core.base.BaseViewModel
@@ -27,8 +27,20 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
         btnBack.setOnClickListener {
             mainNavigator.popBackStack()
         }
-        btnChangeUnlockCode.setOnClickListener {
-            mainNavigator.navigate(MainNavigator.Direction.SecurityFragmentToChangeUnlockCodeFragment)
+        btnSetupPassword.setOnClickListener {
+            mainNavigator.navigate(
+                MainNavigator.Direction.SecurityFragmentToSetupUnlockCodeFragment(
+                    AuthMethod.PASSWORD
+                )
+            )
+        }
+
+        btnSetupPin.setOnClickListener {
+            mainNavigator.navigate(
+                MainNavigator.Direction.SecurityFragmentToSetupUnlockCodeFragment(
+                    AuthMethod.PIN
+                )
+            )
         }
     }
 

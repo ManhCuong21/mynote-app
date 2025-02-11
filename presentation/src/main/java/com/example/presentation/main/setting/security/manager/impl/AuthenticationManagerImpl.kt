@@ -17,7 +17,7 @@ class AuthenticationManagerImpl @Inject constructor(
             }
 
             AuthMethod.PIN.name -> {
-                mainNavigator.navigate(MainNavigator.Direction.SecurityFragmentToChangeUnlockCodeFragment)
+                mainNavigator.navigate(MainNavigator.Direction.SecurityFragmentToSetupUnlockCodeFragment(AuthMethod.PIN))
             }
 
             AuthMethod.FINGERPRINT.name -> {

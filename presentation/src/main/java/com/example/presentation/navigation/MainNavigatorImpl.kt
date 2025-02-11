@@ -8,14 +8,14 @@ import com.example.core.core.external.ActionCategory
 import com.example.core.core.external.ActionNote
 import com.example.core.core.external.checkMainThread
 import com.example.core.core.external.safeNavigate
-import javax.inject.Inject
 import com.example.presentation.R
 import com.example.presentation.authentication.signin.SignInFragmentDirections
-import com.example.presentation.note.NoteFragmentDirections
 import com.example.presentation.main.MainFragmentDirections
-import com.example.presentation.main.setting.security.SecurityFragmentDirections
-import com.example.presentation.main.setting.security.changeunlockcode.ChangeUnlockCodeFragmentDirections
+import com.example.presentation.main.setting.security.manager.SecurityFragmentDirections
+import com.example.presentation.main.setting.security.setupunlockcode.SetupUnlockCodeFragmentDirections
 import com.example.presentation.navigation.MainNavigator.Direction
+import com.example.presentation.note.NoteFragmentDirections
+import javax.inject.Inject
 
 class MainNavigatorImpl @Inject constructor(
     private val activity: Activity
@@ -72,9 +72,13 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
     is Direction.NoteFragmentToImageNoteFragment -> NoteFragmentDirections.actionNoteFragmentToImageNoteFragment()
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment()
     is Direction.MainFragmentToSecurityFragment -> MainFragmentDirections.actionMainFragmentToSecurityFragment()
-    is Direction.SecurityFragmentToChangeUnlockCodeFragment -> SecurityFragmentDirections.actionSecurityFragmentToChangeUnlockCodeFragment()
-    is Direction.ChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment ->
-        ChangeUnlockCodeFragmentDirections.actionChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment(
+    is Direction.SecurityFragmentToSetupUnlockCodeFragment -> SecurityFragmentDirections.actionSecurityFragmentToSetupUnlockCodeFragment(
+        authMethod = authMethod
+    )
+
+    is Direction.SetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment ->
+        SetupUnlockCodeFragmentDirections.actionSetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment(
+            authMethod = authMethod,
             isSecondAttempt = isSecondAttempt,
             firstOtp = firstOtp
         )

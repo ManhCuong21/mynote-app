@@ -63,8 +63,8 @@
     <string name="title_log_out">Log out</string>
     <string name="content_rate_app_2">We would greatly appreciate it if you can could rate us</string>
     <string name="content_rate_app_1">We are working hard for a better user experience</string>
-    <string name="title_change_password">Change password</string>
-    <string name="title_change_unlock_code">Change unlock code</string>
+    <string name="title_setup_password">Setup password</string>
+    <string name="title_setup_unlock_code">Setup unlock code</string>
     <string name="title_fingerprint_authentication">Fingerprint authentication</string>
 
     <!-- Authentication -->

@@ -1,4 +1,4 @@
-package com.example.presentation.main.setting.security.changeunlockcode
+package com.example.presentation.main.setting.security.setupunlockcode
 
 import android.content.Context
 import android.graphics.Color

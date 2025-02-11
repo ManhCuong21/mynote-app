@@ -121,17 +121,22 @@
 
     <fragment
         android:id="@+id/securityFragment"
-        android:name="com.example.presentation.main.setting.security.SecurityFragment"
+        android:name="com.example.presentation.main.setting.security.manager.SecurityFragment"
         tools:layout="@layout/fragment_security">
         <action
-            android:id="@+id/action_securityFragment_to_ChangeUnlockCodeFragment"
-            app:destination="@+id/changeUnlockCodeFragment" />
+            android:id="@+id/action_securityFragment_to_SetupUnlockCodeFragment"
+            app:destination="@+id/setupUnlockCodeFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/changeUnlockCodeFragment"
-        android:name="com.example.presentation.main.setting.security.changeunlockcode.ChangeUnlockCodeFragment"
+        android:id="@+id/setupUnlockCodeFragment"
+        android:name="com.example.presentation.main.setting.security.setupunlockcode.SetupUnlockCodeFragment"
         tools:layout="@layout/fragment_change_unlock_code">
+
+        <argument
+            android:name="authMethod"
+            app:argType="com.example.presentation.main.setting.security.manager.AuthMethod" />
+
         <argument
             android:name="isSecondAttempt"
             android:defaultValue="false"
@@ -144,7 +149,7 @@
             app:nullable="true" />
 
         <action
-            android:id="@+id/action_changeUnlockCodeFragment_to_SecondChangeUnlockCodeFragment"
-            app:destination="@+id/changeUnlockCodeFragment" />
+            android:id="@+id/action_setupUnlockCodeFragment_to_SecondSetupUnlockCodeFragment"
+            app:destination="@+id/setupUnlockCodeFragment" />
     </fragment>
 </navigation>

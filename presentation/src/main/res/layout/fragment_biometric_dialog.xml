@@ -55,7 +55,7 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.example.presentation.main.setting.security.changeunlockcode.PasswordOTPView
+            <com.example.presentation.main.setting.security.setupunlockcode.PasswordOTPView
                 android:id="@+id/edtOtp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

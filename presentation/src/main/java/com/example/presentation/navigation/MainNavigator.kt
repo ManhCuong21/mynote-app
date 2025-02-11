@@ -4,6 +4,7 @@ import androidx.annotation.MainThread
 import androidx.navigation.NavController
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.NoteModel
+import com.example.presentation.main.setting.security.manager.AuthMethod
 
 @MainThread
 interface MainNavigator {
@@ -21,8 +22,9 @@ interface MainNavigator {
         data object NoteFragmentToImageNoteFragment : Direction
         data object NoteFragmentToRecorderFragment : Direction
         data object MainFragmentToSecurityFragment : Direction
-        data object SecurityFragmentToChangeUnlockCodeFragment : Direction
-        data class ChangeUnlockCodeFragmentToSecondChangeUnlockCodeFragment(
+        data class SecurityFragmentToSetupUnlockCodeFragment(val authMethod: AuthMethod) : Direction
+        data class SetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment(
+            val authMethod: AuthMethod,
             val isSecondAttempt: Boolean,
             val firstOtp: String
         ) : Direction
