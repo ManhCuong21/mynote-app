@@ -8,8 +8,8 @@ import com.example.core.base.BaseViewModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.AuthMethod
 import com.example.presentation.databinding.FragmentChangeUnlockCodeBinding
-import com.example.presentation.main.setting.security.manager.AuthMethod
 import com.example.presentation.main.setting.security.manager.OTPUtils
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint

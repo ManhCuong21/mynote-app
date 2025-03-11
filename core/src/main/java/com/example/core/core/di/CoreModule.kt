@@ -8,10 +8,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Suppress("unused")
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface CoreModule {
+
     @Binds
     @Singleton
     fun appCoroutineDispatchers(impl: DefaultAppCoroutineDispatchers): AppCoroutineDispatchers

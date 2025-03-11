@@ -4,7 +4,7 @@ import androidx.annotation.MainThread
 import androidx.navigation.NavController
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.NoteModel
-import com.example.presentation.main.setting.security.manager.AuthMethod
+import com.example.presentation.authentication.biometric.AuthMethod
 
 @MainThread
 interface MainNavigator {

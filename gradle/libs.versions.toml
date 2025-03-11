@@ -1,14 +1,13 @@
 [versions]
-agp = "8.5.1"
+agp = "8.9.0"
 appcompat = "1.7.0"
-cameraCore = "1.3.4"
-firebaseBom = "33.1.2"
+cameraCore = "1.4.1"
+firebaseBom = "33.10.0"
 glide = "4.15.1"
-gson = "2.10.1"
-guava = "31.1-android"
-hiltCore = "2.48"
+gson = "2.11.0"
+guava = "33.3.1-android"
 kotlin = "2.0.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -16,24 +15,23 @@ kotlinResult = "1.1.17"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.7.3"
 legacySupportV4 = "1.0.0"
-lifecycleRuntimeKtx = "2.8.3"
+lifecycleRuntimeKtx = "2.8.7"
 material = "1.12.0"
-constraintlayout = "2.1.4"
+constraintlayout = "2.2.1"
 googleService = "4.4.2"
-firebaseCrashlytics = "3.0.2"
-googleDaggerHilt = "2.48"
-navigation = "2.7.7"
-recyclerview = "1.3.2"
-review = "2.0.1"
+firebaseCrashlytics = "3.0.3"
+googleDaggerHilt = "2.51"
+navigation = "2.8.8"
+recyclerview = "1.4.0"
+review = "2.0.2"
 feature-delivery = "2.1.0"
 roomRuntime = "2.6.1"
 securityCrypto = "1.1.0-alpha06"
 smoothbottombar = "1.7.9"
 timber = "5.0.1"
-workRuntimeKtx = "2.9.0"
-media3 = "1.3.1"
-media3Exoplayer = "1.3.1"
-biometric = "1.2.0-alpha04"
+workRuntimeKtx = "2.10.0"
+media3Exoplayer = "1.5.1"
+biometric = "1.2.0-alpha05"
 
 [libraries]
 # Android
@@ -79,7 +77,8 @@ firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 # Google
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
-hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hiltCore" }
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "googleDaggerHilt" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "googleDaggerHilt" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 feature-delivery = { module = "com.google.android.play:feature-delivery", version.ref = "feature-delivery" }
 review = { module = "com.google.android.play:review", version.ref = "review" }

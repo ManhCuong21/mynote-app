@@ -8,6 +8,7 @@ import kotlin.reflect.KProperty
 class SharedPrefersManager(preferences: SharedPreferences) {
     var userEmail by SharedPrefStringParameter(USER_EMAIL, preferences, null)
     var authMethod by SharedPrefStringParameter(AUTH_METHOD, preferences, null)
+    var isBiometric by SharedPrefBooleanParameter(IS_BIOMETRIC, preferences, false)
     var otpKey by SharedPrefStringParameter(OTP_KEY, preferences, null)
     var darkModeTheme by SharedPrefBooleanParameter(DARK_MODE_THEME, preferences, false)
     var format24Hour by SharedPrefBooleanParameter(FORMAT_TIME, preferences, false)

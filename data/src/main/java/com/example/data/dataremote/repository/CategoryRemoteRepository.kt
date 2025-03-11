@@ -4,6 +4,7 @@ import com.example.core.core.external.AppCoroutineDispatchers
 import com.example.core.core.external.throwException
 import com.example.data.dataremote.model.CategoryRemote
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.runCatching
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -88,25 +89,26 @@ internal class CategoryRemoteRepositoryImpl @Inject constructor(
     override suspend fun updateCategory(category: CategoryRemote): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             runCatching {
-                dataRef?.child("Category${category.idCategory}")
+                val task = dataRef?.child("Category${category.idCategory}")
                     ?.updateChildren(category.toMap())
-                    ?.addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            it.result
-                        } else {
-                            throwException(it.exception)
-                        }
-                    }?.await()
+                task?.await()
                 Unit
             }
+                .onFailure { exception ->
+                    throw exception
+                }
         }
 
     override suspend fun deleteCategory(category: CategoryRemote): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             runCatching {
-                dataRef?.child("Category${category.idCategory}")?.removeValue()?.await()
+                val task = dataRef?.child("Category${category.idCategory}")?.removeValue()
+                task?.await()
                 Unit
             }
+                .onFailure { exception ->
+                    throw exception
+                }
         }
 
     companion object {

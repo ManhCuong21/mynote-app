@@ -135,7 +135,7 @@
 
         <argument
             android:name="authMethod"
-            app:argType="com.example.presentation.main.setting.security.manager.AuthMethod" />
+            app:argType="com.example.presentation.authentication.biometric.AuthMethod" />
 
         <argument
             android:name="isSecondAttempt"

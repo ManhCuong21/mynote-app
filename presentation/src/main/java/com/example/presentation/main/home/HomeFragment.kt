@@ -12,7 +12,6 @@ import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.authentication.biometric.BiometricAuthenticationManager
 import com.example.presentation.databinding.FragmentHomeBinding
 import com.example.presentation.dialog.list.showListDialog
 import com.example.presentation.navigation.MainNavigator
@@ -23,8 +22,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
-    @Inject
-    lateinit var biometricAuthenticationManager: BiometricAuthenticationManager
 
     @Inject
     lateinit var mainNavigator: MainNavigator
