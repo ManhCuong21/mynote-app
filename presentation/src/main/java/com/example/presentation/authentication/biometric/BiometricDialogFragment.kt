@@ -159,7 +159,7 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     }
 
     private fun handleInputComplete(otp: String) {
-        val decryptOTP = sharedPrefersManager.otpKey?.let { OTPUtils().decryptOTP(it, "123456789") }
+        val decryptOTP = sharedPrefersManager.passwordNote?.let { OTPUtils().decryptOTP(it, "123456789") }
         if (otp == decryptOTP) {
             builder?.setBiometricSuccessListener?.let { it() }
             dismiss()

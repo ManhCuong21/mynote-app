@@ -71,6 +71,7 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
 
     is Direction.NoteFragmentToImageNoteFragment -> NoteFragmentDirections.actionNoteFragmentToImageNoteFragment()
     is Direction.NoteFragmentToRecorderFragment -> NoteFragmentDirections.actionNoteFragmentToRecorderFragment()
+    is Direction.NoteFragmentToSecurityFragment -> NoteFragmentDirections.actionNoteFragmentToSecurityFragment()
     is Direction.MainFragmentToSecurityFragment -> MainFragmentDirections.actionMainFragmentToSecurityFragment()
     is Direction.SecurityFragmentToSetupUnlockCodeFragment -> SecurityFragmentDirections.actionSecurityFragmentToSetupUnlockCodeFragment(
         authMethod = authMethod
@@ -79,7 +80,8 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
     is Direction.SetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment ->
         SetupUnlockCodeFragmentDirections.actionSetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment(
             authMethod = authMethod,
-            isSecondAttempt = isSecondAttempt,
+            isAfterConfirm = isAfterConfirm,
+            isSecondInput = isSecondInput,
             firstOtp = firstOtp
         )
 }

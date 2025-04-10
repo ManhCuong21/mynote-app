@@ -126,7 +126,7 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     private fun setupInitialValues() = binding.apply {
         val state = viewModel.stateFlow.value
         edtCategoryName.editText?.setText(state.title)
-//        imgItemCategory.loadImageDrawable(state.image)
+        imgItemCategory.loadImageDrawable(state.image)
         viewModel.dispatch(CategoryAction.TitleCategoryChanged(state.title))
         viewModel.dispatch(CategoryAction.ImageCategoryChanged(state.image))
     }
@@ -134,7 +134,7 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
     private fun setupInitCategory() = binding.apply {
         categoryModel?.let {
             edtCategoryName.editText?.setText(it.titleCategory)
-//            imgItemCategory.loadImageDrawable(it.imageCategory)
+            imgItemCategory.loadImageDrawable(it.imageCategory)
             viewModel.dispatch(CategoryAction.ImageCategoryChanged(it.imageCategory))
             viewModel.dispatch(CategoryAction.TitleCategoryChanged(it.titleCategory))
         }

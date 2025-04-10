@@ -18,6 +18,7 @@ import com.example.core.core.external.formatDate
 import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.model.NoteModel
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.authentication.biometric.showBiometricDialog
@@ -34,6 +35,9 @@ import javax.inject.Inject
 class NoteFragment : BaseFragment(R.layout.fragment_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
+
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
 
     override val binding: FragmentNoteBinding by viewBinding()
     override val viewModel: NoteViewModel by activityViewModels()
@@ -185,13 +189,17 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
         }
         btnSecurity.setOnClickListener {
-            showBiometricDialog {
-                textTitle(if (viewModel.uiStateFlow.value.security == true) "Unlock" else "Lock")
-                setBiometricSuccessAction {
-                    viewModel.uiStateFlow.value.security?.let {
-                        viewModel.dispatch(NoteAction.SecurityNoteChanged(!it))
+            if (!sharedPrefersManager.passwordNote.isNullOrEmpty() || sharedPrefersManager.isBiometric) {
+                showBiometricDialog {
+                    textTitle(if (viewModel.uiStateFlow.value.security == true) "Unlock" else "Lock")
+                    setBiometricSuccessAction {
+                        viewModel.uiStateFlow.value.security?.let {
+                            viewModel.dispatch(NoteAction.SecurityNoteChanged(!it))
+                        }
                     }
                 }
+            } else {
+                mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToSecurityFragment)
             }
         }
         btnSaveNote.setOnClickListener {
