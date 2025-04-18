@@ -75,7 +75,7 @@ class NoteListRecordAdapter(
             when (status) {
                 StatusRecord.START -> startPlaying(item)
                 StatusRecord.PAUSE -> pausePlaying()
-                StatusRecord.RESUME -> player?.play()
+                StatusRecord.RESUME -> resumePlaying()
                 else -> stopPlaying()
             }
         }
@@ -106,6 +106,11 @@ class NoteListRecordAdapter(
                 exoPlayer.play()
             }
             timer.start()
+        }
+
+        private fun resumePlaying() {
+            timer.start()
+            player?.play()
         }
 
         private fun pausePlaying() {

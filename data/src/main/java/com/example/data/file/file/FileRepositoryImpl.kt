@@ -20,7 +20,7 @@ class FileRepositoryImpl @Inject constructor(
     ): File {
         val mediaDir = fragmentActivity.externalMediaDirs.firstOrNull()?.let { file ->
             File(file, directoryPath).apply {
-                mkdir()
+                mkdirs()
             }
         }
         return if (mediaDir != null && mediaDir.exists()) mediaDir else fragmentActivity.filesDir
@@ -74,29 +74,31 @@ class FileRepositoryImpl @Inject constructor(
         directoryName: String
     ) {
         withContext(appCoroutineDispatchers.io) {
-            val file = createOrGetDirectory(fragmentActivity, directoryName)
-            if (file.isDirectory) {
-                file.listFiles()?.forEach {
-                    if (it.exists()) {
-                        it.delete()
+            val dirToDelete = createOrGetDirectory(fragmentActivity, directoryName)
+            if (dirToDelete.exists() && dirToDelete.isDirectory) {
+                dirToDelete.listFiles()?.forEach { file ->
+                    if (file.exists()) {
+                        file.delete()
                     }
                 }
+                dirToDelete.delete()
             }
-            file.delete()
         }
     }
 
     override suspend fun deleteDirectoryTemp(fragmentActivity: FragmentActivity) {
         withContext(appCoroutineDispatchers.io) {
-            val file = createOrGetDirectory(fragmentActivity, "Temp")
-            if (file.isDirectory) {
-                file.listFiles()?.forEach {
-                    if (it.exists()) {
-                        it.delete()
+            val tempDir = createOrGetDirectory(fragmentActivity, "Temp")
+            if (tempDir.exists() && tempDir.isDirectory) {
+                tempDir.listFiles()?.forEach { child ->
+                    if (child.isDirectory) {
+                        child.deleteRecursively()
+                    } else {
+                        child.delete()
                     }
                 }
+                tempDir.delete()
             }
-            file.delete()
         }
     }
 }

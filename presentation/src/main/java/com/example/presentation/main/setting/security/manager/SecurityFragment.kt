@@ -27,6 +27,7 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
     override val binding: FragmentSecurityBinding by viewBinding()
     override val viewModel: BaseViewModel
         get() = TODO("Not yet implemented")
+    private var isSwitchListenerEnabled = true
 
     override fun setupViews() {
         setupClickListener()
@@ -54,12 +55,19 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
 
         switchAuthentication.isChecked = sharedPrefersManager.isBiometric
         switchAuthentication.setOnCheckedChangeListener { _, isChecked ->
+            if (!isSwitchListenerEnabled) return@setOnCheckedChangeListener
+
             biometricAuthenticationManager.verifyBiometric(
                 requireActivity(),
                 onSucceeded = {
                     sharedPrefersManager.isBiometric = isChecked
                 },
-                onFailed = {})
+                onFailed = {
+                    isSwitchListenerEnabled = false
+                    switchAuthentication.isChecked = !isChecked
+                    isSwitchListenerEnabled = true
+                }
+            )
         }
     }
 
