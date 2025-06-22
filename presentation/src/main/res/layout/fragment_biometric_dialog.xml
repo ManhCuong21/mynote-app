@@ -7,6 +7,7 @@
     android:fitsSystemWindows="true">
 
     <com.google.android.material.card.MaterialCardView
+        style="@style/Theme.CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -27,7 +28,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitleDialog"
-                style="@style/TextTitle"
+                style="@style/TextTitleNotBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/dimen_8" />

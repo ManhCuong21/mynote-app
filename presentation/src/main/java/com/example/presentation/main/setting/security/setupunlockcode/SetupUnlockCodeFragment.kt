@@ -54,6 +54,7 @@ class SetupUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_cod
 
     private fun setupOTPView() = binding.apply {
         edtOtp.setOtpCompleteListener(this@SetupUnlockCodeFragment)
+        edtOtp.setTextColorFromAttr(R.attr.customTextColor)
     }
 
     private fun setupPasswordView() = binding.apply {

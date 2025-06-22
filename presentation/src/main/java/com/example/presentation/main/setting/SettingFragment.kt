@@ -65,8 +65,8 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
 
     private fun setupInformationView() = binding.apply {
         val isHaveUserEmail = sharedPrefersManager.userEmail.isNullOrEmpty()
-        tvAccount.isVisible = isHaveUserEmail
-        btnSignIn.isVisible = isHaveUserEmail
+//        tvAccount.isVisible = isHaveUserEmail
+//        btnSignIn.isVisible = isHaveUserEmail
         lnInformation.isVisible = !isHaveUserEmail
         btnLogOut.isVisible = !isHaveUserEmail
         tvEmail.text = sharedPrefersManager.userEmail
@@ -99,9 +99,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         btnTimeFormat.setOnClickListener {
             showDialogTimeFormat()
         }
-        btnSignIn.setOnClickListener {
-            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignInFragment)
-        }
+//        btnSignIn.setOnClickListener {
+//            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSignInFragment)
+//        }
         btnLogOut.setOnClickListener {
             viewModel.dispatch(SettingAction.SignOut)
         }

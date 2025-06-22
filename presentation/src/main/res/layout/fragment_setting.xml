@@ -73,42 +73,42 @@
                 android:src="@drawable/baseline_arrow_forward_ios_24" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvAccount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_16"
-            android:background="@android:color/transparent"
-            android:text="@string/content_account"
-            android:textColor="#FD5454" />
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/tvAccount"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/dimen_16"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:text="@string/content_account"-->
+<!--            android:textColor="#FD5454" />-->
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/btnSignIn"
-            style="@style/BackgroundContentRoot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+<!--        <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--            android:id="@+id/btnSignIn"-->
+<!--            style="@style/BackgroundContentRoot"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center_vertical">-->
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="@dimen/dimen_24"
-                android:layout_height="@dimen/dimen_24"
-                android:layout_margin="@dimen/dimen_16"
-                android:src="@drawable/icon_profile" />
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:layout_width="@dimen/dimen_24"-->
+<!--                android:layout_height="@dimen/dimen_24"-->
+<!--                android:layout_margin="@dimen/dimen_16"-->
+<!--                android:src="@drawable/icon_profile" />-->
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDeviceBackup"
-                style="@style/TextContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_sign_in" />
+<!--            <androidx.appcompat.widget.AppCompatTextView-->
+<!--                android:id="@+id/tvDeviceBackup"-->
+<!--                style="@style/TextContent"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="@string/title_sign_in" />-->
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/dimen_16"
-                android:src="@drawable/baseline_arrow_forward_ios_24" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+<!--            <androidx.appcompat.widget.AppCompatImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="@dimen/dimen_16"-->
+<!--                android:src="@drawable/baseline_arrow_forward_ios_24" />-->
+<!--        </androidx.appcompat.widget.LinearLayoutCompat>-->
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"

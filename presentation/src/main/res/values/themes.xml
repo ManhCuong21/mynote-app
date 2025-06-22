@@ -12,6 +12,12 @@
         <item name="checkboxStyle">@style/Widget.App.CheckBox</item>
 
         <item name="android:textViewStyle">@style/Widget.App.TextView</item>
+        <item name="colorBackgroundUnderline">@color/white</item>
+
+        <item name="colorUnderline">@color/white</item>
+
+        <!-- Text color-->
+        <item name="customTextColor">@color/black</item>
     </style>
     <!-- Base application theme. -->
 
@@ -34,6 +40,12 @@
 
     <style name="TextTitle">
         <item name="android:background">@android:color/white</item>
+        <item name="android:textSize">@dimen/text_size_20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TextTitleNotBackground">
         <item name="android:textSize">@dimen/text_size_20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>

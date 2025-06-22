@@ -23,7 +23,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvTitle"
-        style="@style/TextTitle"
+        style="@style/TextTitleNotBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_16"
@@ -43,6 +43,7 @@
         android:layout_marginHorizontal="@dimen/dimen_16"
         android:clipToPadding="false"
         android:hint="@string/title_enter_password"
+        android:visibility="gone"
         app:endIconMode="password_toggle"
         app:errorIconDrawable="@null"
         app:startIconDrawable="@drawable/baseline_password_24">

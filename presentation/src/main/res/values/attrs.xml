@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LinedEditText">
-        <attr name="color_line" format="string"/>
+        <attr name="color_line" format="string" />
     </declare-styleable>
 
     <declare-styleable name="dark_theme">
-        <attr name="background_color" format="color"/>
-        <attr name="text_color" format="color"/>
+        <attr name="background_color" format="color" />
+        <attr name="text_color" format="color" />
     </declare-styleable>
+
+    <attr name="colorBackgroundUnderline" format="reference|color" />
+    <attr name="colorUnderline" format="reference|color" />
+    <attr name="customTextColor" format="reference|color" />
 </resources>

@@ -3,6 +3,7 @@ package com.example.presentation.main.setting.security.setupunlockcode
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
@@ -48,11 +49,11 @@ class PasswordOTPView @JvmOverloads constructor(
                 isFocusable = true
                 isFocusableInTouchMode = true
                 isCursorVisible = false
-                setTextColor(Color.BLACK)
                 setHintTextColor(Color.GRAY)
                 filters = arrayOf(android.text.InputFilter.LengthFilter(1))
                 setPadding(16, 8, 16, 0)
-                transformationMethod = android.text.method.PasswordTransformationMethod.getInstance()
+                transformationMethod =
+                    android.text.method.PasswordTransformationMethod.getInstance()
             }
 
             editText.addTextChangedListener { text ->
@@ -99,6 +100,19 @@ class PasswordOTPView @JvmOverloads constructor(
         }
         if (index == numOfFields - 1 && isFilled) {
             otpCompleteListener?.onOtpComplete(getOTP())
+        }
+    }
+
+    fun setTextColorFromAttr(attrRes: Int) {
+        val typedValue = TypedValue()
+        val theme = context.theme
+        if (theme.resolveAttribute(attrRes, typedValue, true)) {
+            val color = if (typedValue.resourceId != 0) {
+                ContextCompat.getColor(context, typedValue.resourceId)
+            } else {
+                typedValue.data
+            }
+            editTexts.forEach { it.setTextColor(color) }
         }
     }
 
