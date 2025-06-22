@@ -8,8 +8,8 @@ import com.example.core.base.BaseViewModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.AuthMethod
 import com.example.presentation.databinding.FragmentChangeUnlockCodeBinding
-import com.example.presentation.main.setting.security.manager.AuthMethod
 import com.example.presentation.main.setting.security.manager.OTPUtils
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,19 +32,28 @@ class SetupUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_cod
     private val authMethod by lazy(LazyThreadSafetyMode.NONE)
     { navArgs<SetupUnlockCodeFragmentArgs>().value.authMethod }
 
-    private val isSecondAttempt by lazy(LazyThreadSafetyMode.NONE)
-    { navArgs<SetupUnlockCodeFragmentArgs>().value.isSecondAttempt }
+    private val isAfterConfirm by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<SetupUnlockCodeFragmentArgs>().value.isAfterConfirm }
+
+    private val isSecondInput by lazy(LazyThreadSafetyMode.NONE)
+    { navArgs<SetupUnlockCodeFragmentArgs>().value.isSecondInput }
 
     private val firstOtp by lazy(LazyThreadSafetyMode.NONE)
     { navArgs<SetupUnlockCodeFragmentArgs>().value.firstOtp }
 
+    private var isHasPassword: Boolean = false
+    private var isOtherMethod: Boolean = false
+
     override fun setupViews() {
+        isHasPassword = !sharedPrefersManager.passwordNote.isNullOrEmpty()
+        isOtherMethod = authMethod.name != sharedPrefersManager.authMethod
         setupVisibleView()
         setUpClickListeners()
     }
 
     private fun setupVisibleView() = binding.apply {
-        tvTitle.text = if (isSecondAttempt) "Re-enter unlock code" else "Create new unlock code"
+        tvTitle.text =
+            if (isSecondInput) "Re-enter unlock code" else if (isAfterConfirm || isOtherMethod) "Create new unlock code" else "Enter current unlock code"
         val isOTPView = authMethod == AuthMethod.PIN
         edtOtp.isVisible = isOTPView
         edtPassword.isVisible = !isOTPView
@@ -76,26 +85,46 @@ class SetupUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_cod
     }
 
     private fun handleInputComplete(otp: String) {
-        if (isSecondAttempt) {
+        if (isSecondInput) {
             if (otp == firstOtp) {
                 val encryptedOtp = OTPUtils().encryptOTP(otp, "123456789")
-                sharedPrefersManager.otpKey = encryptedOtp
+                sharedPrefersManager.passwordNote = encryptedOtp
                 sharedPrefersManager.authMethod = authMethod.name
-                Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT)
+                    .show()
+                if (isHasPassword) {
+                    mainNavigator.popBackStack()
+                }
                 mainNavigator.popBackStack()
                 mainNavigator.popBackStack()
             } else {
                 Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
                     .show()
             }
-        } else {
+        } else if (isAfterConfirm || isOtherMethod) {
             mainNavigator.navigate(
                 MainNavigator.Direction.SetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment(
                     authMethod = authMethod,
-                    isSecondAttempt = true,
+                    isAfterConfirm = false,
+                    isSecondInput = true,
                     firstOtp = otp
                 )
             )
+        } else {
+            val decryptOTP = OTPUtils().decryptOTP(sharedPrefersManager.passwordNote!!, "123456789")
+            if (otp == decryptOTP) {
+                mainNavigator.navigate(
+                    MainNavigator.Direction.SetupUnlockCodeFragmentToSecondSetupUnlockCodeFragment(
+                        authMethod = authMethod,
+                        isAfterConfirm = true,
+                        isSecondInput = false,
+                        firstOtp = null
+                    )
+                )
+            } else {
+                Toast.makeText(context, "OTP does not match, please try again", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 

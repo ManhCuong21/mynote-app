@@ -1,6 +1,5 @@
 package com.example.presentation.authentication.biometric
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -66,44 +65,56 @@ class BiometricAuthenticationManagerImpl @Inject constructor() : BiometricAuthen
         onFailed: () -> Unit
     ) {
         executor = ContextCompat.getMainExecutor(activity)
-        biometricPrompt = BiometricPrompt(activity, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(
-                    errorCode: Int,
-                    errString: CharSequence
-                ) {
-                    super.onAuthenticationError(errorCode, errString)
-                    onFailed()
-                    Toast.makeText(
-                        activity, "Authentication error: $errString", Toast.LENGTH_SHORT
-                    ).show()
+
+        // Kiểm tra FragmentManager để đảm bảo không có giao dịch fragment nào đang diễn ra
+        if (!activity.supportFragmentManager.isStateSaved) {
+            // Đảm bảo rằng biometricPrompt được tạo và gọi chỉ khi UI thread đã sẵn sàng
+            activity.runOnUiThread {
+                try {
+                    biometricPrompt = BiometricPrompt(activity, executor,
+                        object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationError(
+                                errorCode: Int,
+                                errString: CharSequence
+                            ) {
+                                super.onAuthenticationError(errorCode, errString)
+                                onFailed()
+                                Toast.makeText(
+                                    activity, "Authentication error: $errString", Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            override fun onAuthenticationSucceeded(
+                                result: BiometricPrompt.AuthenticationResult
+                            ) {
+                                super.onAuthenticationSucceeded(result)
+                                onSucceeded()
+                                Toast.makeText(
+                                    activity,
+                                    "Authentication succeeded!", Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            override fun onAuthenticationFailed() {
+                                super.onAuthenticationFailed()
+                                onFailed()
+                                Toast.makeText(activity, "Authentication failed", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+
+                    promptInfo = BiometricPrompt.PromptInfo.Builder()
+                        .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                        .setTitle("Biometric login for my app")
+                        .setSubtitle("Log in using your biometric credential")
+                        .build()
+
+                    // Gọi authenticate() chỉ khi mọi giao dịch UI hoàn tất
+                    biometricPrompt.authenticate(promptInfo)
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                    Toast.makeText(activity, "Failed to authenticate: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult
-                ) {
-                    super.onAuthenticationSucceeded(result)
-                    onSucceeded()
-                    Toast.makeText(
-                        activity,
-                        "Authentication succeeded!", Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    onFailed()
-                    Toast.makeText(activity, "Authentication failed", Toast.LENGTH_SHORT).show()
-                }
-            })
-
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-            .setTitle("Biometric login for my app")
-            .setSubtitle("Log in using your biometric credential")
-            .build()
-
-        biometricPrompt.authenticate(promptInfo)
+            }
+        }
     }
 }

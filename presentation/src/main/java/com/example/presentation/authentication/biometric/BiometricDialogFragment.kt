@@ -1,6 +1,8 @@
 package com.example.presentation.authentication.biometric
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +15,11 @@ import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.authentication.biometric.BiometricDialogFragment.Companion.BIOMETRIC_DIALOG_FRAGMENT_TAG
 import com.example.presentation.databinding.FragmentBiometricDialogBinding
-import com.example.presentation.main.setting.security.setupunlockcode.PasswordOTPView
-import com.example.presentation.main.setting.security.manager.AuthMethod
 import com.example.presentation.main.setting.security.manager.OTPUtils
+import com.example.presentation.main.setting.security.setupunlockcode.PasswordOTPView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 fun Fragment.showBiometricDialog(
     tag: String = this::class.java.simpleName,
@@ -71,10 +73,6 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
             AuthMethod.PIN.name -> {
                 setupPinOTP()
             }
-
-            AuthMethod.FINGERPRINT.name -> {
-
-            }
         }
     }
 
@@ -94,7 +92,33 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
         builder?.let { builder ->
             builder.run {
                 btnPositive.let {
-                    it.isEnabled = !edtPassword.editText?.text.isNullOrEmpty()
+                    binding.edtPassword.editText?.addTextChangedListener(object : TextWatcher {
+                        override fun beforeTextChanged(
+                            charSequence: CharSequence,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                        ) {
+                            // Không cần thiết lập gì ở đây
+                        }
+
+                        override fun onTextChanged(
+                            charSequence: CharSequence,
+                            start: Int,
+                            before: Int,
+                            after: Int
+                        ) {
+                            if (charSequence.isNotEmpty()) {
+                                it.setEnabled(true) // Bật button
+                            } else {
+                                it.setEnabled(false) // Tắt button
+                            }
+                        }
+
+                        override fun afterTextChanged(editable: Editable) {
+                            // Không cần thiết lập gì ở đây
+                        }
+                    })
                     it.setOnClickListener {
                         handleInputComplete(edtPassword.editText?.text.toString())
                         dismiss()
@@ -129,14 +153,13 @@ class BiometricDialogFragment : DialogFragment(), PasswordOTPView.OtpCompleteLis
     private fun handleVisibleItem() = binding.apply {
         val visiblePasswordOtp = sharedPrefersManager.authMethod == AuthMethod.PASSWORD.name
         val visiblePinOtp = sharedPrefersManager.authMethod == AuthMethod.PIN.name
-//        val visibleFingerprint = sharedPrefersManager.authMethod == AuthMethod.FINGERPRINT.name
         edtOtp.isVisible = visiblePinOtp
         edtPassword.isVisible = visiblePasswordOtp
         btnPositive.isVisible = visiblePasswordOtp
     }
 
     private fun handleInputComplete(otp: String) {
-        val decryptOTP = sharedPrefersManager.otpKey?.let { OTPUtils().decryptOTP(it, "123456789") }
+        val decryptOTP = sharedPrefersManager.passwordNote?.let { OTPUtils().decryptOTP(it, "123456789") }
         if (otp == decryptOTP) {
             builder?.setBiometricSuccessListener?.let { it() }
             dismiss()

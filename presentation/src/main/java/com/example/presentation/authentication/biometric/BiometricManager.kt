@@ -6,3 +6,7 @@ interface BiometricAuthenticationManager {
     fun verifyBiometric(activity: FragmentActivity, onSucceeded: () -> Unit, onFailed: () -> Unit)
     fun showBiometric(activity: FragmentActivity, onSucceeded: () -> Unit, onFailed: () -> Unit)
 }
+
+enum class AuthMethod {
+    PASSWORD, PIN
+}

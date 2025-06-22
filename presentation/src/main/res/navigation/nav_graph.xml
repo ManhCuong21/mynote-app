@@ -63,6 +63,10 @@
         <action
             android:id="@+id/action_noteFragment_to_recorderFragment"
             app:destination="@id/recorderFragment" />
+
+        <action
+            android:id="@+id/action_noteFragment_to_SecurityFragment"
+            app:destination="@+id/securityFragment" />
     </fragment>
 
     <fragment
@@ -135,10 +139,15 @@
 
         <argument
             android:name="authMethod"
-            app:argType="com.example.presentation.main.setting.security.manager.AuthMethod" />
+            app:argType="com.example.presentation.authentication.biometric.AuthMethod" />
 
         <argument
-            android:name="isSecondAttempt"
+            android:name="isAfterConfirm"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isSecondInput"
             android:defaultValue="false"
             app:argType="boolean" />
 

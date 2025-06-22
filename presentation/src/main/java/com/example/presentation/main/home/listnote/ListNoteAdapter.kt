@@ -16,6 +16,7 @@ import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.NoteModel
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.BiometricAuthenticationManager
 import com.example.presentation.authentication.biometric.showBiometricDialog
 import com.example.presentation.databinding.DialogSettingNoteBinding
 import com.example.presentation.databinding.ItemListNoteBinding
@@ -23,7 +24,9 @@ import com.example.presentation.databinding.ItemListNoteBinding
 class ListNoteAdapter(
     private val fragment: ListNoteFragment,
     private val format24Hour: Boolean,
-    private val onItemClicked: (ActionNote, NoteModel) -> Unit
+    private val onItemClicked: (ActionNote, NoteModel) -> Unit,
+    private val isBiometric: Boolean,
+    private val biometricAuthenticationManager: BiometricAuthenticationManager
 ) : ListAdapter<NoteModel, ListNoteAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<NoteModel>() {
         override fun areItemsTheSame(oldItem: NoteModel, newItem: NoteModel): Boolean =
@@ -59,7 +62,11 @@ class ListNoteAdapter(
             vHaveRecord.isVisible = item.hasRecord
             vHaveNotification.isVisible = item.notificationModel?.idNotification != null
             root.setOnClickListener {
-                if (item.security) {
+                if (isBiometric) {
+                    biometricAuthenticationManager.verifyBiometric(fragment.requireActivity(),
+                        onSucceeded = { openActionNote(item) },
+                        onFailed = {})
+                } else if (item.security) {
                     fragment.showBiometricDialog {
                         textTitle("Enter otp code")
                         setBiometricSuccessAction {

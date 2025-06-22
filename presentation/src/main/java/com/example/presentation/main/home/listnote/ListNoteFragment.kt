@@ -21,6 +21,7 @@ import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
+import com.example.presentation.authentication.biometric.BiometricAuthenticationManager
 import com.example.presentation.databinding.FragmentListNoteBinding
 import com.example.presentation.dialog.list.showListDialog
 import com.example.presentation.dialog.progress.renderLoadingUI
@@ -42,6 +43,9 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
 
+    @Inject
+    lateinit var biometricAuthenticationManager: BiometricAuthenticationManager
+
     override val binding: FragmentListNoteBinding by viewBinding()
     override val viewModel: ListNoteViewModel by viewModels()
 
@@ -56,6 +60,8 @@ class ListNoteFragment : BaseFragment(R.layout.fragment_list_note) {
         ListNoteAdapter(
             fragment = this,
             format24Hour = sharedPrefersManager.format24Hour,
+            isBiometric = sharedPrefersManager.isBiometric,
+            biometricAuthenticationManager = biometricAuthenticationManager,
             onItemClicked = { action, noteModel ->
                 when (action) {
                     ActionNote.NOTIFICATION -> {

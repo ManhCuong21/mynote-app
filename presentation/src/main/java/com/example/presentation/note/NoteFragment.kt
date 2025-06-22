@@ -1,9 +1,9 @@
 package com.example.presentation.note
 
 import android.Manifest
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
@@ -18,6 +18,7 @@ import com.example.core.core.external.formatDate
 import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.model.ItemChooseColor
 import com.example.core.core.model.NoteModel
+import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.authentication.biometric.showBiometricDialog
@@ -34,6 +35,9 @@ import javax.inject.Inject
 class NoteFragment : BaseFragment(R.layout.fragment_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
+
+    @Inject
+    lateinit var sharedPrefersManager: SharedPrefersManager
 
     override val binding: FragmentNoteBinding by viewBinding()
     override val viewModel: NoteViewModel by activityViewModels()
@@ -109,32 +113,46 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     override fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
-                    when (event) {
-                        is NoteSingleEvent.SaveFileToTempSuccess -> {
-                            viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
-                        }
+                launch { collectSingleEvents() }
+                launch { collectStateUpdates() }
+                launch { collectUiStateUpdates() }
+            }
+        }
+    }
 
-                        is NoteSingleEvent.GetListRecord -> {
-                            binding.rvRecordNote.isVisible = event.list.isNotEmpty()
-                            listRecordAdapter.submitList(event.list)
-                        }
-
-                        is NoteSingleEvent.SaveNoteSuccess -> {
-                            requireActivity().viewModelStore.clear()
-                            mainNavigator.popBackStack()
-                        }
-
-                        is NoteSingleEvent.Failed -> {}
-                    }
+    private fun collectSingleEvents() {
+        viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
+            when (event) {
+                is NoteSingleEvent.SaveFileToTempSuccess -> {
+                    viewModel.dispatch(NoteAction.GetListRecordNote(requireActivity()))
                 }
-                viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
-                    renderLoadingUI(state.isLoading == true)
+
+                is NoteSingleEvent.GetListRecord -> {
+                    binding.rvRecordNote.isVisible = event.list.isNotEmpty()
+                    listRecordAdapter.submitList(event.list)
                 }
-                viewModel.uiStateFlow.collectIn(viewLifecycleOwner) { state ->
-                    binding.btnSaveNote.isVisible = !state.titleNote.isNullOrEmpty()
+
+                is NoteSingleEvent.SaveNoteSuccess -> {
+                    requireActivity().viewModelStore.clear()
+                    mainNavigator.popBackStack()
+                }
+
+                is NoteSingleEvent.Failed -> {
+                    // Optionally log or show error
                 }
             }
+        }
+    }
+
+    private fun collectStateUpdates() {
+        viewModel.stateFlow.collectIn(viewLifecycleOwner) { state ->
+            renderLoadingUI(state.isLoading == true)
+        }
+    }
+
+    private fun collectUiStateUpdates() {
+        viewModel.uiStateFlow.collectIn(viewLifecycleOwner) { state ->
+            binding.btnSaveNote.isVisible = !state.titleNote.isNullOrEmpty()
         }
     }
 
@@ -170,21 +188,33 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     private fun setupClickListener() = binding.apply {
-        btnBack.setOnClickListener {
-            viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
-            requireActivity().viewModelStore.clear()
-            mainNavigator.popBackStack()
-        }
-        btnChooseColor.setOnClickListener {
-            rvChooseColor.isVisible = !rvChooseColor.isVisible
-        }
+        btnBack.setOnClickListener { handleBackClick() }
+        btnChooseColor.setOnClickListener { toggleColorPicker() }
         btnChooseImage.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToImageNoteFragment)
         }
         btnChooseRecord.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToRecorderFragment)
         }
-        btnSecurity.setOnClickListener {
+        btnSecurity.setOnClickListener { handleSecurityClick() }
+        btnSaveNote.setOnClickListener { handleSaveClick() }
+    }
+
+    private fun handleBackClick() {
+        viewModel.dispatch(NoteAction.DeleteDirectoryTemp(requireActivity()))
+        requireActivity().viewModelStore.clear()
+        mainNavigator.popBackStack()
+    }
+
+    private fun toggleColorPicker() {
+        binding.rvChooseColor.isVisible = !binding.rvChooseColor.isVisible
+    }
+
+    private fun handleSecurityClick() {
+        val hasPasswordOrBiometric =
+            !sharedPrefersManager.passwordNote.isNullOrEmpty() || sharedPrefersManager.isBiometric
+
+        if (hasPasswordOrBiometric) {
             showBiometricDialog {
                 textTitle(if (viewModel.uiStateFlow.value.security == true) "Unlock" else "Lock")
                 setBiometricSuccessAction {
@@ -193,11 +223,14 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
                     }
                 }
             }
+        } else {
+            mainNavigator.navigate(MainNavigator.Direction.NoteFragmentToSecurityFragment)
         }
-        btnSaveNote.setOnClickListener {
-            viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))
-            viewModel.dispatch(NoteAction.SaveNote(requireActivity(), noteModel, actionNote))
-        }
+    }
+
+    private fun handleSaveClick() {
+        viewModel.dispatch(NoteAction.DeleteDirectory(requireActivity()))
+        viewModel.dispatch(NoteAction.SaveNote(requireActivity(), noteModel, actionNote))
     }
 
     private fun setupRecyclerView() = binding.apply {
@@ -213,24 +246,28 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private fun initialValue() = binding.apply {
         val state = viewModel.uiStateFlow.value
+
         edtTitleNote.setText(state.titleNote)
         edtContentNote.setText(state.contentNote)
-        val colorTitle =
-            if (!state.colorTitleNote.isNullOrEmpty()) state.colorTitleNote else resources.getString(
-                listColor[0].colorTitle
-            )
-        val colorContent =
-            if (!state.colorContentNote.isNullOrEmpty()) state.colorContentNote else resources.getString(
-                listColor[0].colorContent
-            )
+
+        val defaultColor = listColor.first()
+        val colorTitle = state.colorTitleNote
+            ?.takeIf { it.isNotEmpty() }
+            ?: resources.getString(defaultColor.colorTitle)
+
+        val colorContent = state.colorContentNote
+            ?.takeIf { it.isNotEmpty() }
+            ?: resources.getString(defaultColor.colorContent)
+
         setupColorTextInput(colorTitle, colorContent)
-        viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitleNote = colorTitle))
-        viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContentNote = colorContent))
+
+        viewModel.dispatch(NoteAction.ColorTitleNoteChanged(colorTitle))
+        viewModel.dispatch(NoteAction.ColorContentNoteChanged(colorContent))
     }
 
     private fun setupColorTextInput(colorTitle: String, colorContent: String) = binding.apply {
-        edtTitleNote.setBackgroundColor(Color.parseColor(colorTitle))
-        edtContentNote.setBackgroundColor(Color.parseColor(colorContent))
+        edtTitleNote.setBackgroundColor(colorTitle.toColorInt())
+        edtContentNote.setBackgroundColor(colorContent.toColorInt())
         edtContentNote.colorLine = colorTitle
     }
 
@@ -248,18 +285,10 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     }
 
     private fun getDefaultPosition(): Int {
-        var position = 0
-        if (noteModel != null) {
-            listColor.forEachIndexed { index, itemChooseColor ->
-                run {
-                    if (resources.getString(itemChooseColor.colorTitle)
-                            .equals(noteModel?.colorTitleNote, true)
-                    ) {
-                        position = index
-                    }
-                }
-            }
-        }
-        return position
+        return noteModel?.let { model ->
+            listColor.indexOfFirst {
+                resources.getString(it.colorTitle).equals(model.colorTitleNote, ignoreCase = true)
+            }.takeIf { it >= 0 } ?: 0
+        } ?: 0
     }
 }
