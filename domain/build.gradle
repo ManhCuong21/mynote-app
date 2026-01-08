@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+    id 'dagger.hilt.android.plugin'
+    id 'jacoco'
+}
+
+android {
+    namespace 'com.example.domain'
+    compileSdkVersion 36
+
+    defaultConfig {
+        minSdk 26
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    packaging {
+        resources {
+            // Loại trừ các tệp đã gây lỗi trước đó
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/NOTICE"
+
+            // THÊM: Loại trừ tệp đang gây lỗi hiện tại
+            excludes += "META-INF/LICENSE-notice.md"
+
+            // Thường thì các tệp có đuôi .txt cũng hay xung đột
+            excludes += "META-INF/*.txt"
+
+        }
+    }
+}
+
+dependencies {
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.google.material
+
+    //Michael bull
+    implementation libs.kotlin.result
+
+    //import Hilt
+    implementation libs.google.hilt.core
+    implementation libs.google.dagger.hilt
+    ksp libs.google.hilt.compiler
+
+    // --- Room Database ---
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
+
+    // --- Unit test ---
+    testImplementation libs.androidx.junit
+    testImplementation libs.mockk
+    testImplementation libs.kotlinx.coroutines.test
+
+    implementation project(path: ':core')
+    implementation project(path: ':data')
+}

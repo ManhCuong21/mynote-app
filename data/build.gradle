@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    namespace 'com.notepad.mynote.data'
+    compileSdkVersion 36
+
+    defaultConfig {
+        minSdk 26
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // --- AndroidX cơ bản ---
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.google.material
+
+    // --- Room Database ---
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
+
+    // --- Gson ---
+    implementation libs.google.gson
+
+    // --- Kotlin Result ---
+    implementation libs.kotlin.result
+
+    // --- Hilt ---
+    implementation libs.google.hilt.core
+    implementation libs.google.dagger.hilt
+    ksp libs.google.hilt.compiler
+
+    // --- Unit test ---
+    testImplementation libs.androidx.junit
+    testImplementation libs.androidx.room.testing
+    testImplementation libs.androidx.test.core.ktx
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.robolectric
+
+    // --- Module ---
+    implementation project(path: ':core')
+}

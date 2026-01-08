@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.presentation.main.MainFragment"
+        tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/action_mainFragment_to_SignInFragment"
+            app:destination="@+id/signInFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_NoteFragment"
+            app:destination="@+id/noteFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_CategoryFragment"
+            app:destination="@+id/categoryFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_DateTimePickersFragment"
+            app:destination="@+id/dateTimePickersFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_UserInformationFragment"
+            app:destination="@+id/userInformationFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_SecurityFragment"
+            app:destination="@+id/securityFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_PrivacyPolicyFragment"
+            app:destination="@+id/privacyPolicyFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_CompassFragment"
+            app:destination="@+id/compassFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteFragment"
+        android:name="com.example.presentation.note.NoteFragment"
+        tools:layout="@layout/fragment_note">
+
+        <argument
+            android:name="actionNote"
+            app:argType="com.example.core.core.external.ActionNote" />
+
+        <argument
+            android:name="category"
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.CategoryModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="noteModel"
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.NoteModel"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_noteFragment_to_imageNoteFragment"
+            app:destination="@id/imageNoteFragment" />
+
+        <action
+            android:id="@+id/action_noteFragment_to_recorderFragment"
+            app:destination="@id/recorderFragment" />
+
+        <action
+            android:id="@+id/action_noteFragment_to_SecurityFragment"
+            app:destination="@+id/securityFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.presentation.category.CategoryFragment"
+        tools:layout="@layout/fragment_category">
+        <argument
+            android:name="actionCategory"
+            app:argType="com.example.core.core.external.ActionCategory" />
+
+        <argument
+            android:name="category"
+            android:defaultValue="@null"
+            app:argType="com.example.core.core.model.CategoryModel"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_categoryFragment_to_SecurityFragment"
+            app:destination="@+id/securityFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dateTimePickersFragment"
+        android:name="com.example.presentation.dialog.datetimepickers.DateTimePickersFragment"
+        tools:layout="@layout/fragment_date_time_pickers">
+        <argument
+            android:name="noteModel"
+            app:argType="com.example.core.core.model.NoteModel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/imageNoteFragment"
+        android:name="com.example.presentation.note.image.ImageNoteFragment"
+        tools:layout="@layout/fragment_image_note">
+        <action
+            android:id="@+id/action_ImageNoteFragment_to_EditImageNoteFragment"
+            app:destination="@+id/editImageNoteFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editImageNoteFragment"
+        android:name="com.example.presentation.main.home.listnote.image.EditImageFragment"
+        tools:layout="@layout/fragment_edit_image">
+        <argument
+            android:name="imagePath"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recorderFragment"
+        android:name="com.example.presentation.note.record.RecorderFragment"
+        tools:layout="@layout/fragment_recorder" />
+
+    <!-- Authentication -->
+    <fragment
+        android:id="@+id/securityFragment"
+        android:name="com.example.presentation.main.setting.security.manager.SecurityFragment"
+        tools:layout="@layout/fragment_security">
+        <action
+            android:id="@+id/action_securityFragment_to_SetupUnlockCodeFragment"
+            app:destination="@+id/setupUnlockCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/setupUnlockCodeFragment"
+        android:name="com.example.presentation.main.setting.security.setupunlockcode.SetupUnlockCodeFragment"
+        tools:layout="@layout/fragment_change_unlock_code">
+
+        <argument
+            android:name="authMethod"
+            app:argType="com.example.presentation.biometric.AuthMethod" />
+
+        <argument
+            android:name="isAfterConfirm"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="isSecondInput"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="firstOtp"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_setupUnlockCodeFragment_to_SecondSetupUnlockCodeFragment"
+            app:destination="@+id/setupUnlockCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/compassFragment"
+        android:name="com.example.presentation.main.setting.compass.CompassFragment"
+        tools:layout="@layout/fragment_compass" />
+
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.example.presentation.main.setting.privacypolicy.PrivacyPolicyFragment"
+        tools:layout="@layout/fragment_privacy_policy" />
+</navigation>

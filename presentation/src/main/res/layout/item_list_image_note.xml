@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/dimen_8"
+    android:layout_marginBottom="@dimen/dimen_8">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgItem"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:scaleType="centerCrop" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgDelete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/dimen_2"
+        android:layout_marginEnd="@dimen/dimen_2"
+        android:src="@drawable/icon_delete_image_edit_note" />
+</FrameLayout>

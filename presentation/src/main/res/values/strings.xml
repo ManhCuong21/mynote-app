@@ -1,0 +1,131 @@
+<resources>
+    <string name="app_name">MyNote</string>
+
+    <string name="title_ok">OK</string>
+    <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
+
+    <!-- Home -->
+    <string name="time_note">My Note</string>
+    <string name="title_empty_note">Empty Note</string>
+    <string name="title_empty_category">Empty Category</string>
+
+    <!-- Bottom Nav -->
+    <string name="title_home">Home</string>
+    <string name="title_category">Category</string>
+    <string name="title_search">Search</string>
+    <string name="title_setting">Setting</string>
+
+    <!-- Add Category -->
+    <string name="title_add_category">Add Category</string>
+    <string name="category_name">Category Name</string>
+    <string name="category">Category</string>
+
+    <!-- Dialog Category -->
+    <string name="title_dialog_category">Select Category</string>
+    <string name="title_dialog_change_category">Change Category</string>
+
+    <!-- Add Note -->
+    <string name="title_add_note">New Note</string>
+    <string name="input_title">Title…</string>
+    <string name="text_dialog_camera">Camera</string>
+    <string name="text_dialog_photo">My Photo</string>
+    <string name="text_record">Record</string>
+    <string name="text_un_recording">Tap the button to start recording.</string>
+    <string name="text_recording">Recording…</string>
+    <string name="text_pause_recording">Tap the button to continue recording.</string>
+
+    <!-- Setting -->
+    <string name="title_general">General</string>
+    <string name="content_use_dark_theme">Use dark theme</string>
+    <string name="content_time_format">Time format</string>
+    <string name="content_date_format">Date format</string>
+    <string name="content_security">Security</string>
+    <string name="content_account">Account</string>
+    <string name="content_sign_in">Backup on device</string>
+    <string name="content_apps">Apps</string>
+    <string name="content_other">Others</string>
+    <string name="content_rate_app">Rate app</string>
+    <string name="content_compass">Compass</string>
+    <string name="content_privacy_policy">Privacy policy</string>
+    <string name="content_share_app">Share app</string>
+    <string name="dialog_time_format_title">Time Format</string>
+    <string name="dialog_time_format_12">12 hour</string>
+    <string name="dialog_time_format_24">24 hour</string>
+
+    <!-- Setting Note -->
+    <string name="title_option">Option</string>
+    <string name="title_update_note">Update note</string>
+    <string name="title_change_category">Change Category</string>
+    <string name="title_delete">Delete</string>
+    <string name="title_update_category">Update</string>
+    <string name="format_date_note">Edited: %s</string>
+    <string name="title_notification">Notification</string>
+    <string name="format_date_time_picker_today">Today - %s</string>
+    <string name="format_date_time_picker_tomorrow">Tomorrow - %s</string>
+    <string name="title_log_out">Log out</string>
+    <string name="content_rate_app_2">We would greatly appreciate it if you can could rate us</string>
+    <string name="content_rate_app_1">We are working hard for a better user experience</string>
+    <string name="title_setup_password">Setup password</string>
+    <string name="title_setup_unlock_code">Setup unlock code</string>
+    <string name="title_fingerprint_authentication">Fingerprint authentication</string>
+
+    <!-- Authentication -->
+    <string name="title_email">Email</string>
+    <string name="title_password">Password</string>
+    <string name="hint_email_empty_error">Empty Email</string>
+    <string name="hint_email_length_error">Length Email</string>
+    <string name="hint_email_format_error">Format Email</string>
+    <string name="hint_password_empty_error">Empty Password</string>
+    <string name="hint_password_length_error">Length Password</string>
+    <string name="hint_password_confirm_not_match_error">Not Match Password</string>
+    <string name="hint_null_error" />
+    <string name="title_not_have_an_account">Don\'t have an account?</string>
+    <string name="title_sign_up">Sign Up</string>
+    <string name="title_sign_in">Sign In</string>
+    <string name="title_welcome_back">Welcome \nBack</string>
+    <string name="title_hey_good_to_see_you_again">Hey! Good to see you again</string>
+    <string name="title_enter_password">Enter password</string>
+
+    <!-- Information -->
+    <string name="title_information">Information</string>
+    <string name="title_delete_account">Delete account</string>
+
+    <!-- List Image -->
+    <string name="title_image">Image</string>
+    <string name="hint_search_note">Search note</string>
+
+    <!-- Compass -->
+    <string name="compass_rose_image_description">Compass rose showing to north</string>
+    <string name="device_heading_indicator_image_description">Indicates in which direction the device is pointing</string>
+    <string name="cardinal_direction_north">North</string>
+    <string name="cardinal_direction_northeast">Northeast</string>
+    <string name="cardinal_direction_east">East</string>
+    <string name="cardinal_direction_southeast">Southeast</string>
+    <string name="cardinal_direction_south">South</string>
+    <string name="cardinal_direction_southwest">Southwest</string>
+    <string name="cardinal_direction_west">West</string>
+    <string name="cardinal_direction_northwest">Northwest</string>
+    <string name="cardinal_direction_north_abbreviation">N</string>
+    <string name="cardinal_direction_east_abbreviation">E</string>
+    <string name="cardinal_direction_south_abbreviation">S</string>
+    <string name="cardinal_direction_west_abbreviation">W</string>
+    <string name="sensor_error_message">Sensor not available</string>
+    <string name="error_message">An error occurred.\nMessage: %1$s\nCode: %2$s</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="zero_degrees" translatable="false">0°</string>
+    <string name="degrees" translatable="false">%1$d°</string>
+    <string name="degree_0_text" translatable="false">0</string>
+    <string name="degree_30_text" translatable="false">30</string>
+    <string name="degree_60_text" translatable="false">60</string>
+    <string name="degree_90_text" translatable="false">90</string>
+    <string name="degree_120_text" translatable="false">120</string>
+    <string name="degree_150_text" translatable="false">150</string>
+    <string name="degree_180_text" translatable="false">180</string>
+    <string name="degree_210_text" translatable="false">210</string>
+    <string name="degree_240_text" translatable="false">240</string>
+    <string name="degree_270_text" translatable="false">270</string>
+    <string name="degree_300_text" translatable="false">300</string>
+    <string name="degree_330_text" translatable="false">330</string>
+</resources>

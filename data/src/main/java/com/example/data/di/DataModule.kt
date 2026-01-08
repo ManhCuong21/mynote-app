@@ -1,0 +1,48 @@
+package com.example.data.di
+
+import android.content.Context
+import androidx.room.Room
+import com.example.data.datalocal.dao.AppDatabase
+import com.example.data.datalocal.database.CategoryDatabase
+import com.example.data.datalocal.database.CategoryDatabaseImpl
+import com.example.data.datalocal.database.NoteDatabase
+import com.example.data.datalocal.database.NoteDatabaseImpl
+import com.example.data.datalocal.repository.CategoryRepository
+import com.example.data.datalocal.repository.CategoryRepositoryImpl
+import com.example.data.datalocal.repository.NoteLocalRepository
+import com.example.data.datalocal.repository.NoteRepositoryImpl
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal interface DataModule {
+
+    @Binds
+    fun provideCategoryDatabase(impl: CategoryDatabaseImpl): CategoryDatabase
+
+    @Binds
+    fun provideNoteDatabase(impl: NoteDatabaseImpl): NoteDatabase
+
+    @Binds
+    fun noteRepository(impl: NoteRepositoryImpl): NoteLocalRepository
+
+    @Binds
+    fun categoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
+
+    companion object {
+        @Singleton
+        @Provides
+        fun provideAppDatabase(
+            @ApplicationContext context: Context
+        ) = Room.databaseBuilder(
+            context,
+            AppDatabase::class.java, "mynote.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+}

@@ -1,0 +1,92 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+    id 'com.google.dagger.hilt.android'
+    id 'androidx.navigation.safeargs'
+    id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
+
+android {
+    namespace 'com.notepad.mynote.privatenote'
+    compileSdkVersion 36
+
+    defaultConfig {
+        applicationId "com.notepad.mynote.privatenote"
+        minSdk 26
+        targetSdk 35
+        versionCode 12
+        versionName "1.0.7"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile file('mynote.keystore')
+            storePassword 'cuong21022002'
+            keyAlias 'mynote'
+            keyPassword 'cuong21022002'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+
+    ndkVersion '26.3.11579264'
+}
+
+dependencies {
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.google.material
+    implementation libs.androidx.security.crypto
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.constraintlayout
+    testImplementation libs.junit
+
+    //Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    //import Hilt
+    implementation libs.google.hilt.core
+    implementation libs.google.dagger.hilt
+    ksp libs.google.hilt.compiler
+
+    //Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics.ktx)
+
+    //import Timber
+    implementation(libs.timber)
+
+    debugImplementation libs.leakcanary.android
+
+    implementation project(path: ':core')
+    implementation project(path: ':presentation')
+    implementation project(path: ':opencv-library')
+}
