@@ -27,10 +27,8 @@ import com.example.domain.usecase.file.FileUseCase
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentCameraDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
-import org.opencv.objdetect.CascadeClassifier
 import timber.log.Timber
 import java.io.File
-import java.io.FileOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -62,8 +60,6 @@ class CameraDialogFragment : DialogFragment() {
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var cameraProvider: ProcessCameraProvider? = null
     private var isFlashOn = false
-    private var cascadeClassifier: CascadeClassifier? = null
-    private var handCascadeClassifier: CascadeClassifier? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private lateinit var cameraExecutor: ExecutorService
     private val handler = Handler(Looper.getMainLooper())
@@ -72,7 +68,6 @@ class CameraDialogFragment : DialogFragment() {
     private var startTime: Long = 0L
     private val countdownUpdateRunnable = object : Runnable {
         override fun run() {
-            // 💥 KIỂM TRA TRẠNG THÁI TRƯỚC KHI TRUY CẬP UI 💥
             if (!isCountingDown || !isAdded || view == null) return
 
             val elapsed = System.currentTimeMillis() - startTime
@@ -88,7 +83,6 @@ class CameraDialogFragment : DialogFragment() {
 
     // 1. Runnable gốc: Chạy sau 3 giây để chụp ảnh
     private val autoCaptureRunnable = Runnable {
-        // 💥 KIỂM TRA TRẠNG THÁI TRƯỚC KHI TRUY CẬP UI 💥
         if (!isAdded || view == null) return@Runnable
 
         isCountingDown = false
@@ -141,10 +135,8 @@ class CameraDialogFragment : DialogFragment() {
         binding = layoutInflater.inflateViewBinding(container, false)
 
         // Fix scale camera not zooming in
-        binding.previewView.scaleType = PreviewView.ScaleType.FIT_CENTER
+        binding.previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
         try {
-            System.loadLibrary("opencv_java4")
-            loadCascadeFile()
             Timber.d("Loaded OpenCV native libs")
         } catch (e: UnsatisfiedLinkError) {
             Timber.e("Failed to load OpenCV libs: + $e")
@@ -155,32 +147,6 @@ class CameraDialogFragment : DialogFragment() {
         setupClickListener()
         return binding.root
     }
-
-    private fun loadCascadeFile() {
-        try {
-            val faceInput = requireContext().assets.open("haarcascade_frontalface_default.xml")
-            val cascadeDir = requireContext().getDir("cascade", 0)
-
-            val faceFile = File(cascadeDir, "haarcascade_frontalface_default.xml")
-            faceInput.copyTo(FileOutputStream(faceFile))
-            faceInput.close()
-            cascadeClassifier = CascadeClassifier(faceFile.absolutePath)
-            if (cascadeClassifier!!.empty()) cascadeClassifier = null
-
-            // Load hand cascade
-            val handInput = requireContext().assets.open("haarcascade_hand.xml")
-            val handFile = File(cascadeDir, "haarcascade_hand.xml")
-            handInput.copyTo(FileOutputStream(handFile))
-            handInput.close()
-            handCascadeClassifier = CascadeClassifier(handFile.absolutePath)
-            if (handCascadeClassifier!!.empty()) handCascadeClassifier = null
-
-            Timber.d("Cascade loaded: face=${cascadeClassifier != null}, hand=${handCascadeClassifier != null}")
-        } catch (e: Exception) {
-            Timber.e("Error loading cascade: $e")
-        }
-    }
-
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -211,48 +177,41 @@ class CameraDialogFragment : DialogFragment() {
                 .setResolutionSelector(resolutionSelector)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-                .also {
+                .also { analysis ->
+
+                    // 1️⃣ Hand analyzer (giữ nguyên logic của bạn)
                     val handAnalyzer = HandAnalyzer(requireContext()) {
                         if (!isCountingDown) {
-                            isCountingDown = true
-                            Timber.d("Hand Detected: Starting 3s countdown...")
-                            requireActivity().runOnUiThread {
-                                startCountdown()
-                            }
+                            requireActivity().runOnUiThread { startCountdown() }
                         }
                     }
 
-                    val faceAnalyzerImpl = FaceAnalyzer(cascadeClassifier) { faces, imgW, imgH ->
-                        if (!isAdded || activity == null) return@FaceAnalyzer
-                        activity?.runOnUiThread {
+                    // 2️⃣ Face analyzer (CẬP NHẬT: Thêm tham số rotation)
+                    val faceAnalyzer = FaceAnalyzer { faces, imgW, imgH, rotation ->
+                        if (!isAdded) return@FaceAnalyzer
+                        requireActivity().runOnUiThread {
+                            // Truyền thêm rotationDegrees vào Overlay
                             binding.faceOverlayView.setFaces(
                                 faces,
                                 imgW,
                                 imgH,
-                                cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA
+                                cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA,
+                                rotation // <-- Thêm cái này
                             )
                         }
                     }
 
-                    it.setAnalyzer(cameraExecutor) { imageProxy ->
+                    analysis.setAnalyzer(cameraExecutor) { imageProxy ->
                         try {
-                            // 1. Face Analysis (DO NOT close)
-                            faceAnalyzerImpl.analyze(imageProxy)
+                            // Lưu ý: Đảm bảo FaceAnalyzer của bạn đã nhận 4 tham số như hướng dẫn trước
+                            faceAnalyzer.analyze(imageProxy)
 
-                            // 2. Hand Analysis (NOT closed)
+                            // Sau đó mới chạy handAnalyzer
                             handAnalyzer.analyze(imageProxy)
-
                         } catch (e: Exception) {
-                            // If there is an error, we still try to close the file, but the finally block does it better.
-                            e.printStackTrace()
+                            Timber.e(e)
                         } finally {
-                            // IMPORTANT STEP: CLOSE ONLY AND MANDATORY HERE
-                            // This frees the buffer for CameraX to feed the next frame.
-                            try {
-                                imageProxy.close()
-                            } catch (e: Exception) {
-                                Timber.e("Error closing image in CameraDialogFragment: $e")
-                            }
+                            imageProxy.close()
                         }
                     }
                 }

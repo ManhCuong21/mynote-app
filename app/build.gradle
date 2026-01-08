@@ -79,7 +79,7 @@ dependencies {
 
     //Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.crashlytics)
 
     //import Timber
     implementation(libs.timber)
@@ -88,5 +88,4 @@ dependencies {
 
     implementation project(path: ':core')
     implementation project(path: ':presentation')
-    implementation project(path: ':opencv-library')
 }

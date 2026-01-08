@@ -9,11 +9,5 @@ class MyNoteApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        try {
-            System.loadLibrary("opencv_java4")
-            Timber.d("Loaded OpenCV native libs ✅")
-        } catch (e: UnsatisfiedLinkError) {
-            Timber.e("Failed to load OpenCV libs: + $e")
-        }
     }
 }

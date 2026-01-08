@@ -14,6 +14,7 @@ import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker.HandLandmarkerOptions
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import timber.log.Timber
+import kotlin.math.abs
 
 class HandAnalyzer(
     context: Context,
@@ -22,7 +23,7 @@ class HandAnalyzer(
 
     private val landmarker: HandLandmarker
     private var lastDetectionTime = 0L
-    private val DEBOUNCE_INTERVAL_MS = 500L
+    private val debounceIntervalMs = 500L
 
     init {
         val baseOptions = BaseOptions.builder()
@@ -50,7 +51,7 @@ class HandAnalyzer(
 
         try {
             // --- 1. Xử lý Debounce ---
-            if (currentTime - lastDetectionTime < DEBOUNCE_INTERVAL_MS) {
+            if (currentTime - lastDetectionTime < debounceIntervalMs) {
                 // Nếu đang trong cooldown, ta không cần chạy phân tích MediaPipe.
                 // Bỏ qua và đóng ImageProxy.
                 return
@@ -104,15 +105,15 @@ class HandAnalyzer(
 
         // 2. Kiểm tra độ mở rộng của bàn tay (để phân biệt nắm tay lỏng và bàn tay mở)
         // Tính khoảng cách giữa gốc ngón trỏ (5) và gốc ngón út (17) (khoảng cách trên trục X)
-        val horizontalDistance = Math.abs(landmarks[5].x() - landmarks[17].x())
+        val horizontalDistance = abs(landmarks[5].x() - landmarks[17].x())
 
         // 3. Kiểm tra khoảng cách cổ tay - ngón tay (chiều dài bàn tay)
-        val wristToFingerLength = Math.abs(landmarks[0].y() - landmarks[8].y())
+//        val wristToFingerLength = abs(landmarks[0].y() - landmarks[8].y())
 
         // Nếu bàn tay rất gần camera, giá trị khoảng cách có thể lớn hơn 0.1.
         // Thử nghiệm với các ngưỡng đơn giản:
         val isWideEnough = horizontalDistance > 0.15f // Bàn tay phải mở rộng
-        val isLongEnough = wristToFingerLength > 0.2f // Đảm bảo đó là bàn tay đầy đủ
+//        val isLongEnough = wristToFingerLength > 0.2f // Đảm bảo đó là bàn tay đầy đủ
 
         // Cử chỉ kích hoạt chụp ảnh:
         // Ít nhất ngón trỏ hoặc ngón út phải duỗi thẳng VÀ bàn tay phải mở đủ rộng.

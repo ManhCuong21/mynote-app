@@ -1,8 +1,8 @@
 package com.example.mynote.activity
 
 import android.util.Log
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import timber.log.Timber
 
 class CrashlyticsLogger : Timber.Tree() {
