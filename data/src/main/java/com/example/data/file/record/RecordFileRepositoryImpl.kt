@@ -12,35 +12,24 @@ class RecordFileRepositoryImpl @Inject constructor(
     private val fileRepository: FileRepository
 ) : RecordFileRepository {
 
-    override suspend fun getListRecord(): List<ItemRecord> {
-        return withContext(appCoroutineDispatchers.io) {
-            val tempDir = fileRepository.createOrGetDirectory("Temp")
+    override suspend fun getListRecord(): List<ItemRecord> = withContext(appCoroutineDispatchers.io) {
+        val tempDir = fileRepository.createOrGetDirectory("Temp")
 
-            if (!tempDir.exists() || !tempDir.isDirectory) return@withContext emptyList()
-
-            tempDir.walkTopDown()
-                .maxDepth(1)
-                .filter { file ->
-                    file.isFile && file.canRead() && file.extension.equalsIgnoreCase("mp4")
-                }
-                .map { file ->
-                    ItemRecord(
-                        directoryPath = file.parentFile?.absolutePath ?: tempDir.absolutePath,
-                        recordPath = file.absolutePath
-                    )
-                }
-                .toList()
-        }
+        // Sử dụng listFiles thay vì walkTopDown nếu bạn chỉ cần 1 cấp thư mục (nhanh hơn)
+        tempDir.listFiles()
+            ?.filter { it.isFile && it.canRead() && it.extension.equals("mp4", true) }
+            ?.map { file ->
+                ItemRecord(
+                    directoryPath = tempDir.absolutePath,
+                    recordPath = file.absolutePath
+                )
+            } ?: emptyList()
     }
 
     override suspend fun deleteRecord(recordPath: String) {
         withContext(appCoroutineDispatchers.io) {
             val file = File(recordPath)
-            if (file.exists() && file.isFile) {
-                file.delete()
-            }
+            if (file.exists()) file.delete()
         }
     }
-
-    private fun String.equalsIgnoreCase(other: String): Boolean = this.equals(other, ignoreCase = true)
 }

@@ -51,9 +51,9 @@ class CategoryUseCaseTest {
     @Test
     fun readAllCategory_repositorySuccess_returnsOkListOfCategoryModel() = runTest {
         val entityList = listOf(dummyCategoryEntity)
-        coEvery { mockRepository.readAllCategory() } returns Ok(entityList)
+        coEvery { mockRepository.getAllCategory() } returns Ok(entityList)
         val result = useCase.readAllCategory()
-        coVerify(exactly = 1) { mockRepository.readAllCategory() }
+        coVerify(exactly = 1) { mockRepository.getAllCategory() }
         assertTrue(result.isOk)
         assertEquals(result,Ok(entityList.toListCategory()))    }
 }

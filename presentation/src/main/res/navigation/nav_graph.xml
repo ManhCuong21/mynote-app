@@ -41,6 +41,10 @@
         <action
             android:id="@+id/action_mainFragment_to_CompassFragment"
             app:destination="@+id/compassFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_SyncFragment"
+            app:destination="@+id/syncFragment" />
     </fragment>
 
     <fragment
@@ -179,4 +183,9 @@
         android:id="@+id/privacyPolicyFragment"
         android:name="com.example.presentation.main.setting.privacypolicy.PrivacyPolicyFragment"
         tools:layout="@layout/fragment_privacy_policy" />
+
+    <fragment
+        android:id="@+id/syncFragment"
+        android:name="com.example.presentation.main.setting.syncdata.SyncFragment"
+        tools:layout="@layout/fragment_sync" />
 </navigation>

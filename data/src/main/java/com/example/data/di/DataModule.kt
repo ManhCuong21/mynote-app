@@ -9,8 +9,13 @@ import com.example.data.datalocal.database.NoteDatabase
 import com.example.data.datalocal.database.NoteDatabaseImpl
 import com.example.data.datalocal.repository.CategoryRepository
 import com.example.data.datalocal.repository.CategoryRepositoryImpl
-import com.example.data.datalocal.repository.NoteLocalRepository
+import com.example.data.datalocal.repository.NoteRepository
 import com.example.data.datalocal.repository.NoteRepositoryImpl
+import com.example.data.syncdata.manager.impl.NearbySyncManagerImpl
+import com.example.data.syncdata.manager.SyncManager
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.ConnectionsClient
+import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,10 +35,13 @@ internal interface DataModule {
     fun provideNoteDatabase(impl: NoteDatabaseImpl): NoteDatabase
 
     @Binds
-    fun noteRepository(impl: NoteRepositoryImpl): NoteLocalRepository
+    fun noteRepository(impl: NoteRepositoryImpl): NoteRepository
 
     @Binds
     fun categoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
+
+    @Binds
+    fun bindSyncManager(impl: NearbySyncManagerImpl): SyncManager
 
     companion object {
         @Singleton
@@ -41,8 +49,19 @@ internal interface DataModule {
         fun provideAppDatabase(
             @ApplicationContext context: Context
         ) = Room.databaseBuilder(
-            context,
-            AppDatabase::class.java, "mynote.db"
-        ).fallbackToDestructiveMigration().build()
+                context,
+                AppDatabase::class.java, "mynote.db"
+            ).fallbackToDestructiveMigration(false).build()
+
+        @Singleton
+        @Provides
+        fun provideGson(): Gson = Gson()
+
+        // Cung cấp Nearby Connections Client
+        @Singleton
+        @Provides
+        fun provideConnectionsClient(
+            @ApplicationContext context: Context
+        ): ConnectionsClient = Nearby.getConnectionsClient(context)
     }
 }

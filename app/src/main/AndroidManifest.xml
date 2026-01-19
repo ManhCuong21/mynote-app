@@ -15,28 +15,22 @@
         android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.READ_MEDIA_IMAGES"
-        tools:ignore="SelectedPhotoAccess" />
+        tools:ignore="PhotoAndVideoPolicy,SelectedPhotoAccess" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
-    <!-- Vị trí (cần cho BLE/Wi-Fi Direct) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- Bluetooth (Android 12+) -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:usesPermissionFlags="neverForLocation"
-        tools:targetApi="31" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"
-        tools:targetApi="31" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" />
 
     <!-- Wi-Fi -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
-    <!-- Android 13+ -->
-    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" />
 
     <application
         android:name="com.example.mynote.MyNoteApplication"

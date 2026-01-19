@@ -8,7 +8,6 @@ import android.location.LocationManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.CancellationSignal
-import android.util.Log
 import android.view.Display
 import android.view.Surface
 import android.view.ViewGroup
@@ -29,6 +28,7 @@ import com.example.presentation.main.setting.compass.model.RotationVector
 import com.example.presentation.main.setting.compass.util.MathUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 const val OPTION_INSTRUMENTED_TEST = "INSTRUMENTED_TEST"
 
@@ -66,12 +66,12 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
         super.onResume()
 
         if (isInstrumentedTest()) {
-            Log.i(TAG, "Skipping start of system service functionalities")
+            Timber.tag(TAG).i("Skipping start of system service functionalities")
         } else {
             startSystemServiceFunctionalities()
         }
 
-        Log.i(TAG, "Started compass")
+        Timber.tag(TAG).i("Started compass")
     }
 
     private fun isInstrumentedTest() =
@@ -85,7 +85,7 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
         sensorManager
             ?.also(::registerSensorListener)
             ?: run {
-                Log.w(TAG, "SensorManager not present")
+                Timber.tag(TAG).w("SensorManager not present")
                 showErrorDialog(AppError.SENSOR_MANAGER_NOT_PRESENT)
             }
     }
@@ -99,7 +99,7 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
                 )
             }
             ?: run {
-                Log.w(TAG, "Rotation vector sensor not available")
+                Timber.tag(TAG).w("Rotation vector sensor not available")
                 showErrorDialog(AppError.ROTATION_VECTOR_SENSOR_NOT_AVAILABLE)
             }
 
@@ -111,7 +111,7 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
                 )
             }
             ?: run {
-                Log.w(TAG, "Magnetic field sensor not available")
+                Timber.tag(TAG).w("Magnetic field sensor not available")
                 showErrorDialog(AppError.MAGNETIC_FIELD_SENSOR_NOT_AVAILABLE)
             }
     }
@@ -126,9 +126,9 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
             SensorManager.SENSOR_DELAY_FASTEST
         )
         if (success) {
-            Log.d(TAG, "Registered listener for rotation vector sensor")
+            Timber.tag(TAG).d("Registered listener for rotation vector sensor")
         } else {
-            Log.w(TAG, "Could not enable rotation vector sensor")
+            Timber.tag(TAG).w("Could not enable rotation vector sensor")
             showErrorDialog(AppError.ROTATION_VECTOR_SENSOR_FAILED)
         }
     }
@@ -143,9 +143,9 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
             SensorManager.SENSOR_DELAY_NORMAL
         )
         if (success) {
-            Log.d(TAG, "Registered listener for magnetic field sensor")
+            Timber.tag(TAG).d("Registered listener for magnetic field sensor")
         } else {
-            Log.w(TAG, "Could not enable magnetic field sensor")
+            Timber.tag(TAG).w("Could not enable magnetic field sensor")
             showErrorDialog(AppError.MAGNETIC_FIELD_SENSOR_FAILED)
         }
     }
@@ -161,7 +161,7 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
                     appError.name
                 )
             )
-            .setPositiveButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(R.string.title_ok) { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
@@ -169,7 +169,6 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
         super.onPause()
         sensorManager?.unregisterListener(compassSensorEventListener)
         locationRequestCancellationSignal?.cancel()
-        Log.i(TAG, "Stopped compass")
     }
 
     override fun onDestroyView() {
@@ -197,13 +196,11 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
         override fun onSensorChanged(event: SensorEvent) {
             when (event.sensor.type) {
                 Sensor.TYPE_ROTATION_VECTOR -> updateCompass(event)
-                Sensor.TYPE_MAGNETIC_FIELD -> Log.v(
-                    TAG, "Received magnetic field sensor event ${event.values}"
-                )
+                Sensor.TYPE_MAGNETIC_FIELD -> Timber.tag(TAG)
+                    .v("Received magnetic field sensor event ${event.values}")
 
-                else -> Log.w(
-                    TAG, "Unexpected sensor changed event of type ${event.sensor.type}"
-                )
+                else -> Timber.tag(TAG)
+                    .w("Unexpected sensor changed event of type ${event.sensor.type}")
             }
         }
 
@@ -235,7 +232,6 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
     }
 
     internal fun setAzimuth(azimuth: Azimuth) {
-        Log.v(TAG, "Azimuth $azimuth")
         binding.compass.setAzimuth(azimuth.degrees)
     }
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 interface CategoryRepository {
     suspend fun insertCategory(category: CategoryEntity): Result<Unit, Throwable>
-    suspend fun readAllCategory(): Result<List<CategoryEntity>, Throwable>
+    suspend fun getAllCategory(): Result<List<CategoryEntity>, Throwable>
     suspend fun updateCategory(category: CategoryEntity): Result<Unit, Throwable>
     suspend fun deleteCategory(category: CategoryEntity): Result<Unit, Throwable>
 }
@@ -23,9 +23,9 @@ class CategoryRepositoryImpl @Inject constructor(
             categoryDatabase.insertCategory(category)
         }
 
-    override suspend fun readAllCategory(): Result<List<CategoryEntity>, Throwable> =
+    override suspend fun getAllCategory(): Result<List<CategoryEntity>, Throwable> =
         withContext(appCoroutineDispatchers.io) {
-            categoryDatabase.readAllCategory()
+            categoryDatabase.getAllCategory()
         }
 
     override suspend fun updateCategory(category: CategoryEntity) =

@@ -41,6 +41,7 @@
     <string name="content_time_format">Time format</string>
     <string name="content_date_format">Date format</string>
     <string name="content_security">Security</string>
+    <string name="content_sync_data">Sync Data</string>
     <string name="content_account">Account</string>
     <string name="content_sign_in">Backup on device</string>
     <string name="content_apps">Apps</string>
@@ -71,20 +72,6 @@
     <string name="title_fingerprint_authentication">Fingerprint authentication</string>
 
     <!-- Authentication -->
-    <string name="title_email">Email</string>
-    <string name="title_password">Password</string>
-    <string name="hint_email_empty_error">Empty Email</string>
-    <string name="hint_email_length_error">Length Email</string>
-    <string name="hint_email_format_error">Format Email</string>
-    <string name="hint_password_empty_error">Empty Password</string>
-    <string name="hint_password_length_error">Length Password</string>
-    <string name="hint_password_confirm_not_match_error">Not Match Password</string>
-    <string name="hint_null_error" />
-    <string name="title_not_have_an_account">Don\'t have an account?</string>
-    <string name="title_sign_up">Sign Up</string>
-    <string name="title_sign_in">Sign In</string>
-    <string name="title_welcome_back">Welcome \nBack</string>
-    <string name="title_hey_good_to_see_you_again">Hey! Good to see you again</string>
     <string name="title_enter_password">Enter password</string>
 
     <!-- Information -->
@@ -113,7 +100,6 @@
     <string name="sensor_error_message">Sensor not available</string>
     <string name="error_message">An error occurred.\nMessage: %1$s\nCode: %2$s</string>
     <string name="error">Error</string>
-    <string name="ok">OK</string>
     <string name="zero_degrees" translatable="false">0°</string>
     <string name="degrees" translatable="false">%1$d°</string>
     <string name="degree_0_text" translatable="false">0</string>
@@ -128,4 +114,10 @@
     <string name="degree_270_text" translatable="false">270</string>
     <string name="degree_300_text" translatable="false">300</string>
     <string name="degree_330_text" translatable="false">330</string>
+
+    <!-- Sync -->
+    <string name="share_notes_be_visible">Share Notes (Be Visible)</string>
+    <string name="find_nearby_devices">Find Nearby Devices</string>
+    <string name="send_now">Send Now</string>
+    <string name="ready_to_sync">Ready to Sync</string>
 </resources>

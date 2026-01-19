@@ -74,6 +74,9 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         lSecurity.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSecurityFragment)
         }
+        lSyncData.setOnClickListener {
+            mainNavigator.navigate(MainNavigator.Direction.MainFragmentToSyncFragment)
+        }
         btnPrivacy.setOnClickListener {
             mainNavigator.navigate(MainNavigator.Direction.MainFragmentToPrivacyPolicyFragment)
         }

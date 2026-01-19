@@ -8,19 +8,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface NoteLocalRepository {
+interface NoteRepository {
     suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun readAllNote(): Result<List<NoteEntity>, Throwable>
     suspend fun readNoteWithCategory(idCategory: Long): Result<List<NoteEntity>, Throwable>
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun searchNoteByTitle(keyword: String): Flow<List<NoteEntity>>
+    suspend fun updateNoteFolder(noteId: Long, newFolderDir: String)
 }
 
 class NoteRepositoryImpl @Inject constructor(
     private val noteDatabase: NoteDatabase,
     private val appCoroutineDispatchers: AppCoroutineDispatchers
-) : NoteLocalRepository {
+) : NoteRepository {
     override suspend fun insertNote(note: NoteEntity): Result<Unit, Throwable> =
         withContext(appCoroutineDispatchers.io) {
             noteDatabase.insertNote(note)
@@ -48,4 +49,8 @@ class NoteRepositoryImpl @Inject constructor(
 
     override suspend fun searchNoteByTitle(keyword: String): Flow<List<NoteEntity>> =
         noteDatabase.searchNoteByTitle(keyword)
+
+    override suspend fun updateNoteFolder(noteId: Long, newFolderDir: String) {
+        noteDatabase.updateNoteFolder(noteId, newFolderDir)
+    }
 }

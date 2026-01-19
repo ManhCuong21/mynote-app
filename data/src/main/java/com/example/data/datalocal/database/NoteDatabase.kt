@@ -14,6 +14,7 @@ interface NoteDatabase {
     suspend fun updateNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun deleteNote(note: NoteEntity): Result<Unit, Throwable>
     suspend fun searchNoteByTitle(keyword: String): Flow<List<NoteEntity>>
+    suspend fun updateNoteFolder(noteId: Long, newFolderDir: String)
 }
 
 class NoteDatabaseImpl @Inject constructor(
@@ -43,5 +44,9 @@ class NoteDatabaseImpl @Inject constructor(
 
     override suspend fun searchNoteByTitle(keyword: String): Flow<List<NoteEntity>> {
         return noteDAO.searchNoteByKeyword(keyword)
+    }
+
+    override suspend fun updateNoteFolder(noteId: Long, newFolderDir: String) {
+        return noteDAO.updateNoteFolder(noteId,newFolderDir)
     }
 }

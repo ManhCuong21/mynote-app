@@ -23,6 +23,7 @@ interface MainNavigator {
         data object NoteFragmentToSecurityFragment : Direction
         data object CategoryFragmentToSecurityFragment : Direction
         data object MainFragmentToSecurityFragment : Direction
+        data object MainFragmentToSyncFragment : Direction
         data class ImageNoteFragmentToEditImageNoteFragment(val imagePath: String?) : Direction
         data object MainFragmentToPrivacyPolicyFragment : Direction
         data class SecurityFragmentToSetupUnlockCodeFragment(val authMethod: AuthMethod) : Direction

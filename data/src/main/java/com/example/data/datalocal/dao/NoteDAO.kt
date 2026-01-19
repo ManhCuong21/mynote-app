@@ -38,4 +38,7 @@ interface NoteDAO {
 
     @Query("SELECT * FROM noteEntity WHERE idNote = :id LIMIT 1")
     suspend fun getNoteById(id: Long): NoteEntity?
+
+    @Query("UPDATE noteEntity SET fileMediaNote = :newFolderDir WHERE idNote = :noteId")
+    suspend fun updateNoteFolder(noteId: Long, newFolderDir: String)
 }

@@ -78,6 +78,7 @@ private fun Direction.toNavDirections(): NavDirections = when (this) {
     )
 
     is Direction.MainFragmentToSecurityFragment -> MainFragmentDirections.actionMainFragmentToSecurityFragment()
+    is Direction.MainFragmentToSyncFragment -> MainFragmentDirections.actionMainFragmentToSyncFragment()
     is Direction.MainFragmentToPrivacyPolicyFragment -> MainFragmentDirections.actionMainFragmentToPrivacyPolicyFragment()
     is Direction.SecurityFragmentToSetupUnlockCodeFragment -> SecurityFragmentDirections.actionSecurityFragmentToSetupUnlockCodeFragment(
         authMethod = authMethod

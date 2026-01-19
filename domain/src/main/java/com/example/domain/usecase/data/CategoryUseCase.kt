@@ -22,7 +22,7 @@ class CategoryUseCase @Inject constructor(
 
     suspend fun readAllCategory(): Result<List<CategoryModel>, Throwable> =
         withContext(appCoroutineDispatchers.io) {
-            categoryRepository.readAllCategory().map { it.toListCategory() }
+            categoryRepository.getAllCategory().map { it.toListCategory() }
         }
 
     suspend fun updateCategory(category: CategoryModel): Result<Unit, Throwable> =
