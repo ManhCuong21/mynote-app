@@ -1,9 +1,8 @@
-package com.example.presentation.main.home.listnote
+package com.example.presentation.main.home.listnote.components
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-
 
 class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int) :
     RecyclerView.ItemDecoration() {

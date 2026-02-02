@@ -3,19 +3,15 @@ package com.example.presentation.note.image
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.ExperimentalGetImage
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
@@ -30,7 +26,8 @@ import com.example.presentation.R
 import com.example.presentation.databinding.DialogChooseImageAddNoteBinding
 import com.example.presentation.databinding.FragmentImageNoteBinding
 import com.example.presentation.dialog.camera.showCameraDialog
-import com.example.presentation.dialog.text.showTextDialog
+import com.example.presentation.dialog.permission.PermissionManager
+import com.example.presentation.dialog.permission.PermissionRequest
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.NoteFragment.Companion.IMAGE_HAS
 import com.example.presentation.note.NoteFragment.Companion.IMAGE_RESULT
@@ -47,19 +44,15 @@ class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
     @Inject
     lateinit var mainNavigator: MainNavigator
 
+    @Inject
+    lateinit var permissionManager: PermissionManager
+
     private val listPermission =
-        arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+        listOf(
+            PermissionRequest(permission = Manifest.permission.CAMERA),
+            PermissionRequest(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PermissionRequest(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
         )
-
-    private val appPermissionSettingLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -171,7 +164,7 @@ class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
         binding.btnMyPhoto.setOnClickListener {
-            if (checkPermission()) {
+            permissionManager.requestPermission(listPermission) {
                 val intent = Intent()
                 intent.type = "image/*"
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -181,7 +174,7 @@ class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
             }
         }
         binding.btnCamera.setOnClickListener {
-            if (checkPermission()) {
+            permissionManager.requestPermission(listPermission) {
                 showCameraDialog {
                     takePictureAction {
                         viewModel.dispatch(ImageNoteAction.GetListImageNote)
@@ -190,42 +183,5 @@ class ImageNoteFragment : BaseFragment(R.layout.fragment_image_note) {
             }
             dialog.dismiss()
         }
-    }
-
-    private fun checkPermission(): Boolean {
-        when {
-            listPermission.any {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            } -> return true
-
-            shouldShowRequestPermissionRationale(listPermission[0]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[1]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[2]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            else -> {
-                showTextDialog {
-                    textTitle("Permission Denied")
-                    textContent("Please grant access in setting")
-                    positiveButtonAction("Open") {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.data = "package:${requireActivity().packageName}".toUri()
-                        appPermissionSettingLauncher.launch(intent)
-                    }
-                    negativeButtonAction("Cancel") {}
-                }
-            }
-        }
-        return false
     }
 }

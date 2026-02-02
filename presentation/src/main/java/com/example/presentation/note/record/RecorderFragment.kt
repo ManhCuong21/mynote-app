@@ -1,16 +1,10 @@
 package com.example.presentation.note.record
 
 import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
-import android.provider.Settings
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.example.core.base.BaseFragment
@@ -19,11 +13,11 @@ import com.example.core.core.external.loadImageDrawable
 import com.example.core.core.model.StatusRecord
 import com.example.core.core.viewbinding.viewBinding
 import com.example.domain.usecase.file.FileUseCase
-import com.example.domain.usecase.file.RecordFileUseCase
 import com.example.presentation.R
 import com.example.presentation.canvas.Timer
 import com.example.presentation.databinding.FragmentRecorderBinding
-import com.example.presentation.dialog.text.showTextDialog
+import com.example.presentation.dialog.permission.PermissionManager
+import com.example.presentation.dialog.permission.PermissionRequest
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.NoteFragment.Companion.RECORD_HAS
 import com.example.presentation.note.NoteFragment.Companion.RECORD_RESULT
@@ -44,7 +38,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     lateinit var fileUseCase: FileUseCase
 
     @Inject
-    lateinit var recordFileUseCase: RecordFileUseCase
+    lateinit var permissionManager: PermissionManager
 
     override val binding: FragmentRecorderBinding by viewBinding()
     override val viewModel: BaseViewModel
@@ -53,17 +47,14 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
     private var recorder: MediaRecorder? = null
     private lateinit var timer: Timer
     private lateinit var file: File
-
-    private val listPermission =
-        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-    private val appPermissionSettingLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+    val listPermission = listOf(
+        PermissionRequest(permission = Manifest.permission.RECORD_AUDIO),
+        PermissionRequest(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPermissionLauncher.launch(listPermission)
+        permissionManager.requestPermission(requests = listPermission) {}
     }
 
     override fun setupViews() {
@@ -86,7 +77,7 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
         var statusRecord = StatusRecord.CREATE
         btnRecording.setOnClickListener {
             if (abs(SystemClock.elapsedRealtime() - lastClickTime) > 1000) {
-                if (checkPermission()) {
+                permissionManager.requestPermission(requests = listPermission) {
                     statusRecord = when (statusRecord) {
                         StatusRecord.CREATE -> StatusRecord.START
                         StatusRecord.START -> StatusRecord.PAUSE
@@ -189,38 +180,5 @@ class RecorderFragment : BaseFragment(R.layout.fragment_recorder) {
             recorder = null
             timer.stop()
         }
-    }
-
-    private fun checkPermission(): Boolean {
-        when {
-            listPermission.any {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            } -> return true
-
-            shouldShowRequestPermissionRationale(listPermission[0]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            shouldShowRequestPermissionRationale(listPermission[1]) -> {
-                requestPermissionLauncher.launch(listPermission)
-            }
-
-            else -> {
-                showTextDialog {
-                    textTitle("Permission Denied")
-                    textContent("Please grant access in setting")
-                    positiveButtonAction("Open") {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.data = "package:${requireActivity().packageName}".toUri()
-                        appPermissionSettingLauncher.launch(intent)
-                    }
-                    negativeButtonAction("Cancel") {}
-                }
-            }
-        }
-        return false
     }
 }

@@ -46,7 +46,6 @@ android {
 
             // Thường thì các tệp có đuôi .txt cũng hay xung đột
             excludes += "META-INF/*.txt"
-
         }
     }
 }

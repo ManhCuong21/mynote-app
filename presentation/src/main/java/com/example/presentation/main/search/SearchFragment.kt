@@ -1,13 +1,7 @@
 package com.example.presentation.main.search
 
-import android.content.Intent
-import android.content.pm.PackageManager
+import android.Manifest
 import android.os.Build
-import android.provider.Settings
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,26 +9,28 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.core.base.BaseFragment
 import com.example.core.core.external.ActionNote
+import com.example.core.core.model.NoteModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.biometric.BiometricAuthenticationManager
+import com.example.presentation.dialog.biometric.BiometricManager
 import com.example.presentation.databinding.FragmentSearchBinding
-import com.example.presentation.dialog.list.showListDialog
-import com.example.presentation.dialog.text.showTextDialog
-import com.example.presentation.main.home.listnote.GridSpacingItemDecoration
+import com.example.presentation.dialog.biometric.ManualAuthDialogManager
+import com.example.presentation.dialog.di.DialogService
 import com.example.presentation.main.home.listnote.ListNoteAction
-import com.example.presentation.main.home.listnote.ListNoteAdapter
-import com.example.presentation.main.home.listnote.ListNoteFragment.Companion.PERMISSION_NOTIFICATION
 import com.example.presentation.main.home.listnote.ListNoteViewModel
-import com.example.presentation.main.home.toListDialogItem
+import com.example.presentation.main.home.listnote.components.GridSpacingItemDecoration
+import com.example.presentation.main.home.listnote.components.NoteActionHandler
+import com.example.presentation.main.home.listnote.components.NoteUIHelper
+import com.example.presentation.dialog.permission.PermissionManager
+import com.example.presentation.dialog.permission.PermissionRequest
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SearchFragment : BaseFragment(R.layout.fragment_search) {
+class SearchFragment : BaseFragment(R.layout.fragment_search), NoteActionHandler {
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
@@ -43,76 +39,87 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
     lateinit var mainNavigator: MainNavigator
 
     @Inject
-    lateinit var biometricAuthenticationManager: BiometricAuthenticationManager
+    lateinit var biometricManager: BiometricManager
+
+    @Inject
+    lateinit var dialogService: DialogService
+
+    @Inject
+    lateinit var manualAuthDialogManager: ManualAuthDialogManager
+
+    @Inject
+    lateinit var permissionManager: PermissionManager
 
     override val binding: FragmentSearchBinding by viewBinding<FragmentSearchBinding>()
     override val viewModel: ListNoteViewModel by viewModels()
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
-
-    private val appPermissionSettingLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+    private val noteUIHelper by lazy {
+        NoteUIHelper(
+            fragment = this,
+            dialogService = dialogService,
+            layoutInflater = layoutInflater,
+            actionHandler = this,
+            onRequireBiometric = { onSuccess ->
+                biometricManager.verifyBiometric(
+                    onSucceeded = onSuccess,
+                    onFailed = {})
+            },
+            onRequireOtp = { onSuccess ->
+                manualAuthDialogManager.showManualAuth("Enter otp code") { onSuccess() }
+            }
+        )
+    }
 
     private val listNoteAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        ListNoteAdapter(
-            fragment = this,
-            format24Hour = sharedPrefersManager.format24Hour,
-            isBiometric = sharedPrefersManager.isBiometric,
-            biometricAuthenticationManager = biometricAuthenticationManager,
-            onItemClicked = { action, noteModel ->
-                when (action) {
-                    ActionNote.NOTIFICATION -> {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            if (checkPermission()) {
-                                mainNavigator.navigate(
-                                    MainNavigator.Direction.MainFragmentToDateTimePickersFragment(
-                                        noteModel
-                                    )
-                                )
-                            }
-                        } else {
-                            mainNavigator.navigate(
-                                MainNavigator.Direction.MainFragmentToDateTimePickersFragment(
-                                    noteModel
-                                )
-                            )
-                        }
-                    }
+        noteUIHelper.createAdapter()
+    }
 
-                    ActionNote.UPDATE_NOTE -> {
-                        mainNavigator.navigate(
-                            MainNavigator.Direction.MainFragmentToUpdateNoteFragment(noteModel = noteModel)
+    override fun getSettings(): Pair<Boolean, Boolean> =
+        sharedPrefersManager.format24Hour to sharedPrefersManager.isBiometric
+
+    override fun onHandleAction(
+        action: ActionNote,
+        note: NoteModel
+    ) {
+        when (action) {
+            ActionNote.NOTIFICATION -> {
+                val listPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    listOf(
+                        PermissionRequest(
+                            permission = Manifest.permission.POST_NOTIFICATIONS,
+                            minSdk = Build.VERSION_CODES.TIRAMISU,
+                            title = "Permission Required",
+                            message = "Please grant access in settings to receive notifications"
                         )
-                    }
-
-                    ActionNote.CHANGE_CATEGORY -> {
-                        showListDialog {
-                            val listCategory = viewModel.stateFlow.value.listCategory
-                            textTitle(getString(R.string.title_dialog_change_category))
-                            listItem(listCategory.map { it.toListDialogItem() })
-                            positionSelected(listCategory.indexOf(noteModel.categoryNote))
-                            positiveButtonAction(getString(R.string.title_ok)) { indexItem ->
-                                listCategory[indexItem].let {
-                                    viewModel.dispatch(
-                                        ListNoteAction.ChangeCategoryNote(
-                                            noteModel = noteModel,
-                                            category = it
-                                        )
-                                    )
-                                }
-                            }
-                            negativeButtonAction(getString(R.string.button_cancel)) {}
-                        }
-                    }
-
-                    ActionNote.DELETE_NOTE -> {
-                        viewModel.dispatch(ListNoteAction.DeleteNote(noteModel))
-                    }
-
-                    else -> {}
+                    )
+                } else {
+                    emptyList()
                 }
-            })
+                permissionManager.requestPermission(requests = listPermission) {
+                    mainNavigator.navigate(
+                        MainNavigator.Direction.MainFragmentToDateTimePickersFragment(
+                            note
+                        )
+                    )
+                }
+            }
+
+            ActionNote.UPDATE_NOTE -> mainNavigator.navigate(
+                MainNavigator.Direction.MainFragmentToUpdateNoteFragment(note)
+            )
+
+            ActionNote.CHANGE_CATEGORY -> {
+                noteUIHelper.showChangeCategoryDialog(
+                    listCategory = viewModel.stateFlow.value.listCategory,
+                    onCategorySelected = { newCategory ->
+                        viewModel.dispatch(ListNoteAction.ChangeCategoryNote(note, newCategory))
+                    }
+                )
+            }
+
+            ActionNote.DELETE_NOTE -> viewModel.dispatch(ListNoteAction.DeleteNote(note))
+            else -> Unit
+        }
     }
 
     override fun setupViews() {
@@ -136,35 +143,5 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
         smoothScrollToPosition(0)
         adapter = listNoteAdapter
         addItemDecoration(GridSpacingItemDecoration(2, 24))
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkPermission(): Boolean {
-        when {
-            PERMISSION_NOTIFICATION.any {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    PERMISSION_NOTIFICATION
-                ) == PackageManager.PERMISSION_GRANTED
-            } -> return true
-
-            shouldShowRequestPermissionRationale(PERMISSION_NOTIFICATION) -> {
-                requestPermissionLauncher.launch(PERMISSION_NOTIFICATION)
-            }
-
-            else -> {
-                showTextDialog {
-                    textTitle("Permission Denied")
-                    textContent("Please grant access in setting")
-                    positiveButtonAction("Open") {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.data = "package:${requireActivity().packageName}".toUri()
-                        appPermissionSettingLauncher.launch(intent)
-                    }
-                    negativeButtonAction("Cancel") {}
-                }
-            }
-        }
-        return false
     }
 }

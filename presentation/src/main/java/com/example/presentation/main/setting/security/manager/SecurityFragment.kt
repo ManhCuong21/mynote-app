@@ -2,11 +2,11 @@ package com.example.presentation.main.setting.security.manager
 
 import com.example.core.base.BaseFragment
 import com.example.core.base.BaseViewModel
+import com.example.core.core.model.AuthMethod
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.biometric.AuthMethod
-import com.example.presentation.biometric.BiometricAuthenticationManager
+import com.example.presentation.dialog.biometric.BiometricManager
 import com.example.presentation.databinding.FragmentSecurityBinding
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +19,7 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
     lateinit var mainNavigator: MainNavigator
 
     @Inject
-    lateinit var biometricAuthenticationManager: BiometricAuthenticationManager
+    lateinit var biometricManager: BiometricManager
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
@@ -57,8 +57,7 @@ class SecurityFragment : BaseFragment(R.layout.fragment_security) {
         switchAuthentication.setOnCheckedChangeListener { _, isChecked ->
             if (!isSwitchListenerEnabled) return@setOnCheckedChangeListener
 
-            biometricAuthenticationManager.verifyBiometric(
-                requireActivity(),
+            biometricManager.verifyBiometric(
                 onSucceeded = {
                     sharedPrefersManager.isBiometric = isChecked
                 },

@@ -5,10 +5,10 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.example.core.base.BaseFragment
 import com.example.core.base.BaseViewModel
+import com.example.core.core.model.AuthMethod
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.biometric.AuthMethod
 import com.example.presentation.databinding.FragmentChangeUnlockCodeBinding
 import com.example.presentation.main.setting.security.manager.OTPUtils
 import com.example.presentation.navigation.MainNavigator
@@ -46,7 +46,7 @@ class SetupUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_cod
 
     override fun setupViews() {
         isHasPassword = !sharedPrefersManager.passwordNote.isNullOrEmpty()
-        isOtherMethod = authMethod.name != sharedPrefersManager.authMethod
+        isOtherMethod = authMethod != sharedPrefersManager.authMethod
         setupVisibleView()
         setUpClickListeners()
     }
@@ -92,7 +92,7 @@ class SetupUnlockCodeFragment : BaseFragment(R.layout.fragment_change_unlock_cod
             if (otp == firstOtp) {
                 val encryptedOtp = OTPUtils().encryptOTP(otp, "123456789")
                 sharedPrefersManager.passwordNote = encryptedOtp
-                sharedPrefersManager.authMethod = authMethod.name
+                sharedPrefersManager.authMethod = authMethod
                 Toast.makeText(context, "Verification successful!", Toast.LENGTH_SHORT)
                     .show()
                 if (isHasPassword) {

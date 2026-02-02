@@ -15,3 +15,4 @@ data class ListDialogItem(
 )
 
 enum class StatusRecord { CREATE, START, PAUSE, RESUME }
+enum class AuthMethod { PASSWORD, PIN }

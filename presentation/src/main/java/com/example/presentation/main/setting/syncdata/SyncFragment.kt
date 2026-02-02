@@ -10,7 +10,7 @@ import com.example.core.core.lifecycle.collectIn
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentSyncBinding
-import com.example.presentation.dialog.text.showTextDialog
+import com.example.presentation.dialog.di.DialogService
 import com.example.presentation.main.setting.syncdata.adapter.DeviceAdapter
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +22,9 @@ class SyncFragment : BaseFragment(R.layout.fragment_sync) {
 
     @Inject
     lateinit var mainNavigator: MainNavigator
+
+    @Inject
+    lateinit var dialogService: DialogService
 
     override val binding: FragmentSyncBinding by viewBinding()
     override val viewModel: SyncViewModel by viewModels()
@@ -66,7 +69,7 @@ class SyncFragment : BaseFragment(R.layout.fragment_sync) {
             state.connectedEndpointId?.let { id ->
                 viewModel.dispatch(SyncAction.SendData(id))
             } ?: run {
-                showTextDialog {
+                dialogService.showText {
                     textTitle("Thông báo")
                     textContent("Chưa xác định được thiết bị nhận. Vui lòng thử lại.")
                 }
@@ -82,7 +85,7 @@ class SyncFragment : BaseFragment(R.layout.fragment_sync) {
                 is SyncSingleEvent.SyncSuccess -> {
                     // Khi thành công, ẩn progress bar
                     binding.progressBarSync.visibility = android.view.View.GONE
-                    showTextDialog {
+                    dialogService.showText {
                         textTitle("Thành công"); textContent("Đã nhận dữ liệu mới")
                         positiveButtonAction(getString(R.string.title_ok)) {}
                     }
@@ -90,7 +93,7 @@ class SyncFragment : BaseFragment(R.layout.fragment_sync) {
 
                 is SyncSingleEvent.SyncFailed -> {
                     Timber.e(event.error)
-                    showTextDialog {
+                    dialogService.showText {
                         textTitle(getString(R.string.error))
                         textContent(event.error?.message ?: "Unknown Error")
                         negativeButtonAction(getString(R.string.title_ok)) {}
@@ -155,7 +158,7 @@ class SyncFragment : BaseFragment(R.layout.fragment_sync) {
     }
 
     private fun showPermissionDeniedDialog() {
-        showTextDialog {
+        dialogService.showText {
             textTitle("Permissions Required")
             textContent("Sync function needs Nearby and Location permissions to work.")
             positiveButtonAction("Retry") { checkAndRequestPermissions() }

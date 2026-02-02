@@ -5,9 +5,9 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.LocationManager
+import android.media.MediaPlayer
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import android.os.CancellationSignal
 import android.view.Display
 import android.view.Surface
 import android.view.ViewGroup
@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.core.base.BaseFragment
 import com.example.core.base.BaseViewModel
@@ -27,23 +28,17 @@ import com.example.presentation.main.setting.compass.model.DisplayRotation
 import com.example.presentation.main.setting.compass.model.RotationVector
 import com.example.presentation.main.setting.compass.util.MathUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import kotlin.math.abs
 
 const val OPTION_INSTRUMENTED_TEST = "INSTRUMENTED_TEST"
 
-private const val TAG = "CompassFragment"
-
-@AndroidEntryPoint
 class CompassFragment : BaseFragment(R.layout.fragment_compass) {
     private val compassSensorEventListener = CompassSensorEventListener()
     override val binding: FragmentCompassBinding by viewBinding()
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: BaseViewModel by viewModels()
     private var sensorManager: SensorManager? = null
     private var locationManager: LocationManager? = null
-    private var locationRequestCancellationSignal: CancellationSignal? = null
-
+    private var mediaPlayer: MediaPlayer? = null
     private fun setupSystemServices() {
         sensorManager = ActivityCompat.getSystemService(requireContext(), SensorManager::class.java)
         locationManager =
@@ -64,93 +59,43 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
 
     override fun onResume() {
         super.onResume()
-
-        if (isInstrumentedTest()) {
-            Timber.tag(TAG).i("Skipping start of system service functionalities")
-        } else {
-            startSystemServiceFunctionalities()
+        initMediaPlayer()
+        if (!isInstrumentedTest()) {
+            registerSensorListener()
         }
-
-        Timber.tag(TAG).i("Started compass")
     }
 
     private fun isInstrumentedTest() =
         requireActivity().intent.extras?.getBoolean(OPTION_INSTRUMENTED_TEST) == true
 
-    private fun startSystemServiceFunctionalities() {
-        registerSensorListener()
+    private fun initMediaPlayer() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(requireContext(), R.raw.alert_sound)
+        }
     }
 
     private fun registerSensorListener() {
-        sensorManager
-            ?.also(::registerSensorListener)
-            ?: run {
-                Timber.tag(TAG).w("SensorManager not present")
-                showErrorDialog(AppError.SENSOR_MANAGER_NOT_PRESENT)
-            }
-    }
-
-    private fun registerSensorListener(sensorManager: SensorManager) {
-        sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-            ?.also { rotationVectorSensor ->
-                registerRotationVectorSensorListener(
-                    sensorManager,
-                    rotationVectorSensor
-                )
-            }
-            ?: run {
-                Timber.tag(TAG).w("Rotation vector sensor not available")
-                showErrorDialog(AppError.ROTATION_VECTOR_SENSOR_NOT_AVAILABLE)
-            }
-
-        sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-            ?.also { magneticFieldSensor ->
-                registerMagneticFieldSensorListener(
-                    sensorManager,
-                    magneticFieldSensor
-                )
-            }
-            ?: run {
-                Timber.tag(TAG).w("Magnetic field sensor not available")
-                showErrorDialog(AppError.MAGNETIC_FIELD_SENSOR_NOT_AVAILABLE)
-            }
-    }
-
-    private fun registerRotationVectorSensorListener(
-        sensorManager: SensorManager,
-        rotationVectorSensor: Sensor
-    ) {
-        val success = sensorManager.registerListener(
-            compassSensorEventListener,
-            rotationVectorSensor,
-            SensorManager.SENSOR_DELAY_FASTEST
+        val sm = sensorManager ?: return
+        val sensors = listOf(
+            Sensor.TYPE_ROTATION_VECTOR to SensorManager.SENSOR_DELAY_FASTEST,
+            Sensor.TYPE_MAGNETIC_FIELD to SensorManager.SENSOR_DELAY_NORMAL,
+            Sensor.TYPE_ACCELEROMETER to SensorManager.SENSOR_DELAY_NORMAL,
+            Sensor.TYPE_GYROSCOPE to SensorManager.SENSOR_DELAY_NORMAL
         )
-        if (success) {
-            Timber.tag(TAG).d("Registered listener for rotation vector sensor")
-        } else {
-            Timber.tag(TAG).w("Could not enable rotation vector sensor")
-            showErrorDialog(AppError.ROTATION_VECTOR_SENSOR_FAILED)
+
+        sensors.forEach { (type, delay) ->
+            sm.getDefaultSensor(type)?.let { sensor ->
+                sm.registerListener(compassSensorEventListener, sensor, delay)
+            } ?: run {
+                if (type == Sensor.TYPE_ROTATION_VECTOR) {
+                    showErrorDialog()
+                }
+            }
         }
     }
 
-    private fun registerMagneticFieldSensorListener(
-        sensorManager: SensorManager,
-        magneticFieldSensor: Sensor
-    ) {
-        val success = sensorManager.registerListener(
-            compassSensorEventListener,
-            magneticFieldSensor,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
-        if (success) {
-            Timber.tag(TAG).d("Registered listener for magnetic field sensor")
-        } else {
-            Timber.tag(TAG).w("Could not enable magnetic field sensor")
-            showErrorDialog(AppError.MAGNETIC_FIELD_SENSOR_FAILED)
-        }
-    }
-
-    private fun showErrorDialog(appError: AppError) {
+    private fun showErrorDialog() {
+        val appError = AppError.ROTATION_VECTOR_SENSOR_NOT_AVAILABLE
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.error)
             .setIcon(R.drawable.ic_error)
@@ -168,7 +113,9 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
     override fun onPause() {
         super.onPause()
         sensorManager?.unregisterListener(compassSensorEventListener)
-        locationRequestCancellationSignal?.cancel()
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun onDestroyView() {
@@ -190,17 +137,42 @@ class CompassFragment : BaseFragment(R.layout.fragment_compass) {
     }
 
     private inner class CompassSensorEventListener : SensorEventListener {
+        private val lastSensorValues = mutableMapOf<Int, FloatArray>()
+        private val motionThreshold = 30.0
 
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
         override fun onSensorChanged(event: SensorEvent) {
             when (event.sensor.type) {
                 Sensor.TYPE_ROTATION_VECTOR -> updateCompass(event)
-                Sensor.TYPE_MAGNETIC_FIELD -> Timber.tag(TAG)
-                    .v("Received magnetic field sensor event ${event.values}")
+                Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE -> detectMotion(event)
+            }
+        }
 
-                else -> Timber.tag(TAG)
-                    .w("Unexpected sensor changed event of type ${event.sensor.type}")
+        private fun detectMotion(event: SensorEvent) {
+            val sensorType = event.sensor.type
+            val currentValues = event.values
+            val prevValues = lastSensorValues[sensorType]
+
+            if (prevValues != null) {
+                var delta = 0.0
+                for (i in currentValues.indices) {
+                    delta += abs(currentValues[i] - prevValues[i])
+                }
+
+                if (delta > motionThreshold) {
+                    playAlertSound()
+                }
+            }
+
+            lastSensorValues[sensorType] = currentValues.clone()
+        }
+
+        private fun playAlertSound() {
+            mediaPlayer?.let { mp ->
+                if (!mp.isPlaying) {
+                    mp.start()
+                }
             }
         }
 

@@ -3,7 +3,6 @@ package com.example.presentation.note
 import android.Manifest
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -24,9 +23,11 @@ import com.example.core.core.model.NoteModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.biometric.showBiometricDialog
 import com.example.presentation.databinding.FragmentNoteBinding
+import com.example.presentation.dialog.biometric.ManualAuthDialogManager
 import com.example.presentation.dialog.progress.renderLoadingUI
+import com.example.presentation.dialog.permission.PermissionManager
+import com.example.presentation.dialog.permission.PermissionRequest
 import com.example.presentation.navigation.MainNavigator
 import com.example.presentation.note.adapter.NoteChooseColorAdapter
 import com.example.presentation.note.adapter.NoteListRecordAdapter
@@ -41,6 +42,12 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
+
+    @Inject
+    lateinit var manualAuthDialogManager: ManualAuthDialogManager
+
+    @Inject
+    lateinit var permissionManager: PermissionManager
 
     override val binding: FragmentNoteBinding by viewBinding {
         rvChooseColor.adapter = null
@@ -58,12 +65,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
     { navArgs<NoteFragmentArgs>().value.noteModel }
 
     private val listPermission =
-        arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+        listOf(
+            PermissionRequest(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PermissionRequest(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
         )
+
     private val listColor = listOf(
         ItemChooseColor(R.color.orangeTitle, R.color.orangeContent),
         ItemChooseColor(R.color.blueTitle, R.color.blueContent),
@@ -88,19 +94,17 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
 
     private val listRecordAdapter by lazy {
         NoteListRecordAdapter(onItemDelete = {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.dispatch(NoteAction.DeleteRecordNote(it))
+            permissionManager.requestPermission(listPermission) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.dispatch(NoteAction.DeleteRecordNote(it))
+                }
             }
         })
     }
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.dispatch(NoteAction.DeleteDirectoryTemp)
-        requestPermissionLauncher.launch(listPermission)
         setFragmentResultListener(IMAGE_RESULT) { _, bundle ->
             val hasImage = bundle.getBoolean(IMAGE_HAS)
             viewModel.dispatch(NoteAction.HasImageNoteChanged(hasImage))
@@ -230,14 +234,11 @@ class NoteFragment : BaseFragment(R.layout.fragment_note) {
             !sharedPrefersManager.passwordNote.isNullOrEmpty() || sharedPrefersManager.isBiometric
 
         if (hasPasswordOrBiometric) {
-            showBiometricDialog {
-                textTitle(if (viewModel.uiStateFlow.value.security == true) "Unlock" else "Lock")
-                setBiometricSuccessAction {
-                    viewModel.uiStateFlow.value.security?.let {
-                        viewModel.dispatch(NoteAction.SecurityNoteChanged(!it))
-                        val msg = if (it) "Unlock note" else "Lock note"
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    }
+            manualAuthDialogManager.showManualAuth(if (viewModel.uiStateFlow.value.security == true) "Unlock" else "Lock") {
+                viewModel.uiStateFlow.value.security?.let {
+                    viewModel.dispatch(NoteAction.SecurityNoteChanged(!it))
+                    val msg = if (it) "Unlock note" else "Lock note"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
             }
         } else {

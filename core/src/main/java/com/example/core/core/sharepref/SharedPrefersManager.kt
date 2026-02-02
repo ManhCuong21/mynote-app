@@ -2,11 +2,12 @@ package com.example.core.core.sharepref
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.example.core.core.model.AuthMethod
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class SharedPrefersManager(preferences: SharedPreferences) {
-    var authMethod by SharedPrefStringParameter(AUTH_METHOD, preferences, null)
+    var authMethod by SharedPrefEnumParameter(AUTH_METHOD, preferences, AuthMethod::class.java, AuthMethod.PIN)
     var isBiometric by SharedPrefBooleanParameter(IS_BIOMETRIC, preferences, false)
     var passwordNote by SharedPrefStringParameter(PASSWORD_NOTE, preferences, null)
     var darkModeTheme by SharedPrefBooleanParameter(DARK_MODE_THEME, preferences, false)
@@ -71,5 +72,21 @@ class SharedPrefIntParameter(
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
         return if (preferences.contains(key)) preferences.getInt(key, default) else default
+    }
+}
+
+class SharedPrefEnumParameter<T : Enum<T>>(
+    private val key: String,
+    private val preferences: SharedPreferences,
+    private val enumClass: Class<T>,
+    private val default: T
+) : ReadWriteProperty<Any, T> {
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        val name = preferences.getString(key, default.name)
+        return try { java.lang.Enum.valueOf(enumClass, name!!) } catch (_: Exception) { default }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        preferences.edit { putString(key, value.name) }
     }
 }

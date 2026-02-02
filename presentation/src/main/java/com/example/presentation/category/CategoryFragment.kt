@@ -15,8 +15,8 @@ import com.example.core.core.model.ItemCategory
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
-import com.example.presentation.biometric.showBiometricDialog
 import com.example.presentation.databinding.FragmentCategoryBinding
+import com.example.presentation.dialog.biometric.ManualAuthDialogManager
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,6 +30,9 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
+
+    @Inject
+    lateinit var manualAuthDialogManager: ManualAuthDialogManager
 
     override val binding: FragmentCategoryBinding by viewBinding()
     override val viewModel: CategoryViewModel by viewModels()
@@ -181,14 +184,11 @@ class CategoryFragment : BaseFragment(R.layout.fragment_category) {
             !sharedPrefersManager.passwordNote.isNullOrEmpty() || sharedPrefersManager.isBiometric
 
         if (hasPasswordOrBiometric) {
-            showBiometricDialog {
-                textTitle(if (viewModel.uiStateFlow.value.securityCategory) "Unlock" else "Lock")
-                setBiometricSuccessAction {
-                    viewModel.uiStateFlow.value.securityCategory.let {
-                        viewModel.dispatch(CategoryAction.SecurityCategoryChanged(!it))
-                        val msg = if (it) "Unlock category" else "Lock category"
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                    }
+            manualAuthDialogManager.showManualAuth(if (viewModel.uiStateFlow.value.securityCategory) "Unlock" else "Lock") {
+                viewModel.uiStateFlow.value.securityCategory.let {
+                    viewModel.dispatch(CategoryAction.SecurityCategoryChanged(!it))
+                    val msg = if (it) "Unlock category" else "Lock category"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
             }
         } else {

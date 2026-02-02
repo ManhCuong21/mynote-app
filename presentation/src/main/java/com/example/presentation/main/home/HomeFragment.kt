@@ -2,21 +2,17 @@ package com.example.presentation.main.home
 
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.example.core.base.BaseFragment
-import com.example.core.core.lifecycle.collectIn
+import com.example.core.core.lifecycle.collectInViewLifecycle
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.sharepref.SharedPrefersManager
 import com.example.core.core.viewbinding.viewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentHomeBinding
-import com.example.presentation.dialog.list.showListDialog
+import com.example.presentation.dialog.di.DialogService
 import com.example.presentation.navigation.MainNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,6 +24,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     @Inject
     lateinit var sharedPrefersManager: SharedPrefersManager
+
+    @Inject
+    lateinit var dialogService: DialogService
 
     override val binding: FragmentHomeBinding by viewBinding {
         viewPagerNote.adapter = null
@@ -62,7 +61,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             val listCategory =
                 viewModel.stateFlow.value.listCategory.filterIndexed { index, _ -> index != 0 }
             if (listCategory.isNotEmpty()) {
-                showListDialog {
+                dialogService.showList {
                     textTitle(getString(R.string.title_dialog_category))
                     listItem(listCategory.map { it.toListDialogItem() })
                     positiveButtonAction(getString(R.string.title_ok)) { indexItem ->
@@ -84,30 +83,16 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     }
 
     override fun bindViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.singleEventFlow.collectIn(viewLifecycleOwner) { event ->
-                    when (event) {
-                        is HomeSingleEvent.GetListCategory.Success -> {
-                            val list =
-                                arrayListOf(
-                                    CategoryModel(
-                                        idCategory = -1,
-                                        titleCategory = "All",
-                                        imageCategory = R.drawable.icon_clock.toString(),
-                                        securityCategory = false
-                                    )
-                                )
-                            list.addAll(event.list)
-                            categoryAdapter.submitList(list)
-                            setUpViewPager(list)
-                            viewModel.dispatch(HomeAction.ListCategoryChanged(list))
-                        }
+        viewModel.singleEventFlow.collectInViewLifecycle(this) { event ->
+            when (event) {
+                is HomeSingleEvent.GetListCategory.Success -> {
+                    categoryAdapter.submitList(event.list)
+                    setUpViewPager(event.list)
+                    viewModel.dispatch(HomeAction.ListCategoryChanged(event.list))
+                }
 
-                        is HomeSingleEvent.GetListCategory.Failed -> {
-                            Timber.e(event.error)
-                        }
-                    }
+                is HomeSingleEvent.GetListCategory.Failed -> {
+                    Timber.e(event.error)
                 }
             }
         }

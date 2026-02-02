@@ -2,9 +2,9 @@ package com.example.presentation.navigation
 
 import androidx.annotation.MainThread
 import androidx.navigation.NavController
+import com.example.core.core.model.AuthMethod
 import com.example.core.core.model.CategoryModel
 import com.example.core.core.model.NoteModel
-import com.example.presentation.biometric.AuthMethod
 
 @MainThread
 interface MainNavigator {

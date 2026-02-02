@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment
 import com.example.core.core.viewbinding.inflateViewBinding
 import com.example.presentation.R
 import com.example.presentation.databinding.FragmentRateAppBinding
-import com.example.presentation.dialog.text.showTextDialog
+import com.example.presentation.dialog.di.DialogService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 fun Fragment.showRateAppDialog(
     tag: String = this::class.java.simpleName,
@@ -26,7 +28,11 @@ fun Fragment.showRateAppDialog(
         )
 }
 
+@AndroidEntryPoint
 class RateAppFragment : DialogFragment() {
+    @Inject
+    lateinit var dialogService: DialogService
+
     private lateinit var binding: FragmentRateAppBinding
     private var starRate = 0F
 
@@ -65,7 +71,7 @@ class RateAppFragment : DialogFragment() {
                 rateApp()
                 dismiss()
             } else {
-                showTextDialog {
+                dialogService.showText {
                     textContent("Thank you for feedback. We will try to improve your experience")
                     negativeButtonAction("OK") {
                         dismiss()

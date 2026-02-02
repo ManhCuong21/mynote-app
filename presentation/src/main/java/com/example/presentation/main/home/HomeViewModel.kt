@@ -4,12 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.core.external.ResultContent
+import com.example.core.core.model.CategoryModel
 import com.example.domain.usecase.data.CategoryUseCase
+import com.example.presentation.R
 import com.github.michaelbull.result.fold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,68 +33,65 @@ class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val categoryUseCase: CategoryUseCase
 ) : BaseViewModel() {
-    val stateFlow: StateFlow<HomeUiState>
 
     private val _actionSharedFlow = MutableSharedFlow<HomeAction>(extraBufferCapacity = 64)
-    private inline fun <reified T : HomeAction> action() =
-        _actionSharedFlow.filterIsInstance<T>()
+    private inline fun <reified T : HomeAction> action() = _actionSharedFlow.filterIsInstance<T>()
 
     private val _singleEventChannel = Channel<HomeSingleEvent>(Channel.UNLIMITED).addToBag()
-    val singleEventFlow: Flow<HomeSingleEvent> get() = _singleEventChannel.receiveAsFlow()
+    val singleEventFlow = _singleEventChannel.receiveAsFlow()
 
-    fun dispatch(action: HomeAction) =
-        viewModelScope.launch { _actionSharedFlow.emit(action) }
+    val stateFlow: StateFlow<HomeUiState>
 
     init {
-        val initialUiState =
-            savedStateHandle.get<HomeUiState?>(STATE_KEY)?.copy() ?: HomeUiState.INITIAL
+        val initial = savedStateHandle.get<HomeUiState>(STATE_KEY) ?: HomeUiState.INITIAL
 
-        val listCategoryFlow = action<HomeAction.ListCategoryChanged>()
+        val listCategory = action<HomeAction.ListCategoryChanged>()
             .map { it.list }
-            .onStart { emit(initialUiState.listCategory) }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+            .onStart { emit(initial.listCategory) }
+            .distinctUntilChanged()
 
-        val listNoteFlow = action<HomeAction.ListNoteChanged>()
+        val listNote = action<HomeAction.ListNoteChanged>()
             .map { it.list }
-            .onStart { emit(initialUiState.listNote) }
-            .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+            .onStart { emit(initial.listNote) }
+            .distinctUntilChanged()
 
-        val listCategory = listCategoryFlow.distinctUntilChanged()
-        val listNote = listNoteFlow.distinctUntilChanged()
+        stateFlow = combine(listCategory, listNote, ::buildHomeUiState)
+            .onEach { savedStateHandle[STATE_KEY] = it }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initial)
 
-        stateFlow = combine(
-            listCategory,
-            listNote,
-            ::buildHomeUiState
-        ).onEach {
-            savedStateHandle[STATE_KEY] = it
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
-        getListCategory()
+        observeGetListCategory()
+        dispatch(HomeAction.GetListCategory)
+    }
+
+    fun dispatch(action: HomeAction) {
+        viewModelScope.launch { _actionSharedFlow.emit(action) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getListCategory() {
+    private fun observeGetListCategory() {
         action<HomeAction.GetListCategory>()
             .flatMapLatest {
                 flow {
                     emit(ResultContent.Loading)
-                    categoryUseCase.readAllCategory().fold(
-                        success = {
-                            ResultContent.Content(it)
-                        },
-                        failure = {
-                            ResultContent.Error(it)
-                        }
-                    ).let { emit(it) }
+                    val result = categoryUseCase.readAllCategory().fold(
+                        success = { ResultContent.Content(it) },
+                        failure = { ResultContent.Error(it) }
+                    )
+                    emit(result)
                 }
-            }.onEach { result ->
+            }
+            .onEach { result ->
                 val event = when (result) {
-                    is ResultContent.Loading -> null
-                    is ResultContent.Content -> HomeSingleEvent.GetListCategory.Success(list = result.content)
-                    is ResultContent.Error -> HomeSingleEvent.GetListCategory.Failed(error = result.error)
+                    is ResultContent.Content -> {
+                        val allCategory = CategoryModel(-1, "All", R.drawable.icon_clock.toString(), false)
+                        HomeSingleEvent.GetListCategory.Success(listOf(allCategory) + result.content)
+                    }
+                    is ResultContent.Error -> HomeSingleEvent.GetListCategory.Failed(result.error)
+                    else -> null
                 }
                 event?.let { _singleEventChannel.send(it) }
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
     private companion object {

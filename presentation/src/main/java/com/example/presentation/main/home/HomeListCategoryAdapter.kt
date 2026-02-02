@@ -1,9 +1,9 @@
 package com.example.presentation.main.home
 
 import android.content.Context
-import android.graphics.Color
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +36,8 @@ class HomeListCategoryAdapter(
         val backgroundCard = if (isDarkMode)
             ContextCompat.getColor(holder.context, R.color.background_content_root_night) else
             ContextCompat.getColor(holder.context, R.color.white)
-        val backgroundCardSelected = if (isDarkMode) Color.parseColor("#4E4E4E") else
-            Color.parseColor("#FFEAEA")
+        val backgroundCardSelected = if (isDarkMode) "#4E4E4E".toColorInt() else
+            "#FFEAEA".toColorInt()
         if (selectedPosition == position) {
             holder.binding.root.setCardBackgroundColor(backgroundCardSelected)
         } else {

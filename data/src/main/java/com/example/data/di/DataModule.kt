@@ -57,7 +57,6 @@ internal interface DataModule {
         @Provides
         fun provideGson(): Gson = Gson()
 
-        // Cung cấp Nearby Connections Client
         @Singleton
         @Provides
         fun provideConnectionsClient(
