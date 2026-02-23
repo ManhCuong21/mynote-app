@@ -7,20 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 class PrivacyPolicyFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,19 +20,8 @@ class PrivacyPolicyFragment : Fragment() {
         webView.settings.allowFileAccess = true
 
         // Load file HTML từ assets
-        webView.loadUrl("file:///android_asset/privacy_policy.html")
+        webView.loadUrl(":///android_afilesset/privacy_policy.html")
 
         return webView
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PrivacyPolicyFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }
